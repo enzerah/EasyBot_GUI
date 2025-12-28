@@ -2,7 +2,7 @@
 #define SCRIPTEDITORDIALOG_H
 
 #include <QDialog>
-#include <QTextEdit>
+#include "CodeEditor.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
@@ -15,7 +15,7 @@ public:
     QString getScript() const;
 
 private:
-    QTextEdit *m_textEdit;
+    CodeEditor *m_codeEditor;
 };
 
 #endif // SCRIPTEDITORDIALOG_H

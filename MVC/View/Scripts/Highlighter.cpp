@@ -4,43 +4,44 @@ Highlighter::Highlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
     QTextCharFormat keywordFormat;
-    keywordFormat.setForeground(QColor("#569CD6"));
+    // Keywords (Blue)
+    keywordFormat.setForeground(Qt::blue);
     keywordFormat.setFontWeight(QFont::Bold);
-
-    const QStringList keywords = {
-        "and", "break", "do", "else", "elseif", "end", "false",
-        "for", "function", "goto", "if", "in", "local", "nil",
-        "not", "or", "repeat", "return", "then", "true", "until", "while",
-        "proto", "Otc", "msleep"
-    };
-
-    for (const QString &word : keywords) {
-        rules.append({
-            QRegularExpression("\\b" + word + "\\b"),
-            keywordFormat
-        });
+    QStringList keywordPatterns;
+    keywordPatterns << "\\band\\b" << "\\bbreak\\b" << "\\bdo\\b" << "\\belse\\b"
+                    << "\\belseif\\b" << "\\bend\\b" << "\\bfor\\b" << "\\bfunction\\b"
+                    << "\\bgoto\\b" << "\\bif\\b" << "\\bin\\b" << "\\blocal\\b"
+                    << "\\bnil\\b" << "\\bnot\\b" << "\\bor\\b" << "\\brepeat\\b"
+                    << "\\breturn\\b" << "\\bthen\\b" << "\\btrue\\b" << "\\buntil\\b"
+                    << "\\bwhile\\b" << "\\bproto\\b" << "\\bOtc\\b" << "\\bmsleep\\b";
+    
+    for (const QString &pattern : keywordPatterns) {
+        rules.append({QRegularExpression(pattern), keywordFormat});
     }
 
     QTextCharFormat stringFormat;
-    stringFormat.setForeground(QColor("#CE9178"));
-    // Match both single and double quoted strings
+    // Strings (Dark Red)
+    stringFormat.setForeground(Qt::darkRed);
     rules.append({
-        QRegularExpression("\".*?\"|'.*?'"),
+        QRegularExpression("\".*?\""),
+        stringFormat
+    });
+    rules.append({
+        QRegularExpression("'.*?'"),
         stringFormat
     });
 
     QTextCharFormat commentFormat;
-    commentFormat.setForeground(QColor("#6A9955"));
-
-    // Lua comments start with --
+    // Comments (Dark Green)
+    commentFormat.setForeground(Qt::darkGreen);
     rules.append({
         QRegularExpression("--[^\n]*"),
         commentFormat
     });
 
     QTextCharFormat numberFormat;
-    numberFormat.setForeground(QColor("#B5CEA8"));
-
+    // Numbers (Magenta)
+    numberFormat.setForeground(Qt::magenta);
     rules.append({
         QRegularExpression("\\b\\d+\\b"),
         numberFormat

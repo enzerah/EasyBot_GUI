@@ -1,9 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_CavebotView.h" resolved
-
 #include "WalkerView.h"
 
 #include <iostream>

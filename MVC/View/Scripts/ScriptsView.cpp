@@ -11,13 +11,13 @@
 
 
 ScriptsView::ScriptsView(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::Scripts_View) {
+    QMainWindow(parent),
+    ui(new Ui::Scripts_View) {
+    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     ui->setupUi(this);
 
-    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
-    ui->scripts_tableWidget->horizontalHeader()
-        ->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->scripts_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->scripts_tableWidget->horizontalHeader()
         ->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
@@ -26,10 +26,11 @@ ScriptsView::ScriptsView(QWidget *parent) :
         ui->scripts_tableWidget->insertRow(row);
 
         auto *textEdit = new QTextEdit(ui->scripts_tableWidget);
-        ui->scripts_tableWidget->setCellWidget(row, 0, textEdit);
-        new Highlighter(textEdit->document());
+        textEdit->setReadOnly(true);
         textEdit->installEventFilter(this);
         textEdit->viewport()->installEventFilter(this);
+        ui->scripts_tableWidget->setCellWidget(row, 0, textEdit);
+        new Highlighter(textEdit->document());
 
         auto *checkBox = new QCheckBox();
 

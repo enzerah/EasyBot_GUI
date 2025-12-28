@@ -4,15 +4,15 @@
 ScriptEditorDialog::ScriptEditorDialog(const QString &script, QWidget *parent)
     : QDialog(parent) {
     setWindowTitle("Script Editor");
-    resize(500, 500);
+    resize(700, 600);
 
     auto *layout = new QVBoxLayout(this);
 
-    m_textEdit = new QTextEdit(this);
-    m_textEdit->setPlainText(script);
-    new Highlighter(m_textEdit->document());
+    m_codeEditor = new CodeEditor(this);
+    m_codeEditor->setPlainText(script);
+    new Highlighter(m_codeEditor->document());
 
-    layout->addWidget(m_textEdit);
+    layout->addWidget(m_codeEditor);
 
     auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -22,5 +22,5 @@ ScriptEditorDialog::ScriptEditorDialog(const QString &script, QWidget *parent)
 }
 
 QString ScriptEditorDialog::getScript() const {
-    return m_textEdit->toPlainText();
+    return m_codeEditor->toPlainText();
 }
