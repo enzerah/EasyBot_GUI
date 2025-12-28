@@ -13,6 +13,9 @@ class RunScripts_Thread : public QThread {
 protected:
     void run() override;
 private:
+    void executeScript(const std::string& scriptText);
+    void parseAndExecute(const std::string& line);
+
     std::vector<Script> m_scripts;
 };
 
