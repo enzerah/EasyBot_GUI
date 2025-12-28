@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>378</height>
+    <height>398</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -115,7 +115,7 @@
       <item>
        <widget class="QPushButton" name="scripts_pushButton">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>Scripts</string>
@@ -390,7 +390,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>33</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLicense">

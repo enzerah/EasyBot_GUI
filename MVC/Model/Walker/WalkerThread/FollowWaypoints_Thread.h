@@ -20,6 +20,7 @@ protected:
 private:
     std::vector<Waypoint> waypoints;
     int findClosest();
+    int bestWpt(Waypoint first_wpt, Waypoint second_wpt);
 };
 
 

@@ -28,9 +28,8 @@ LootingController::~LootingController() {
 }
 
 void LootingController::showView() {
-    if (m_view) {
-        m_view->show();
-    }
+    m_view->showNormal();
+    m_view->show();
 }
 
 void LootingController::addItem_View(const int& itemID, const QString& destination, const int& lootingSpeed) {

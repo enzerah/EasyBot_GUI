@@ -1,9 +1,3 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_TargetingView.h" resolved
-
 #include "TargetingView.h"
 
 

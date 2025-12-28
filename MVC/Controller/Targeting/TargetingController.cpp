@@ -34,9 +34,8 @@ TargetingController::~TargetingController()
 
 void TargetingController::showView()
 {
-    if (m_view) {
-        m_view->show();
-    }
+    m_view->showNormal();
+    m_view->show();
 }
 
 void TargetingController::addItem_View(const QString &targetName, const int &dist, const int &count,

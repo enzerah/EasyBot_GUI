@@ -22,9 +22,8 @@ SpellsController::~SpellsController() {
 }
 
 void SpellsController::showView() {
-    if (m_view) {
-        m_view->show();
-    }
+    m_view->showNormal();
+    m_view->show();
 }
 
 QJsonArray SpellsController::saveSettings() const {

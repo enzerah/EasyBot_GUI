@@ -14,6 +14,7 @@
 #include "MainBot/BotView.h"
 #include "Spells/SpellsController.h"
 #include "Targeting/TargetingController.h"
+#include "Scripts/ScriptsController.h"
 
 
 class BotController : public QObject
@@ -29,6 +30,7 @@ private slots:
     void onShowLootingModule();
     void onShowHealingModule();
     void onShowSpellsModule();
+    void onShowScriptsModule();
 
     void onSaveRequested(const QString &name, const QString &category);
     void onLoadRequested(const QString &name, const QString &category);
@@ -44,6 +46,7 @@ private:
     LootingController *m_lootingController;
     HealingController *m_healingController;
     SpellsController *m_spellsController;
+    ScriptsController *m_scriptsController;
 };
 
 

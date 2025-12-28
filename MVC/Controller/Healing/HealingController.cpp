@@ -23,9 +23,8 @@ HealingController::~HealingController() {
 }
 
 void HealingController::showView() {
-    if (m_view) {
-        m_view->show();
-    }
+    m_view->showNormal();
+    m_view->show();
 }
 
 void HealingController::addItem_View(const QString &action, const QString &heal, const QString &condition, const int &random,

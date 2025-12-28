@@ -1,11 +1,15 @@
 #include "FollowWaypoints_Thread.h"
 #include <QElapsedTimer>
+#include "../../BotEngine.h"
 
 
 void FollowWaypoints_Thread::run() {
     if (waypoints.empty()) return;
     size_t index = findClosest();
     while (!isInterruptionRequested()) {
+        if (engine->hasTarget && (index + 1) % waypoints.size() != 0) {
+            index += bestWpt(waypoints[index], waypoints[index + 1]);
+        }
         auto localPlayer = proto->getLocalPlayer();
         auto wpt = waypoints[index];
         auto playerPos = proto->getPosition(localPlayer);
@@ -14,12 +18,11 @@ void FollowWaypoints_Thread::run() {
             emit indexUpdate_signal(static_cast<int>(index));
             continue;
         }
-        while (proto->isAttacking() && wpt.option != "Lure")
-        {
-            msleep(4000);
-        }
-        if (!proto->isAutoWalking(localPlayer)) {
-            proto->autoWalk(localPlayer, wpt.position, false);
+        // Only walks if we dont have a target or we want to Lure
+        if (!engine->hasTarget || wpt.option == "Lure") {
+            if (!proto->isAutoWalking(localPlayer)) {
+                proto->autoWalk(localPlayer, wpt.position, false);
+            }
         }
         msleep(50);
     }
@@ -46,6 +49,26 @@ int FollowWaypoints_Thread::findClosest() {
     }
 
     return closestIndex;
+}
+
+int FollowWaypoints_Thread::bestWpt(Waypoint first_wpt, Waypoint second_wpt) {
+    auto localPlayer = proto->getLocalPlayer();
+    auto playerPos = proto->getPosition(localPlayer);
+
+    auto f = first_wpt.position;
+    auto s = second_wpt.position;
+    if (f.z != s.z)
+        return 0;
+
+    float distFirst =
+        (f.x - playerPos.x) * (f.x - playerPos.x) +
+        (f.y - playerPos.y) * (f.y - playerPos.y);
+
+    float distSecond =
+        (s.x - playerPos.x) * (s.x - playerPos.x) +
+        (s.y - playerPos.y) * (s.y - playerPos.y);
+
+    return (distFirst < distSecond) ? 0 : 1;
 }
 
 

@@ -28,6 +28,7 @@ public:
     void openLootingViewRequested();
     void openHealingViewRequested();
     void openSpellsViewRequested();
+    void openScriptsViewRequested();
 
     void startWalker_signal(bool state);
     void startTargeting_signal(bool state);

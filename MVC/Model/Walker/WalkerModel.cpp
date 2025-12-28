@@ -1,8 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
-
 #include "WalkerModel.h"
 #include <QThread>
 #include <QJsonArray>

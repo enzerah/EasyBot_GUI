@@ -28,6 +28,7 @@ WalkerController::WalkerController(QObject *parent)
 
 
 void WalkerController::showView() {
+    m_view->showNormal();
     m_view->show();
 }
 
