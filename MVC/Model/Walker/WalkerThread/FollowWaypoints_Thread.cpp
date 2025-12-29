@@ -4,6 +4,7 @@
 
 
 void FollowWaypoints_Thread::run() {
+    initLua();
     if (waypoints.empty()) return;
     size_t index = findClosest();
     while (!isInterruptionRequested()) {
@@ -26,6 +27,7 @@ void FollowWaypoints_Thread::run() {
         }
         msleep(50);
     }
+    closeLua();
 }
 
 int FollowWaypoints_Thread::findClosest() {
