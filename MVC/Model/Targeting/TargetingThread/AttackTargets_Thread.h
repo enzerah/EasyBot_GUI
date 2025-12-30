@@ -24,7 +24,7 @@ private:
     bool m_openCorpseState = false;
     int m_stayAwayDistance = 1;
     bool attackCondition(Target target, uintptr_t spectator);
-    void desiredStance(Position playerPos, Position targetPos, std::string option);
+    void desiredStance(Position playerPos, Position spectatorPos, std::string option);
     void monstersAttacks(Position playerPos, Position targetPos, std::string option);
 };
 

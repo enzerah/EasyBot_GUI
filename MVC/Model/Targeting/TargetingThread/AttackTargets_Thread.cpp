@@ -63,8 +63,6 @@ void AttackTargets_Thread::run()
                 }
             }
         }
-
-
         msleep(50);
     }
 }
@@ -84,31 +82,58 @@ bool AttackTargets_Thread::attackCondition(Target target, uintptr_t spectator) {
     // Can shoot the monster
     if (m_shootableState && !proto->canShoot(spectator, dist)) return false;
     // There is a path to monster
-    if (m_reachableState) {
+    if (m_reachableState && dist > 1) {
         auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
         if (path.empty()) return false;
+        for (int lastDir =0; lastDir < 8; lastDir++) {
+            auto newPos = spectatorPos;
+            if (lastDir == Otc::North) newPos.y +=1;
+            if (lastDir == Otc::East) newPos.x -=1;
+            if (lastDir == Otc::South) newPos.y -=1;
+            if (lastDir == Otc::West) newPos.x +=1;
+            if (lastDir == Otc::NorthEast) newPos.x -=1, newPos.y +=1;
+            if (lastDir == Otc::SouthEast) newPos.x -=1, newPos.y -=1;
+            if (lastDir == Otc::SouthWest) newPos.x +=1, newPos.y -=1;
+            if (lastDir == Otc::NorthWest) newPos.x +=1, newPos.y +=1;
+            auto second_path = proto->findPath(playerPos, newPos, 100, Otc::PathFindAllowNonPathable);
+            if (!second_path.empty()) return true;
+        }
+        return false;
     }
     return true;
 }
 
-void AttackTargets_Thread::desiredStance(Position playerPos, Position targetPos, std::string option) {
-    int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(targetPos.x)),
-    std::abs(static_cast<int>(playerPos.y) - static_cast<int>(targetPos.y)));
-    if (option == "Chase") {
-        if (dist <= 1) return;
-        auto path = proto->findPath(playerPos, targetPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
-        if (!path.empty()) {
-            proto->walk(path.at(0));
+void AttackTargets_Thread::desiredStance(Position playerPos, Position spectatorPos, std::string option) {
+    int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(spectatorPos.x)),
+    std::abs(static_cast<int>(playerPos.y) - static_cast<int>(spectatorPos.y)));
+    if (option == "Chase" && dist > 1) {
+        auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
+        if (path.empty()) return;
+        for (int lastDir =0; lastDir < 8; lastDir++) {
+            auto newPos = spectatorPos;
+            if (lastDir == Otc::North) newPos.y +=1;
+            if (lastDir == Otc::East) newPos.x -=1;
+            if (lastDir == Otc::South) newPos.y -=1;
+            if (lastDir == Otc::West) newPos.x +=1;
+            if (lastDir == Otc::NorthEast) newPos.x -=1, newPos.y +=1;
+            if (lastDir == Otc::SouthEast) newPos.x -=1, newPos.y -=1;
+            if (lastDir == Otc::SouthWest) newPos.x +=1, newPos.y -=1;
+            if (lastDir == Otc::NorthWest) newPos.x +=1, newPos.y +=1;
+            auto second_path = proto->findPath(playerPos, newPos, 100, Otc::PathFindAllowNonPathable);
+            if (!second_path.empty()) {
+                proto->walk(second_path.at(0));
+                return;
+            }
         }
     }
     else if (option == "Stay Away") {
         if (dist >= m_stayAwayDistance) return;
         auto distFromTarget = 1;
         Otc::Direction neededDir = Otc::InvalidDirection;
-        if (targetPos.y < playerPos.y) neededDir = Otc::North;
-        else if (targetPos.y > playerPos.y) neededDir = Otc::South;
-        else if (targetPos.x < playerPos.x) neededDir = Otc::West;
-        else if (targetPos.x > playerPos.x) neededDir = Otc::East;
+        if (spectatorPos.y < playerPos.y) neededDir = Otc::North;
+        else if (spectatorPos.y > playerPos.y) neededDir = Otc::South;
+        else if (spectatorPos.x < playerPos.x) neededDir = Otc::West;
+        else if (spectatorPos.x > playerPos.x) neededDir = Otc::East;
         auto newPos = playerPos;
         int randomNum = rand() % 4; // Random from 0 to 3
         if (neededDir == Otc::North) {
