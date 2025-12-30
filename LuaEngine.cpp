@@ -12,9 +12,9 @@ void LuaEngine::initLua() {
     L = luaL_newstate();
     luaL_openlibs(L);
     
-    // Store 'this' pointer in Lua registry so hook can access it
     lua_pushlightuserdata(L, this);
     lua_setfield(L, LUA_REGISTRYINDEX, "LuaEngine_instance");
+    
     LuaBindings::registerAll(L);
 
     // Globalize proto functions
@@ -50,6 +50,9 @@ void LuaEngine::closeLua() {
 
 void LuaEngine::executeLuaScript(const std::string &scriptText) {
     if (!L) return;
+    
+    m_returnedString.clear();  // Reset before execution
+    
     if (luaL_dostring(L, scriptText.c_str()) != LUA_OK) {
         const char* error = lua_tostring(L, -1);
         // Don't print error if it was intentional interruption
@@ -57,6 +60,16 @@ void LuaEngine::executeLuaScript(const std::string &scriptText) {
             std::cerr << "Lua Error: " << error << std::endl;
         }
         lua_pop(L, 1);
+    } else {
+        // Check if script returned a value
+        if (lua_gettop(L) > 0) {
+            // Check if the returned value is a string
+            if (lua_isstring(L, -1)) {
+                m_returnedString = lua_tostring(L, -1);
+                std::cout << "Lua script returned: '" << m_returnedString << "'" << std::endl;
+            }
+            lua_pop(L, 1);  // Pop the return value
+        }
     }
 }
 

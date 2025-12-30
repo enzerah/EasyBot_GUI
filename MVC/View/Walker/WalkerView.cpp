@@ -36,6 +36,12 @@ WalkerView::WalkerView(QWidget *parent)
         emit addItem_signal(direction, option, action);
         ui->action_textEdit->clear();
     });
+    connect(option_buttonGroup, &QButtonGroup::buttonClicked, this, [this, option_buttonGroup]() {
+        auto option = option_buttonGroup->checkedButton()->text().trimmed().toStdString();
+        bool enable = (option == "Action" || option == "Label");
+        ui->action_textEdit->setEnabled(enable);
+    });
+
     connect(ui->record_checkBox, &QCheckBox::toggled, this, [this, direction_buttonGroup, option_buttonGroup]() {
         auto state = ui->record_checkBox->isChecked();
         auto sqmDist = ui->record_lineEdit->text().toInt();

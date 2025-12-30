@@ -23,6 +23,7 @@ void FollowWaypoints_Thread::run() {
         auto wpt = waypoints[index];
         auto playerPos = proto->getPosition(localPlayer);
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
+            index = (index + 1) % waypoints.size();
             if (wpt.option == "Action") {
                 std::cout << "Executing waypoint action script..." << std::endl;
                 auto* actionEngine = new LuaEngine(wpt.action, nullptr);
@@ -40,10 +41,21 @@ void FollowWaypoints_Thread::run() {
                     msleep(100);
                 }
                 
+                // Check if script returned a label to goto
+                std::string returnedLabel = actionEngine->getReturnedString();
                 delete actionEngine;
+                std::cout << "Returned value: " << returnedLabel << std::endl;
+                
+                if (!returnedLabel.empty()) {
+                    for (size_t i = 0; i < waypoints.size(); ++i) {
+                        if (waypoints[i].action == returnedLabel) {
+                            index = i;
+                            std::cout << "Action script returned goto '" << returnedLabel << "' - jumping to index " << i << std::endl;
+                        }
+                    }
+                }
                 std::cout << "Waypoint action script completed" << std::endl;
             }
-            index = (index + 1) % waypoints.size();
             emit indexUpdate_signal(static_cast<int>(index));
             continue;
         }
@@ -123,3 +135,4 @@ void FollowWaypoints_Thread::setLuaScript(const std::string& script) {
 void FollowWaypoints_Thread::clearLuaScript() {
     luaScriptText.clear();
 }
+

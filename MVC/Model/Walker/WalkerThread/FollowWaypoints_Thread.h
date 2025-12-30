@@ -6,6 +6,7 @@
 #define FOLLOWWAYPINTS_THREAD_H
 #include <QThread>
 #include <string>
+#include <atomic>
 #include "../../const.h"
 #include "../../proto_functions_client.h"
 

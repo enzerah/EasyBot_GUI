@@ -13,6 +13,7 @@ public:
         : QThread(parent), m_script(script), m_shouldStop(false) {}
 
     void requestStop();
+    std::string getReturnedString() const { return m_returnedString; }
 
 protected:
     void run() override;
@@ -26,6 +27,7 @@ private:
     lua_State* L = nullptr;
     std::string m_script;
     std::atomic<bool> m_shouldStop;
+    std::string m_returnedString;  // Store any string returned by the script
 };
 
 
