@@ -25,8 +25,8 @@ void StartHealing_Thread::run()
                 }
                 else if (heal.action == "Use") {
                     int itemId = std::stoi(heal.heal);
-                    if (client_version >= 800) { // Hotkeys Available
-                        proto->useInventoryItem(itemId);
+                    if (client_version >= 758) { // Hotkeys Available
+                        proto->useInventoryItemWith(itemId, localPlayer);
                     } else { // No hotkeys
                         bool found = false;
                         auto containers = proto->getContainers();
@@ -52,8 +52,9 @@ void StartHealing_Thread::run()
                     proto->talk(heal.heal);
                 } else if (heal.action == "Use") {
                     int itemId = std::stoi(heal.heal);
-                    if (client_version >= 800) { // Hotkeys Available
-                        proto->useInventoryItem(itemId);
+                    if (client_version >= 758) { // Hotkeys Available
+                        std::cout << itemId << std::endl;
+                        proto->useInventoryItemWith(itemId, localPlayer);
                     } else { // No hotkeys
                         bool found = false;
                         auto containers = proto->getContainers();
