@@ -61,8 +61,7 @@ void WalkerController::deleteItem_View(const int& index) {
 }
 
 // Walker Model Requests
-void WalkerController::addItem_Model(const QString &item)
-{
+void WalkerController::addItem_Model(const QString &item) {
     m_view->addItem(item);
 }
 
