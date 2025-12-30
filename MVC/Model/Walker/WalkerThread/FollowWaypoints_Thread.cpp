@@ -1,10 +1,19 @@
 #include "FollowWaypoints_Thread.h"
 #include <QElapsedTimer>
+#include <iostream>
 #include "../../BotEngine.h"
 #include "../../../../LuaEngine.h"
 
 void FollowWaypoints_Thread::run() {
     if (waypoints.empty()) return;
+    
+    // Start the Lua script if one is set
+    if (!luaScriptText.empty()) {
+        luaScriptEngine = new LuaEngine(luaScriptText, nullptr);
+        luaScriptEngine->start();
+        std::cout << "Started Lua script for walker" << std::endl;
+    }
+    
     size_t index = findClosest();
     while (!isInterruptionRequested()) {
         if (engine->hasTarget && (index + 1) % waypoints.size() != 0) {
@@ -15,8 +24,24 @@ void FollowWaypoints_Thread::run() {
         auto playerPos = proto->getPosition(localPlayer);
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
             if (wpt.option == "Action") {
-                auto luaEngine = new LuaEngine(wpt.action, nullptr);
-                luaEngine->start();
+                std::cout << "Executing waypoint action script..." << std::endl;
+                auto* actionEngine = new LuaEngine(wpt.action, nullptr);
+                actionEngine->start();
+                
+                // Wait for the script to complete (check for interruption every 100ms)
+                while (actionEngine->isRunning()) {
+                    if (isInterruptionRequested()) {
+                        std::cout << "Interrupting waypoint action script..." << std::endl;
+                        actionEngine->requestStop();
+                        actionEngine->wait(1000);
+                        delete actionEngine;
+                        return; // Exit the walker thread
+                    }
+                    msleep(100);
+                }
+                
+                delete actionEngine;
+                std::cout << "Waypoint action script completed" << std::endl;
             }
             index = (index + 1) % waypoints.size();
             emit indexUpdate_signal(static_cast<int>(index));
@@ -29,6 +54,22 @@ void FollowWaypoints_Thread::run() {
             }
         }
         msleep(50);
+    }
+    
+    // Stop the Lua script if running
+    if (luaScriptEngine) {
+        std::cout << "Stopping walker Lua script..." << std::endl;
+        luaScriptEngine->requestStop();
+        
+        if (!luaScriptEngine->wait(1000)) { // 1 second timeout
+            std::cerr << "Warning: Walker Lua script did not finish in time, terminating forcefully" << std::endl;
+            luaScriptEngine->terminate();
+            luaScriptEngine->wait();
+        }
+        
+        delete luaScriptEngine;
+        luaScriptEngine = nullptr;
+        std::cout << "Walker Lua script stopped" << std::endl;
     }
 }
 
@@ -75,4 +116,10 @@ int FollowWaypoints_Thread::bestWpt(Waypoint first_wpt, Waypoint second_wpt) {
     return (distFirst < distSecond) ? 0 : 1;
 }
 
+void FollowWaypoints_Thread::setLuaScript(const std::string& script) {
+    luaScriptText = script;
+}
 
+void FollowWaypoints_Thread::clearLuaScript() {
+    luaScriptText.clear();
+}
