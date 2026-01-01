@@ -125,6 +125,7 @@ service BotService {
   // --- Tile.h ---
   rpc GetTopThing(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
   rpc GetTopUseThing(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
+  rpc GetTileItems(google.protobuf.UInt64Value) returns (bot_Uint64List);
 
   // --- CustomFunctions.h ---
   rpc GetMessages(google.protobuf.UInt32Value) returns (bot_GetMessages);

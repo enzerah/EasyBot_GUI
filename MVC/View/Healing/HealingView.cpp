@@ -1,13 +1,6 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_HealingView.h" resolved
-
 #include "HealingView.h"
 
 #include <iostream>
-#include <__msvc_ostream.hpp>
 
 
 HealingView::HealingView(QWidget *parent) :

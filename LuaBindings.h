@@ -128,6 +128,7 @@ namespace LuaBindings {
                 // Tile
                 .addFunction("getTopThing", &BotClient::getTopThing)
                 .addFunction("getTopUseThing", &BotClient::getTopUseThing)
+                .addFunction("getTileItems", &BotClient::getTileItems)
                 // Custom
                 .addFunction("getMessages", &BotClient::getMessages)
                 .addFunction("clearMessages", &BotClient::clearMessages)

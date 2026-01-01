@@ -8,7 +8,8 @@ BotController::BotController(BotView *botView, QObject *parent)
     m_healingController(nullptr),
     m_lootingController(nullptr),
     m_spellsController(nullptr),
-    m_scriptsController(nullptr)
+    m_scriptsController(nullptr),
+    m_agentAIController(nullptr)
 {
     connect(m_botView, &BotView::openWalkerView, this, &BotController::openWalkerView);
     connect(m_botView, &BotView::openTargetingViewRequested, this, &BotController::onShowTargetingModule);
@@ -16,6 +17,7 @@ BotController::BotController(BotView *botView, QObject *parent)
     connect(m_botView, &BotView::openHealingViewRequested, this, &BotController::onShowHealingModule);
     connect(m_botView, &BotView::openSpellsViewRequested, this, &BotController::onShowSpellsModule);
     connect(m_botView, &BotView::openScriptsViewRequested, this, &BotController::onShowScriptsModule);
+    connect(m_botView, &BotView::openAgentAIViewRequested, this, &BotController::onShowAgentAIModule);
 
     // Walker
     connect(m_botView, &BotView::startWalker_signal, this, [this](bool checked){
@@ -208,5 +210,14 @@ void BotController::onShowScriptsModule() {
         m_scriptsController = new ScriptsController();
     } else {
         m_scriptsController->showView();
+    }
+}
+
+void BotController::onShowAgentAIModule() {
+    if (!m_agentAIController)
+    {
+        m_agentAIController = new AgentAIController();
+    } else {
+        m_agentAIController->showView();
     }
 }

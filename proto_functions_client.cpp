@@ -1136,6 +1136,21 @@ uintptr_t BotClient::getTopUseThing(uintptr_t value)
     return response.value();
 }
 
+std::vector<uintptr_t> BotClient::getTileItems(uintptr_t tile) {
+    UInt64Value request;
+    request.set_value(tile);
+    bot_Uint64List response;
+    ClientContext context;
+    Status status = stub->GetTileItems(&context, request, &response);
+    std::vector<uintptr_t> items;
+    if (status.ok()) {
+        for (const auto& item : response.items()) {
+            items.push_back(item);
+        }
+    }
+    return items;
+}
+
 // Custom Functions
 std::vector<MessageStruct> BotClient::getMessages(int messageNumber) {
     google::protobuf::UInt32Value request;

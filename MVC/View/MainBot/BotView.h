@@ -29,6 +29,7 @@ public:
     void openHealingViewRequested();
     void openSpellsViewRequested();
     void openScriptsViewRequested();
+    void openAgentAIViewRequested();
 
     void startWalker_signal(bool state);
     void startTargeting_signal(bool state);

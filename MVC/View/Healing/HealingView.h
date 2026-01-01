@@ -1,7 +1,3 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
 #ifndef HEALINGVIEW_H
 #define HEALINGVIEW_H
 
