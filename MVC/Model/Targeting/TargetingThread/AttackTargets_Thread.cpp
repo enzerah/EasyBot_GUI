@@ -42,18 +42,18 @@ void AttackTargets_Thread::run()
             }
         }
         if (!proto->isAttacking()) {
+            if (m_openCorpseState && looted) {
+                looted = false;
+                auto tile = proto->getTile(monsterPos);
+                auto getTopThing = proto->getTopUseThing(tile);
+                proto->open(getTopThing, 0);
+            }
             auto spectators = proto->getSpectators(playerPos, false);
             std::vector<uintptr_t> monsters;
             for (auto spectator : spectators) {
                 if (attackCondition(target, spectator)) {
                     monsters.emplace_back(spectator);
                 }
-            }
-            if (m_openCorpseState && looted) {
-                looted = false;
-                auto tile = proto->getTile(monsterPos);
-                auto getTopThing = proto->getTopUseThing(tile);
-                proto->open(getTopThing, 0);
             }
             currentTarget = 0;
             int best_match = 999;
