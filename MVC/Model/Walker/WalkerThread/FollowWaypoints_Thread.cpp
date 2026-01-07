@@ -38,8 +38,15 @@ void FollowWaypoints_Thread::run() {
         auto localPlayer = proto->getLocalPlayer();
         auto playerPos = proto->getPosition(localPlayer);
         auto wpt = waypoints[index];
+
         // Only walks if we dont have a target or we want to Lure
         if (!engine->hasTarget || wpt.option == "Lure") {
+
+            if (wpt.position.z != playerPos.z && wpt.direction == "C" && wpt.option == "Stand") {
+                index = findClosest();
+                stuckTimer.restart();
+                continue;
+            }
             if (!proto->isAutoWalking(localPlayer)) {
                 if (wpt.option == "Stand" || wpt.option == "Lure") performWalk(wpt, localPlayer);
                 if (wpt.option == "Use") performUse(wpt, localPlayer);
@@ -82,7 +89,7 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer) {
     if (wpt.direction != "C") {
         auto direction = getDirection(wpt.direction);
         proto->walk(direction);
-        msleep(2500);
+        msleep(1000);
         return;
     }
     proto->autoWalk(localPlayer, wpt.position, false);
