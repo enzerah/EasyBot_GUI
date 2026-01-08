@@ -15,11 +15,16 @@ public:
     ~ScriptsModel();
 
 
-    void addItem(const int &id, bool state, const QString &script_text);
+    void addItem(const int &id, bool state, const QString &name, const QString &script_text);
+    void deleteItem(const int &index);
     void startScripts(bool state);
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
+
+    signals:
+    void clearTableWidget_signal();
+    void addItem_signal(bool state, const QString &name, const QString &script_text);
 
 private:
     std::vector<Script> scripts;

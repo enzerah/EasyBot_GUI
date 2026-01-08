@@ -18,9 +18,14 @@ public:
     QJsonArray saveSettings() const;
     void loadSettings(const QJsonArray &json);
 
+    // scriptsModel Requests
+    void addItem_Model(bool state, const QString &name, const QString &script_text);
+    void clearTableWidget_Model();
+
 private slots:
     // ScriptsView Requests
-    void addItem_View(const int &id, bool state, const QString &script_text);
+    void addItem_View(const int &id, bool state, const QString &name, const QString &script_text);
+    void deleteItem_View(const int &index);
 
 public slots:
     void startScripts_slot(bool state);

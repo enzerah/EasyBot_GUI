@@ -1,12 +1,21 @@
 #include "ScriptEditorDialog.h"
 #include "Highlighter.h"
 
-ScriptEditorDialog::ScriptEditorDialog(const QString &script, QWidget *parent)
+#include <QLineEdit>
+#include <QLabel>
+
+ScriptEditorDialog::ScriptEditorDialog(const QString &name, const QString &script, QWidget *parent)
     : QDialog(parent) {
     setWindowTitle("Script Editor");
     resize(700, 600);
 
     auto *layout = new QVBoxLayout(this);
+
+    auto *nameLayout = new QHBoxLayout();
+    nameLayout->addWidget(new QLabel("Script Name:", this));
+    m_nameEdit = new QLineEdit(name, this);
+    nameLayout->addWidget(m_nameEdit);
+    layout->addLayout(nameLayout);
 
     m_codeEditor = new CodeEditor(this);
     m_codeEditor->setPlainText(script);
@@ -23,4 +32,8 @@ ScriptEditorDialog::ScriptEditorDialog(const QString &script, QWidget *parent)
 
 QString ScriptEditorDialog::getScript() const {
     return m_codeEditor->toPlainText();
+}
+
+QString ScriptEditorDialog::getName() const {
+    return m_nameEdit->text();
 }

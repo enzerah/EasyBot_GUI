@@ -758,6 +758,7 @@ struct Spell
 };
 
 struct Script {
+    std::string name;
     std::string text;
     bool enabled;
 };

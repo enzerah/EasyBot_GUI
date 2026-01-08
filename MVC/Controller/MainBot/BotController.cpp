@@ -115,6 +115,10 @@ void BotController::onSaveRequested(const QString &name, const QString &category
         if (!m_spellsController) m_spellsController = new SpellsController();
         rootObject["Spells"] = m_spellsController->saveSettings();
     }
+    if (category == "All" || category == "Scripts") {
+        if (!m_scriptsController) m_scriptsController = new ScriptsController();
+        rootObject["Scripts"] = m_scriptsController->saveSettings();
+    }
 
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
@@ -157,6 +161,10 @@ void BotController::onLoadRequested(const QString &name, const QString &category
     if ((category == "All" || category == "Spells") && rootObject.contains("Spells")) {
         if (!m_spellsController) m_spellsController = new SpellsController();
         m_spellsController->loadSettings(rootObject["Spells"].toArray());
+    }
+    if ((category == "All" || category == "Scripts") && rootObject.contains("Scripts")) {
+        if (!m_scriptsController) m_scriptsController = new ScriptsController();
+        m_scriptsController->loadSettings(rootObject["Scripts"].toArray());
     }
 }
 
