@@ -32,6 +32,19 @@ TargetingView::TargetingView(QWidget *parent) :
         ui->targets_listWidget->takeItem(currentIndex);
         emit deleteItem_signal(currentIndex);
     });
+
+    connect(ui->addTile_pushButton, &QPushButton::clicked, this, [this]() {
+        emit addBlockedTile_signal(ui->x_lineEdit->text().toInt(), ui->y_lineEdit->text().toInt(), ui->z_lineEdit->text().toInt());
+        ui->x_lineEdit->clear();
+        ui->y_lineEdit->clear();
+        ui->z_lineEdit->clear();
+    });
+
+    connect(ui->blockedTiles_listWidget, &QListWidget::itemDoubleClicked, this, [this](){
+        auto currentIndex = ui->blockedTiles_listWidget->currentRow();
+        ui->blockedTiles_listWidget->takeItem(currentIndex);
+        emit deleteBlockedTile_signal(currentIndex);
+    });
 }
 
 TargetingView::~TargetingView() {
@@ -44,4 +57,12 @@ void TargetingView::addItem(const QString &item) {
 
 void TargetingView::clearListWidget() {
     ui->targets_listWidget->clear();
+}
+
+void TargetingView::addBlockedTile(const QString &tile) {
+    ui->blockedTiles_listWidget->addItem(tile);
+}
+
+void TargetingView::clearBlockedTilesListWidget() {
+    ui->blockedTiles_listWidget->clear();
 }

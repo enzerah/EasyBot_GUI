@@ -22,15 +22,19 @@ public:
 
     void addItem(const QString &item);
     void clearListWidget();
+    void addBlockedTile(const QString &tile);
+    void clearBlockedTilesListWidget();
 
     signals:
     void addItem_signal(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
+    void addBlockedTile_signal(const int &x, const int &y, const int &z);
 
     void shootableState_signal(bool state);
     void reachableState_signal(bool state);
     void openCorpseState_signal(bool state);
     void stayAwayDist_signal(int distance);
     void deleteItem_signal(const int &index);
+    void deleteBlockedTile_signal(const int &index);
 
 private:
     Ui::Targeting_View *ui;

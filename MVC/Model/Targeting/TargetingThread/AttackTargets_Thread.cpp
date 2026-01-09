@@ -135,6 +135,9 @@ void AttackTargets_Thread::desiredStance(Position playerPos, Position spectatorP
         auto second_path = proto->findPath(playerPos, newPos, 100, Otc::PathFindAllowNonPathable);
         if (!second_path.empty()) {
             auto localPlayer = proto->getLocalPlayer();
+            for (auto blockedTile : m_blockedTiles) {
+                if (blockedTile.x == newPos.x && blockedTile.y == newPos.y && blockedTile.z == newPos.z) return;
+            }
             proto->autoWalk(localPlayer, newPos, false);
             msleep(100);
             return;
@@ -168,8 +171,11 @@ void AttackTargets_Thread::desiredStance(Position playerPos, Position spectatorP
             if (randomNum == Otc::East) newPos.x += distFromTarget;
         }
         if (newPos.x == playerPos.x && newPos.y == playerPos.y) return;
-        auto path = proto->findPath(playerPos, newPos, 25, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
+        auto path = proto->findPath(playerPos, newPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
         if (!path.empty()) {
+            for (auto blockedTile : m_blockedTiles) {
+                if (blockedTile.x == newPos.x && blockedTile.y == newPos.y && blockedTile.z == newPos.z) return;
+            }
             proto->walk(path.at(0));
         }
     }

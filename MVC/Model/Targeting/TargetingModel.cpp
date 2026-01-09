@@ -66,7 +66,7 @@ void TargetingModel::stayAwayDist(int currentDist) {
 void TargetingModel::startTargeting(bool state) {
     if (state) {
         if (!attackTargetsThread) {
-            attackTargetsThread = new AttackTargets_Thread(targets, m_reachable, m_shootable, m_openCorpse, m_stayAwayDist, this);
+            attackTargetsThread = new AttackTargets_Thread(targets, m_reachable, m_shootable, m_openCorpse, m_stayAwayDist, blockedTiles, this);
             connect(this, &TargetingModel::shootableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::shootableStateChange);
             connect(this, &TargetingModel::reachableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::reachableStateChange);
             connect(this, &TargetingModel::openCorpseStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::openCorpseStateChange);
@@ -96,25 +96,95 @@ QJsonArray TargetingModel::toJson() const {
         jsonObj["attack"] = QString::fromStdString(target.monstersAttacks);
         jsonArray.append(jsonObj);
     }
-    return jsonArray;
+    
+    // Add blocked tiles as a separate object
+    QJsonArray blockedTilesArray;
+    for (const auto &tile : blockedTiles) {
+        QJsonObject tileObj;
+        tileObj["x"] = static_cast<int>(tile.x);
+        tileObj["y"] = static_cast<int>(tile.y);
+        tileObj["z"] = static_cast<int>(tile.z);
+        blockedTilesArray.append(tileObj);
+    }
+    
+    // Return array with targets and blocked tiles
+    QJsonObject mainObj;
+    mainObj["targets"] = jsonArray;
+    mainObj["blockedTiles"] = blockedTilesArray;
+    
+    QJsonArray result;
+    result.append(mainObj);
+    return result;
 }
 
 void TargetingModel::fromJson(const QJsonArray &json) {
     targets.clear();
+    blockedTiles.clear();
     emit clearListWidget_signal();
-    for (const auto &val : json) {
-        QJsonObject obj = val.toObject();
-        QString name = obj["name"].toString();
-        int dist = obj["dist"].toInt();
-        int count = obj["count"].toInt();
-        QString stance = obj["stance"].toString();
-        QString attack = obj["attack"].toString();
-        addItem(name, dist, count, stance, attack);
+    emit clearBlockedTilesListWidget_signal();
+    
+    // Check if this is the new format (object with targets and blockedTiles)
+    if (!json.isEmpty() && json[0].isObject()) {
+        QJsonObject mainObj = json[0].toObject();
+        
+        // Load targets
+        if (mainObj.contains("targets")) {
+            QJsonArray targetsArray = mainObj["targets"].toArray();
+            for (const auto &val : targetsArray) {
+                QJsonObject obj = val.toObject();
+                QString name = obj["name"].toString();
+                int dist = obj["dist"].toInt();
+                int count = obj["count"].toInt();
+                QString stance = obj["stance"].toString();
+                QString attack = obj["attack"].toString();
+                addItem(name, dist, count, stance, attack);
+            }
+        }
+        
+        // Load blocked tiles
+        if (mainObj.contains("blockedTiles")) {
+            QJsonArray tilesArray = mainObj["blockedTiles"].toArray();
+            for (const auto &val : tilesArray) {
+                QJsonObject tileObj = val.toObject();
+                int x = tileObj["x"].toInt();
+                int y = tileObj["y"].toInt();
+                int z = tileObj["z"].toInt();
+                addBlockedTile(x, y, z);
+            }
+        }
+    } else {
+        // Old format - just targets
+        for (const auto &val : json) {
+            QJsonObject obj = val.toObject();
+            QString name = obj["name"].toString();
+            int dist = obj["dist"].toInt();
+            int count = obj["count"].toInt();
+            QString stance = obj["stance"].toString();
+            QString attack = obj["attack"].toString();
+            addItem(name, dist, count, stance, attack);
+        }
     }
 }
 
 void TargetingModel::deleteItem(const int& index) {
     targets.erase(targets.begin() + index);
+}
+
+void TargetingModel::addBlockedTile(const int &x, const int &y, const int &z) {
+    Position pos;
+    pos.x = static_cast<uint16_t>(x);
+    pos.y = static_cast<uint16_t>(y);
+    pos.z = static_cast<uint8_t>(z);
+    blockedTiles.push_back(pos);
+    
+    QString tileStr = QStringLiteral("X: %1, Y: %2, Z: %3").arg(x).arg(y).arg(z);
+    emit addBlockedTile_signal(tileStr);
+}
+
+void TargetingModel::deleteBlockedTile(const int &index) {
+    if (index >= 0 && index < static_cast<int>(blockedTiles.size())) {
+        blockedTiles.erase(blockedTiles.begin() + index);
+    }
 }
 
 

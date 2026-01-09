@@ -1,7 +1,3 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
 #include "TargetingController.h"
 #include <QJsonArray>
 
@@ -19,10 +15,18 @@ TargetingController::TargetingController(QObject* parent)
     connect(m_view, &TargetingView::openCorpseState_signal, this, &TargetingController::openCorpseState_View);
     connect(m_view, &TargetingView::stayAwayDist_signal, this, &TargetingController::stayAwayDist_View);
     connect(m_view, &TargetingView::deleteItem_signal, this, &TargetingController::deleteItem_View);
+    
+    // Connect blocked tiles signals
+    connect(m_view, &TargetingView::addBlockedTile_signal, this, &TargetingController::addBlockedTile_View);
+    connect(m_view, &TargetingView::deleteBlockedTile_signal, this, &TargetingController::deleteBlockedTile_View);
 
     // Targeting Model requests
     connect(m_model, &TargetingModel::addItem_signal, this, &TargetingController::addItem_Model);
     connect(m_model, &TargetingModel::clearListWidget_signal, this, &TargetingController::clearListWidget_Model);
+    
+    // Connect blocked tiles model signals
+    connect(m_model, &TargetingModel::addBlockedTile_signal, this, &TargetingController::addBlockedTile_Model);
+    connect(m_model, &TargetingModel::clearBlockedTilesListWidget_signal, this, &TargetingController::clearBlockedTilesListWidget_Model);
 
 
     m_view->show();
@@ -81,6 +85,22 @@ QJsonArray TargetingController::saveSettings() const {
 
 void TargetingController::loadSettings(const QJsonArray &json) {
     if (m_model) m_model->fromJson(json);
+}
+
+void TargetingController::addBlockedTile_View(const int &x, const int &y, const int &z) {
+    m_model->addBlockedTile(x, y, z);
+}
+
+void TargetingController::deleteBlockedTile_View(const int &index) {
+    m_model->deleteBlockedTile(index);
+}
+
+void TargetingController::addBlockedTile_Model(const QString &tile) {
+    m_view->addBlockedTile(tile);
+}
+
+void TargetingController::clearBlockedTilesListWidget_Model() {
+    m_view->clearBlockedTilesListWidget();
 }
 
 

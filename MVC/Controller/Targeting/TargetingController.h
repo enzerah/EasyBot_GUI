@@ -24,11 +24,15 @@ class TargetingController : public QObject {
     void openCorpseState_View(bool state);
     void stayAwayDist_View(int value);
     void deleteItem_View(const int &index);
+    void addBlockedTile_View(const int &x, const int &y, const int &z);
+    void deleteBlockedTile_View(const int &index);
 
 
     // TargetingModel Requests
     void addItem_Model(const QString &item);
     void clearListWidget_Model();
+    void addBlockedTile_Model(const QString &tile);
+    void clearBlockedTilesListWidget_Model();
 
 public slots:
     void startTargeting_slot(bool state);

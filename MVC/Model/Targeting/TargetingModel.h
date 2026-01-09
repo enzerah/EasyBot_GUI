@@ -23,6 +23,8 @@ class TargetingModel : public QObject {
     void openCorpseState(bool state);
     void stayAwayDist(int currentDist);
     void startTargeting(bool state);
+    void addBlockedTile(const int &x, const int &y, const int &z);
+    void deleteBlockedTile(const int &index);
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
@@ -38,9 +40,12 @@ class TargetingModel : public QObject {
     void openCorpseStateChanged_signal(bool state);
     void stayAwayDistChanged_signal(int currentDist);
     void clearListWidget_signal();
+    void addBlockedTile_signal(const QString &tile);
+    void clearBlockedTilesListWidget_signal();
 
 private:
     std::vector<Target> targets;
+    std::vector<Position> blockedTiles;
     AttackTargets_Thread *attackTargetsThread = nullptr;
     bool m_shootable = false;
     bool m_reachable = false;
