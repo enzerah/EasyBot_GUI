@@ -13,6 +13,7 @@ LootingController::LootingController(QObject *parent)
     connect(m_view, &LootingView::nextBpState_signal, this, &LootingController::nextBpState_View);
     connect(m_view, &LootingView::corpseBpState_signal, this, &LootingController::corpseBpState_View);
     connect(m_view, &LootingView::deleteItem_signal, this, &LootingController::deleteItem_View);
+    connect(m_view, &LootingView::clearListWidget_signal, this, &LootingController::clearListWidget_View);
 
 
 
@@ -46,6 +47,10 @@ void LootingController::corpseBpState_View(bool state) {
 
 void LootingController::deleteItem_View(const int& index){
     m_model->deleteItem(index);
+}
+
+void LootingController::clearListWidget_View() {
+    m_model->clearListWidget();
 }
 
 void LootingController::addItem_Model(const QString& item) {

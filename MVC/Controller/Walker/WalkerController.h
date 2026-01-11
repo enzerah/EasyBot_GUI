@@ -24,6 +24,7 @@ private slots:
     void addItem_View(const QString &direction, const QString &option, const QString &action);
     void recordWaypoints_View(bool state, int sqmDist, const QString &direction, const QString &option);
     void deleteItem_View(const int &index);
+    void clearListWidget_View();
 
     // WalkerModel Requests
     void addItem_Model(const QString &item);

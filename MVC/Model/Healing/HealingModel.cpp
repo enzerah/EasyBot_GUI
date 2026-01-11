@@ -88,3 +88,7 @@ void HealingModel::fromJson(const QJsonArray &json) {
     }
 }
 
+void HealingModel::clearListWidget() {
+    heals.clear();
+}
+

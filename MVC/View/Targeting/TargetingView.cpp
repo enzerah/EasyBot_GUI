@@ -33,6 +33,10 @@ TargetingView::TargetingView(QWidget *parent) :
         emit deleteItem_signal(currentIndex);
     });
 
+    connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
+       emit clearListWidget();
+    });
+
     connect(ui->addTile_pushButton, &QPushButton::clicked, this, [this]() {
         emit addBlockedTile_signal(ui->x_lineEdit->text().toInt(), ui->y_lineEdit->text().toInt(), ui->z_lineEdit->text().toInt());
         ui->x_lineEdit->clear();

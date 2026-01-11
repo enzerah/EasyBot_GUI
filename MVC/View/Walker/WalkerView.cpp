@@ -37,6 +37,7 @@ WalkerView::WalkerView(QWidget *parent)
         emit addItem_signal(direction, option, action);
         ui->action_textEdit->clear();
     });
+
     connect(option_buttonGroup, &QButtonGroup::buttonClicked, this, [this, option_buttonGroup]() {
         auto option = option_buttonGroup->checkedButton()->text().trimmed().toStdString();
         bool enable = (option == "Action" || option == "Label" || option == "Use");
@@ -55,6 +56,11 @@ WalkerView::WalkerView(QWidget *parent)
         auto currentIndex = ui->waypoints_listWidget->currentRow();
         ui->waypoints_listWidget->takeItem(currentIndex);
         emit deleteItem_signal(currentIndex);
+    });
+
+    connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
+        emit clearListWidget_signal();
+        ui->waypoints_listWidget->clear();
     });
 }
 

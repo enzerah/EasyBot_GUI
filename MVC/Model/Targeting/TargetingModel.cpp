@@ -159,6 +159,10 @@ void TargetingModel::deleteItem(const int& index) {
     targets.erase(targets.begin() + index);
 }
 
+void TargetingModel::clearListWidget() {
+    targets.clear();
+}
+
 void TargetingModel::addBlockedTile(const int &x, const int &y, const int &z) {
     Position pos;
     pos.x = static_cast<uint16_t>(x);

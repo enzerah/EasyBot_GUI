@@ -22,9 +22,10 @@ public:
     void recordWaypoints(bool state, int sqmDist, const QString &direction, const QString &option);
     void startWalker(bool state);
 
+    void clearListWidget();
+
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
-
     void deleteItem(const int &index);
 
 public slots:

@@ -28,6 +28,7 @@ public:
     signals:
     void addItem_signal(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
     void addBlockedTile_signal(const int &x, const int &y, const int &z);
+    void clearListWidget_signal();
 
     void shootableState_signal(bool state);
     void reachableState_signal(bool state);

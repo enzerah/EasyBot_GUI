@@ -24,6 +24,7 @@ public:
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
+    void clearListWidget();
 
     signals:
     void addItem_signal(const QString &item);

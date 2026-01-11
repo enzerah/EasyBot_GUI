@@ -27,6 +27,7 @@ public:
     void nextBpState_signal(bool state);
     void corpseBpState_signal(bool state);
     void deleteItem_signal(const int &index);
+    void clearListWidget_signal();
 
 
 private:

@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
 #ifndef HEALINGCONTROLLER_H
 #define HEALINGCONTROLLER_H
 #include <QObject>
@@ -26,6 +22,7 @@ public:
     void addItem_View(const QString &action, const QString &heal, const QString &condition, const int &random,
         const int &below, const int &above, const int &minimum);
     void deleteItem_View(const int &index);
+    void clearListWidget_View();
 
 
     // HealingModel Requests

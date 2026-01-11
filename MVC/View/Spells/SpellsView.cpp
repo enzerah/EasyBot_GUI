@@ -38,6 +38,10 @@ SpellsView::SpellsView(QWidget *parent) :
         ui->spells_listWidget->takeItem(currentIndex);
         emit deleteItem_signal(currentIndex);
     });
+
+    connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
+        emit clearListWidget();
+    });
 }
 
 SpellsView::~SpellsView() {

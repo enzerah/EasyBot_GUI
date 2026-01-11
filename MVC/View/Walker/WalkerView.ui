@@ -423,22 +423,5 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>clear_pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>waypoints_listWidget</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>148</x>
-     <y>379</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>126</x>
-     <y>192</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

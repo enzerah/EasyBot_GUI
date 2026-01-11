@@ -23,6 +23,7 @@ public:
     void fromJson(const QJsonArray &json);
 
     void deleteItem(const int &index);
+    void clearListWidget();
 
     signals:
     void addItem_signal(const QString &item);

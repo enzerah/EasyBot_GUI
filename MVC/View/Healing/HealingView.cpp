@@ -32,6 +32,10 @@ HealingView::HealingView(QWidget *parent) :
         ui->healing_listWidget->takeItem(currentIndex);
         emit deleteItem_signal(currentIndex);
     });
+
+    connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
+        emit clearListWidget();
+    });
 }
 
 HealingView::~HealingView() {

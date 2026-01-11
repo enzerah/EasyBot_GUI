@@ -97,3 +97,7 @@ void SpellsModel::deleteItem(const int& index) {
     spells.erase(spells.begin() + index);
 }
 
+void SpellsModel::clearListWidget() {
+    spells.clear();
+}
+

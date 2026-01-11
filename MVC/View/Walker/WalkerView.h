@@ -22,6 +22,7 @@ signals:
     void addItem_signal(const QString &direction, const QString &option, const QString &action);
     void recordWaypoints_signal(bool state, int sqmDist, const QString &direction, const QString &option);
     void deleteItem_signal(const int &index);
+    void clearListWidget_signal();
 
 private:
     Ui::Walker_View *ui;

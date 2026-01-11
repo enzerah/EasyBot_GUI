@@ -88,4 +88,8 @@ void LootingModel::deleteItem(const int& index) {
     items.erase(items.begin() + index);
 }
 
+void LootingModel::clearListWidget() {
+    items.clear();
+}
+
 

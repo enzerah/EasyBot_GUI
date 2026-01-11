@@ -83,6 +83,10 @@ void WalkerModel::startWalker(bool state) {
     }
 }
 
+void WalkerModel::clearListWidget() {
+    waypoints.clear();
+}
+
 void WalkerModel::indexUpdate_slot(int index) {
     emit indexUpdate_signal(index);
 }

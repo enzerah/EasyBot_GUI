@@ -16,6 +16,7 @@ WalkerController::WalkerController(QObject *parent)
     connect(m_view, &WalkerView::addItem_signal, this, &WalkerController::addItem_View);
     connect(m_view, &WalkerView::recordWaypoints_signal, this, &WalkerController::recordWaypoints_View);
     connect(m_view, &WalkerView::deleteItem_signal, this, &WalkerController::deleteItem_View);
+    connect(m_view, &WalkerView::clearListWidget_signal, this, &WalkerController::clearListWidget_View);
 
     // Walker Model requests
     connect(m_model, &WalkerModel::addItem_signal, this, &WalkerController::addItem_Model);
@@ -59,6 +60,10 @@ void WalkerController::recordWaypoints_View(bool state, int sqmDist, const QStri
 
 void WalkerController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
+}
+
+void WalkerController::clearListWidget_View() {
+    m_model->clearListWidget();
 }
 
 // Walker Model Requests

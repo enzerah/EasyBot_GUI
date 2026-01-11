@@ -15,7 +15,8 @@ TargetingController::TargetingController(QObject* parent)
     connect(m_view, &TargetingView::openCorpseState_signal, this, &TargetingController::openCorpseState_View);
     connect(m_view, &TargetingView::stayAwayDist_signal, this, &TargetingController::stayAwayDist_View);
     connect(m_view, &TargetingView::deleteItem_signal, this, &TargetingController::deleteItem_View);
-    
+    connect(m_view, &TargetingView::clearListWidget, this, &TargetingController::clearListWidget_View);
+
     // Connect blocked tiles signals
     connect(m_view, &TargetingView::addBlockedTile_signal, this, &TargetingController::addBlockedTile_View);
     connect(m_view, &TargetingView::deleteBlockedTile_signal, this, &TargetingController::deleteBlockedTile_View);
@@ -93,6 +94,10 @@ void TargetingController::addBlockedTile_View(const int &x, const int &y, const 
 
 void TargetingController::deleteBlockedTile_View(const int &index) {
     m_model->deleteBlockedTile(index);
+}
+
+void TargetingController::clearListWidget_View() {
+    m_model->clearListWidget();
 }
 
 void TargetingController::addBlockedTile_Model(const QString &tile) {

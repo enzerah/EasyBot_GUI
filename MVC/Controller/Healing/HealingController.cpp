@@ -11,6 +11,7 @@ HealingController::HealingController(QObject *parent)
     // Healing View requests
     connect(m_view, &HealingView::addItem_signal, this, &HealingController::addItem_View);
     connect(m_view, &HealingView::deleteItem_signal, this, &HealingController::deleteItem_View);
+    connect(m_view, &HealingView::clearListWidget, this, &HealingController::clearListWidget_View);
 
     // Healing Model requests
     connect(m_model, &HealingModel::addItem_signal, this, &HealingController::addItem_Model);
@@ -34,6 +35,10 @@ void HealingController::addItem_View(const QString &action, const QString &heal,
 
 void HealingController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
+}
+
+void HealingController::clearListWidget_View() {
+    m_model->clearListWidget();
 }
 
 void HealingController::addItem_Model(const QString& item) {

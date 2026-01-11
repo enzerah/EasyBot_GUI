@@ -26,6 +26,7 @@ class TargetingController : public QObject {
     void deleteItem_View(const int &index);
     void addBlockedTile_View(const int &x, const int &y, const int &z);
     void deleteBlockedTile_View(const int &index);
+    void clearListWidget_View();
 
 
     // TargetingModel Requests

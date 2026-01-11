@@ -6,8 +6,6 @@
 
 void FollowWaypoints_Thread::run() {
     if (waypoints.empty()) return;
-
-
     // Start the Lua script if one is set
     if (!luaScriptText.empty()) {
         luaScriptEngine = new LuaEngine(luaScriptText, nullptr);
@@ -16,11 +14,13 @@ void FollowWaypoints_Thread::run() {
     }
     
     size_t index = findClosest();
-    std::cout << index << std::endl;
 
     QElapsedTimer stuckTimer;
     stuckTimer.start();
     size_t lastIndex = index;
+
+    bool canWalk = true;
+    Position walkingTo{};
 
 
     while (!isInterruptionRequested()) {
@@ -46,7 +46,10 @@ void FollowWaypoints_Thread::run() {
                 stuckTimer.restart();
                 continue;
             }
-            if (!proto->isAutoWalking(localPlayer)) {
+            if (wpt.position.x != walkingTo.x || wpt.position.y != walkingTo.y) {
+                canWalk = true;
+            }
+            if (!proto->isAutoWalking(localPlayer) || canWalk) {
                 if (wpt.option == "Stand" || wpt.option == "Lure" || wpt.option == "Node") performWalk(wpt, localPlayer);
                 if (wpt.option == "Use") performUse(wpt, localPlayer);
                 if (wpt.option == "Action") {
@@ -54,6 +57,8 @@ void FollowWaypoints_Thread::run() {
                     if (index == -1) return;
                     wpt = waypoints[index];
                 }
+                walkingTo = wpt.position;
+                canWalk = false;
             } else if (stuckTimer.hasExpired(5000)) {
                 if (wpt.option == "Stand" || wpt.option == "Lure" || wpt.option == "Node") performWalk(wpt, localPlayer);
             }

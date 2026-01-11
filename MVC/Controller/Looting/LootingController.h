@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
 #ifndef LOOTINGCONTROLLER_H
 #define LOOTINGCONTROLLER_H
 #include <QObject>
@@ -27,6 +23,7 @@ public:
     void nextBpState_View(bool state);
     void corpseBpState_View(bool state);
     void deleteItem_View(const int &index);
+    void clearListWidget_View();
 
     // LootingModel Requests
     void addItem_Model(const QString &item);

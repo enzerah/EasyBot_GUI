@@ -12,6 +12,7 @@ SpellsController::SpellsController(QObject *parent)
     // Targeting View requests
     connect(m_view, &SpellsView::addItem_signal, this, &SpellsController::addItem_View);
     connect(m_view, &SpellsView::deleteItem_signal, this, &SpellsController::deleteItem_View);
+    connect(m_view, &SpellsView::clearListWidget_signal, this, &SpellsController::clearListWidget_View);
 
     // Targeting Model requests
     connect(m_model, &SpellsModel::addItem_signal, this, &SpellsController::addItem_Model);
@@ -46,6 +47,10 @@ void SpellsController::addItem_View(const QString& target_name, const int& dist,
 
 void SpellsController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
+}
+
+void SpellsController::clearListWidget_View() {
+    m_model->clearListWidget();
 }
 
 void SpellsController::addItem_Model(const QString& item) {

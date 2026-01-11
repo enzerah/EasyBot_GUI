@@ -30,6 +30,7 @@ class TargetingModel : public QObject {
     void fromJson(const QJsonArray &json);
 
     void deleteItem(const int &index);
+    void clearListWidget();
 
 
 
