@@ -41,7 +41,7 @@ void FollowWaypoints_Thread::run() {
 
         // Only walks if we dont have a target or we want to Lure
         if (!engine->hasTarget || wpt.option == "Lure") {
-            if (wpt.position.z != playerPos.z && wpt.direction == "C" && wpt.option == "Stand") {
+            if (wpt.position.z != playerPos.z && wpt.direction == "C" && (wpt.option == "Stand" || wpt.option == "Node")) {
                 index = findClosest();
                 stuckTimer.restart();
                 continue;
@@ -55,7 +55,7 @@ void FollowWaypoints_Thread::run() {
                     wpt = waypoints[index];
                 }
             } else if (stuckTimer.hasExpired(5000)) {
-                if (wpt.option == "Stand" || wpt.option == "Lure") performWalk(wpt, localPlayer);
+                if (wpt.option == "Stand" || wpt.option == "Lure" || wpt.option == "Node") performWalk(wpt, localPlayer);
             }
         } else {
             msleep(500);
