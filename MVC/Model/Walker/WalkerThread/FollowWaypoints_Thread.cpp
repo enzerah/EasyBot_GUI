@@ -90,7 +90,7 @@ void FollowWaypoints_Thread::run() {
 }
 
 bool FollowWaypoints_Thread::checkWaypoint(Waypoint wpt, Position playerPos) {
-    if (wpt.option == "Label") return true;
+    if (wpt.option == "Label" || wpt.option == "Action") return true;
     if (wpt.option == "Node") {
         if (playerPos.z == wpt.position.z) {
             int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
@@ -136,7 +136,6 @@ size_t FollowWaypoints_Thread::performAction(Waypoint wpt, size_t index) {
             }
         }
     }
-    index = (index + 1) % waypoints.size();
     return index;
 }
 
