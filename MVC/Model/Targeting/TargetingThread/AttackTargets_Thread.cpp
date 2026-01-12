@@ -177,7 +177,7 @@ void AttackTargets_Thread::desiredStance(uintptr_t localPlayer, Position playerP
             if (blockedTile.x == currentTarget.truePos.x && blockedTile.y == currentTarget.truePos.y && blockedTile.z == currentTarget.truePos.z) return;
         }
         // Check all dirs around the target
-        for (int allDir =0; allDir < 8; allDir++) {
+        for (int allDir = 0; allDir < 8; allDir++) {
             auto newPos = spectatorPos;
             if (allDir == Otc::North) newPos.y +=1;
             if (allDir == Otc::East) newPos.x -=1;
