@@ -717,7 +717,7 @@ struct Waypoint
 
 struct Target
 {
-    std::string targetName;
+    std::string name;
     int dist;
     int count;
     std::string desiredStance;

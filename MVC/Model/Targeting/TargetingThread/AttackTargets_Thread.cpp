@@ -1,269 +1,171 @@
 #include "AttackTargets_Thread.h"
 #include "../../BotEngine.h"
 #include <algorithm>
+#include <QElapsedTimer>
 
 
-// TODO better Attacking
-void AttackTargets_Thread::run()
-{
+void AttackTargets_Thread::run() {
     if (m_targets.empty()) return;
 
-    uintptr_t currentTarget = 0;
-    size_t index = 0;
-    Position monsterPos{};
-    bool looted = false;
     engine->hasTarget = false;
+    currentTarget = {};
+
+    bool lootCorpse = false;
 
     while (!isInterruptionRequested()) {
-        auto target = m_targets[index];
         auto localPlayer = proto->getLocalPlayer();
         auto playerPos = proto->getPosition(localPlayer);
 
-
-        // Attacking target logic
-        if (currentTarget) {
-            if (proto->isDead(currentTarget)) {
-                currentTarget = 0;
-            } else {
-                if (currentTarget != proto->getAttackingCreature()) currentTarget = proto->getAttackingCreature();
-                if (!attackCondition(target, currentTarget)) {
-                    currentTarget = 0;
-                    proto->cancelAttack();
-                    msleep(100);
-                    proto->cancelAttackAndFollow();
-                    msleep(100);
-                } else {
-                    looted = true;
-                    playerPos = proto->getPosition(localPlayer);
-                    auto trueMonsterPos = proto->getPosition(currentTarget);
-                    if (trueMonsterPos.x != 0xFFFF) {
-                        monsterPos = trueMonsterPos;
-                    }
-                    desiredStance(playerPos, monsterPos, target.desiredStance);
-                    monstersAttacks(playerPos, monsterPos, target.monstersAttacks);
-                }
-            }
-        }
-
         // If player is not attacking
         if (!proto->isAttacking()) {
-            // TODO Better looting
-            if (m_openCorpseState && looted) {
-                looted = false;
-                auto tile = proto->getTile(monsterPos);
+            if (m_openCorpseState && lootCorpse) {
+                lootCorpse = false;
+                auto tile = proto->getTile(currentTarget.truePos);
                 auto tileItems = proto->getTileItems(tile);
                 for (auto tileItem : tileItems) {
                     if (proto->isContainer(tileItem)) {
                         proto->open(tileItem, 0);
-                        msleep(1500);
+                        engine->isLooting = true;
+                        // Waits till looting is finished
+                        QElapsedTimer lootingTimer;
+                        lootingTimer.start();
+                        while (engine->isLooting) {
+                            // Loot for only 5 sec
+                            if (lootingTimer.hasExpired(5000)) break;
+                            msleep(50);
+                        }
                         break;
                     }
                 }
             }
-            // Iterate over all spectators
             auto spectators = proto->getSpectators(playerPos, false);
-            std::vector<uintptr_t> monsters;
+            // Iterate over all spectators
+            std::vector<MonsterCandidate> monsters;
             for (auto spectator : spectators) {
-                if (attackCondition(target, spectator)) {
-                    monsters.emplace_back(spectator);
+                if (!proto->isMonster(spectator)) continue;
+                auto specName = proto->getCreatureName(spectator); // Grabs name of the monster
+                std::transform(specName.begin(), specName.end(), specName.begin(), ::tolower);
+                for (auto target : m_targets) {
+                    if (specName != target.name && target.name != "*") continue;
+                    auto monsterPos = proto->getPosition(spectator);
+                    int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(monsterPos.x)),
+                        std::abs(static_cast<int>(playerPos.y) - static_cast<int>(monsterPos.y)));
+                    monsters.push_back({dist, spectator, monsterPos, target});
+                    break; // One target can only match one name
                 }
             }
-            currentTarget = 0;
-            int best_match = 999;
-            // Attack closest target
-            for (auto monster : monsters) {
-                monsterPos = proto->getPosition(monster);
-                int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(monsterPos.x)),
-                    std::abs(static_cast<int>(playerPos.y) - static_cast<int>(monsterPos.y)));
-                if (dist < best_match) {
-                    best_match = dist;
-                    currentTarget = monster;
-                }
-            }
-            if (currentTarget == 0) {
+            // If there is no Targets
+            if (!monsters.size()) {
                 engine->hasTarget = false;
-                index = (index + 1) % m_targets.size();
-            } else {
-                engine->hasTarget = true;
-                proto->attack(currentTarget, false);
-                msleep(100);
+                msleep(50);
+                continue;
             }
+            // Sort monsters by dist to Local Player
+            std::sort(monsters.begin(), monsters.end(), [](const MonsterCandidate& a, const MonsterCandidate& b) {
+                return a.dist < b.dist;
+            });
+            // Rest of checks
+            for (auto monster : monsters) {
+                bool reachable = true;
+                bool shootable = true;
+                // If monster stays above us we consider it as reachable and shootable
+                if (monster.dist < 2) {
+                    engine->hasTarget = true;
+                    proto->attack(monster.id, false);
+                    msleep(100);
+                    currentTarget = monster;
+                    break;
+                }
+                if (m_reachableState) {
+                    reachable = isReachable(playerPos, monster.truePos);
+                }
+                if (m_shootableState) {
+                    shootable = isShootable(monster.id, monster.dist);
+                }
+                if (reachable && shootable) {
+                    engine->hasTarget = true;
+                    proto->attack(monster.id, false);
+                    msleep(100);
+                    currentTarget = monster;
+                    break;
+                }
+            }
+        } else {
+            auto attackingCreature =  proto->getAttackingCreature();
+            if (currentTarget.id != attackingCreature) continue;
+            bool reachable = true;
+            bool shootable = true;
+
+            if (proto->isDead(currentTarget.id)) {
+                lootCorpse = true;
+                continue;
+            }
+            auto truePos = proto->getPosition(currentTarget.id);
+            // It also means target is dead
+            if (truePos.x == 0xFFFF) {
+                lootCorpse = true;
+                continue;
+            }
+            currentTarget.truePos = truePos;
+            int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(currentTarget.truePos.x)),
+                std::abs(static_cast<int>(playerPos.y) - static_cast<int>(currentTarget.truePos.y)));
+            currentTarget.dist = dist;
+            if (dist > 1) {
+                if (m_reachableState) {
+                    reachable = isReachable(playerPos, currentTarget.truePos);
+                }
+                if (m_shootableState) {
+                    shootable = isShootable(currentTarget.id, currentTarget.dist);
+                }
+            }
+            if (!reachable || !shootable) {
+                proto->cancelAttack();
+                msleep(100);
+                proto->cancelAttackAndFollow();
+                msleep(100);
+                lootCorpse = false;
+                continue;
+            }
+            // If Target is reachable and shootable
+            if (proto->isAutoWalking(localPlayer)) continue;
+            desiredStance(localPlayer);
         }
         msleep(50);
     }
 }
 
-bool AttackTargets_Thread::attackCondition(Target target, uintptr_t spectator) {
-    if (!proto->isMonster(spectator)) return false;
-    auto specName = proto->getCreatureName(spectator);
-    std::string tName = target.targetName;
-    std::transform(specName.begin(), specName.end(), specName.begin(), ::tolower);
-    if (specName != tName && tName != "*") return false;
-    auto localPlayer = proto->getLocalPlayer();
-    auto playerPos = proto->getPosition(localPlayer);
-    auto spectatorPos = proto->getPosition(spectator);
-    int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(spectatorPos.x)),
-        std::abs(static_cast<int>(playerPos.y) - static_cast<int>(spectatorPos.y)));
-    if (target.dist > 0 && dist > target.dist) return false;
-    // Can shoot the monster
-    if (m_shootableState && !proto->canShoot(spectator, dist)) return false;
-    // There is a path to monster
-    if (m_reachableState && dist > 1) {
-        auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
-        if (path.empty()) return false;
-        for (int lastDir =0; lastDir < 8; lastDir++) {
-            auto newPos = spectatorPos;
-            if (lastDir == Otc::North) newPos.y +=1;
-            if (lastDir == Otc::East) newPos.x -=1;
-            if (lastDir == Otc::South) newPos.y -=1;
-            if (lastDir == Otc::West) newPos.x +=1;
-            if (lastDir == Otc::NorthEast) newPos.x -=1, newPos.y +=1;
-            if (lastDir == Otc::SouthEast) newPos.x -=1, newPos.y -=1;
-            if (lastDir == Otc::SouthWest) newPos.x +=1, newPos.y -=1;
-            if (lastDir == Otc::NorthWest) newPos.x +=1, newPos.y +=1;
-            auto second_path = proto->findPath(playerPos, newPos, 100, Otc::PathFindAllowNonPathable);
-            if (!second_path.empty()) return true;
-        }
-        return false;
-    }
+bool AttackTargets_Thread::isReachable(Position playerPos, Position spectatorPos) {
+    auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
+    if (path.empty()) return false;
+    auto lastDir = path.at(path.size() - 1);
+    if (lastDir == Otc::North) spectatorPos.y +=1;
+    if (lastDir == Otc::East) spectatorPos.x -=1;
+    if (lastDir == Otc::South) spectatorPos.y -=1;
+    if (lastDir == Otc::West) spectatorPos.x +=1;
+    if (lastDir == Otc::NorthEast) spectatorPos.x -=1, spectatorPos.y +=1;
+    if (lastDir == Otc::SouthEast) spectatorPos.x -=1, spectatorPos.y -=1;
+    if (lastDir == Otc::SouthWest) spectatorPos.x +=1, spectatorPos.y -=1;
+    if (lastDir == Otc::NorthWest) spectatorPos.x +=1, spectatorPos.y +=1;
+    auto second_path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindAllowNonPathable);
+    if (second_path.empty()) return false;
+    currentTarget.truePos = spectatorPos;
     return true;
 }
 
-void AttackTargets_Thread::desiredStance(Position playerPos, Position spectatorPos, std::string option) {
-    int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(spectatorPos.x)),
-    std::abs(static_cast<int>(playerPos.y) - static_cast<int>(spectatorPos.y)));
-    if (option == "Chase" && dist > 1) {
-        auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
-        if (path.empty()) return;
-        auto lastDir = path[path.size() - 1];
-        auto newPos = spectatorPos;
-        if (lastDir == Otc::North) newPos.y +=1;
-        if (lastDir == Otc::East) newPos.x -=1;
-        if (lastDir == Otc::South) newPos.y -=1;
-        if (lastDir == Otc::West) newPos.x +=1;
-        if (lastDir == Otc::NorthEast) newPos.x -=1, newPos.y +=1;
-        if (lastDir == Otc::SouthEast) newPos.x -=1, newPos.y -=1;
-        if (lastDir == Otc::SouthWest) newPos.x +=1, newPos.y -=1;
-        if (lastDir == Otc::NorthWest) newPos.x +=1, newPos.y +=1;
-        auto second_path = proto->findPath(playerPos, newPos, 100, Otc::PathFindAllowNonPathable);
-        if (!second_path.empty()) {
-            auto localPlayer = proto->getLocalPlayer();
-            for (auto blockedTile : m_blockedTiles) {
-                if (blockedTile.x == newPos.x && blockedTile.y == newPos.y && blockedTile.z == newPos.z) return;
-            }
-            proto->autoWalk(localPlayer, newPos, false);
-            msleep(100);
-            return;
+bool AttackTargets_Thread::isShootable(uintptr_t spectator, int dist) {
+    return proto->canShoot(spectator, dist);
+}
+
+void AttackTargets_Thread::desiredStance(uintptr_t localPlayer) {
+    if (currentTarget.target.desiredStance == "Chase") {
+        for (auto blockedTile : m_blockedTiles) {
+            if (blockedTile.x == currentTarget.truePos.x && blockedTile.y == currentTarget.truePos.y && blockedTile.z == currentTarget.truePos.z) return;
         }
-    }
-    else if (option == "Stay Away") {
-        if (dist >= m_stayAwayDistance) return;
-        auto distFromTarget = 1;
-        Otc::Direction neededDir = Otc::InvalidDirection;
-        if (spectatorPos.y < playerPos.y) neededDir = Otc::North;
-        else if (spectatorPos.y > playerPos.y) neededDir = Otc::South;
-        else if (spectatorPos.x < playerPos.x) neededDir = Otc::West;
-        else if (spectatorPos.x > playerPos.x) neededDir = Otc::East;
-        auto newPos = playerPos;
-        int randomNum = rand() % 4; // Random from 0 to 3
-        if (neededDir == Otc::North) {
-            if (randomNum == Otc::South) newPos.y += distFromTarget;
-            if (randomNum == Otc::West) newPos.x -= distFromTarget;
-            if (randomNum == Otc::East) newPos.x += distFromTarget;
-        } else if (neededDir == Otc::South) {
-            if (randomNum == Otc::North) newPos.y -= distFromTarget;
-            if (randomNum == Otc::West) newPos.x -= distFromTarget;
-            if (randomNum == Otc::East) newPos.x += distFromTarget;
-        } else if (neededDir == Otc::East) {
-            if (randomNum == Otc::North) newPos.y -= distFromTarget;
-            if (randomNum == Otc::South) newPos.y += distFromTarget;
-            if (randomNum == Otc::West) newPos.x -= distFromTarget;
-        } else if (neededDir == Otc::West) {
-            if (randomNum == Otc::North) newPos.y -= distFromTarget;
-            if (randomNum == Otc::South) newPos.y += distFromTarget;
-            if (randomNum == Otc::East) newPos.x += distFromTarget;
-        }
-        if (newPos.x == playerPos.x && newPos.y == playerPos.y) return;
-        auto path = proto->findPath(playerPos, newPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
-        if (!path.empty()) {
-            for (auto blockedTile : m_blockedTiles) {
-                if (blockedTile.x == newPos.x && blockedTile.y == newPos.y && blockedTile.z == newPos.z) return;
-            }
-            proto->walk(path.at(0));
-        }
+        proto->autoWalk(localPlayer, currentTarget.truePos, false);
+        msleep(100);
     }
 }
 
-void AttackTargets_Thread::monstersAttacks(Position playerPos, Position targetPos, std::string option) {
-    auto abs_x = std::abs(static_cast<int>(playerPos.x) - static_cast<int>(targetPos.x));
-    auto abs_y = std::abs(static_cast<int>(playerPos.y) - static_cast<int>(targetPos.y));
-    int dist_max = std::max(abs_x, abs_y);
-    if (dist_max > 1) return;
-    if (option == "Face Target") {
-        int dist_min = std::min(abs_x, abs_y);
-        if (dist_min == 0) {
-            Otc::Direction neededDir = Otc::InvalidDirection;
-            if (targetPos.y < playerPos.y) neededDir = Otc::North;
-            else if (targetPos.y > playerPos.y) neededDir = Otc::South;
-            else if (targetPos.x < playerPos.x) neededDir = Otc::West;
-            else if (targetPos.x > playerPos.x) neededDir = Otc::East;
-            proto->turn(neededDir);
-        } else {
-            Otc::Direction neededDir = Otc::InvalidDirection;
-            if (targetPos.x < playerPos.x && targetPos.y < playerPos.y) neededDir = Otc::NorthWest;
-            else if (targetPos.x > playerPos.x && targetPos.y < playerPos.y) neededDir = Otc::NorthEast;
-            else if (targetPos.x < playerPos.x && targetPos.y > playerPos.y) neededDir = Otc::SouthWest;
-            else if (targetPos.x > playerPos.x && targetPos.y > playerPos.y) neededDir = Otc::SouthEast;
-            auto newPos = playerPos;
-            int randomNum = rand() % 4; // Random from 0 to 3
-            if (neededDir == Otc::NorthWest) {
-                if (randomNum == Otc::North) newPos.y -= 1;
-                if (randomNum == Otc::West) newPos.x -= 1;
-            } else if (neededDir == Otc::NorthEast) {
-                if (randomNum == Otc::North) newPos.y -= 1;
-                if (randomNum == Otc::East) newPos.x += 1;
-            } else if (neededDir == Otc::SouthWest) {
-                if (randomNum == Otc::South) newPos.y += 1;
-                if (randomNum == Otc::West) newPos.x -= 1;
-            } else if (neededDir == Otc::SouthEast) {
-                if (randomNum == Otc::South) newPos.y += 1;
-                if (randomNum == Otc::East) newPos.x += 1;
-            }
-            if (newPos.x == playerPos.x && newPos.y == playerPos.y) return;
-            auto path = proto->findPath(playerPos, newPos, 20, 0);
-            if (path.size() > 0) {
-                proto->walk(static_cast<Otc::Direction>(randomNum));
-            }
-        }
-    } else if (option == "Avoid Waves") {
-        if (abs_x == 1 && abs_y == 1) return; // Already stays diagonal
-        Otc::Direction neededDir = Otc::InvalidDirection;
-        if (targetPos.y < playerPos.y) neededDir = Otc::North;
-        else if (targetPos.y > playerPos.y) neededDir = Otc::South;
-        else if (targetPos.x < playerPos.x) neededDir = Otc::West;
-        else if (targetPos.x > playerPos.x) neededDir = Otc::East;
-        auto newPos = playerPos;
-        int randomNum = rand() % 4; // Random from 0 to 3
-        if (neededDir == Otc::North) {
-            if (randomNum == Otc::West) newPos.x -= 1;
-            if (randomNum == Otc::East) newPos.x += 1;
-        } else if (neededDir == Otc::South) {
-            if (randomNum == Otc::West) newPos.x -= 1;
-            if (randomNum == Otc::East) newPos.x += 1;
-        } else if (neededDir == Otc::East) {
-            if (randomNum == Otc::North) newPos.y -= 1;
-            if (randomNum == Otc::South) newPos.y += 1;
-        } else if (neededDir == Otc::West) {
-            if (randomNum == Otc::North) newPos.y -= 1;
-            if (randomNum == Otc::South) newPos.y += 1;
-        }
-        if (newPos.x == playerPos.x && newPos.y == playerPos.y) return;
-        auto path = proto->findPath(playerPos, newPos, 20, 0);
-        if (path.size() > 0) {
-            proto->walk(static_cast<Otc::Direction>(randomNum));
-        }
-    }
-}
 
 void AttackTargets_Thread::shootableStateChange(bool state) { m_shootableState = state; }
 void AttackTargets_Thread::reachableStateChange(bool state) { m_reachableState = state; }

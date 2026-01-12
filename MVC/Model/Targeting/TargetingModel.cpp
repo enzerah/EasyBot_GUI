@@ -23,7 +23,7 @@ void TargetingModel::addItem(const QString &targetName, const int &dist, const i
     auto tmp_targetName = targetName.toStdString();
     std::transform(tmp_targetName.begin(), tmp_targetName.end(), tmp_targetName.begin(), ::tolower);
     Target target;
-    target.targetName = tmp_targetName;
+    target.name = tmp_targetName;
     target.desiredStance = desiredStance.toStdString();
     target.monstersAttacks = monstersAttacks.toStdString();
     target.dist = dist;
@@ -89,7 +89,7 @@ QJsonArray TargetingModel::toJson() const {
     QJsonArray jsonArray;
     for (const auto &target : targets) {
         QJsonObject jsonObj;
-        jsonObj["name"] = QString::fromStdString(target.targetName);
+        jsonObj["name"] = QString::fromStdString(target.name);
         jsonObj["dist"] = target.dist;
         jsonObj["count"] = target.count;
         jsonObj["stance"] = QString::fromStdString(target.desiredStance);

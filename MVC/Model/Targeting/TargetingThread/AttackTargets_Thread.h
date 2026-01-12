@@ -25,11 +25,20 @@ private:
     int m_stayAwayDistance = 1;
     std::vector<Position> m_blockedTiles{};
 
-    bool attackCondition(Target target, uintptr_t spectator);
-    void desiredStance(Position playerPos, Position spectatorPos, std::string option);
-    void monstersAttacks(Position playerPos, Position targetPos, std::string option);
+    struct MonsterCandidate {
+        int dist;
+        uintptr_t id;
+        Position truePos;
+        Target target;
+    };
+
+    MonsterCandidate currentTarget{};
 
 
+    void desiredStance(uintptr_t localPlayer);
+
+    bool isReachable(Position playerPos, Position spectatorPos);
+    bool isShootable(uintptr_t spectator, int dist);
 };
 
 
