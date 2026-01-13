@@ -88,7 +88,7 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
         msleep(500);
         return;
     }
-    proto->autoWalk(localPlayer, wpt.position, false);
+    proto->autoWalk(localPlayer, wpt.position, true);
 }
 
 void FollowWaypoints_Thread::performAction(Waypoint wpt) {
