@@ -30,26 +30,31 @@ void AttackTargets_Thread::run() {
                     if (walkToCorpseTimer.hasExpired(5000)) break;
                     dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(currentTarget.truePos.x)),
                         std::abs(static_cast<int>(playerPos.y) - static_cast<int>(currentTarget.truePos.y)));
+                    playerPos = proto->getPosition(localPlayer);
+                    std::cout << "Autowalking to corpse because dist is " << dist << std::endl;
                     proto->autoWalk(localPlayer, currentTarget.truePos, false);
                     msleep(100);
                 }
-                auto tile = proto->getTile(currentTarget.truePos);
-                auto tileItems = proto->getTileItems(tile);
-                for (auto tileItem : tileItems) {
-                    if (proto->isContainer(tileItem)) {
-                        proto->open(tileItem, 0);
-                        msleep(100);
-                        engine->isLooting = true;
-                        // Waits till looting is finished
-                        QElapsedTimer lootingTimer;
-                        lootingTimer.start();
-                        while (engine->isLooting) {
-                            // Loot for only 5 sec
-                            if (lootingTimer.hasExpired(5000)) break;
-                            msleep(50);
+                for (int x =-1; x <= 1; x++) {
+                    for (int y =-1; y <= 1; y++) {
+                        auto openPos = playerPos;
+                        openPos.x += x;
+                        openPos.y += y;
+                        auto tile = proto->getTile(openPos);
+                        auto topUseThing = proto->getTopUseThing(tile);
+                        if (proto->isContainer(topUseThing)) {
+                            proto->open(topUseThing, 0);
+                            msleep(100);
                         }
-                        break;
                     }
+                }
+                engine->isLooting = true;
+                QElapsedTimer lootingTimer;
+                lootingTimer.start();
+                while (engine->isLooting) {
+                    // Loot for only 5 sec
+                    if (lootingTimer.hasExpired(5000)) break;
+                    msleep(50);
                 }
             }
             currentTarget = {};
