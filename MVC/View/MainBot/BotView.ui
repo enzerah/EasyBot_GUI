@@ -23,7 +23,7 @@
    <enum>Qt::FocusPolicy::StrongFocus</enum>
   </property>
   <property name="windowTitle">
-   <string>EasyBot</string>
+   <string/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">

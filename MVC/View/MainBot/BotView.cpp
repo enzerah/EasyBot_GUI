@@ -1,9 +1,3 @@
-//
-// Created by Wojciech on 10.10.2025.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_BotView.h" resolved
-
 #include "BotView.h"
 
 
@@ -16,9 +10,8 @@ BotView::BotView(QWidget *parent)
     : ui(new Ui::Bot_View) {
 
     ui->setupUi(this);
-
+    setWindowTitle(" ");
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
-
     connect(ui->walker_pushButton, &QPushButton::clicked, this, &BotView::openWalkerView);
     connect(ui->targeting_pushButton, &QPushButton::clicked, this, &BotView::openTargetingViewRequested);
     connect(ui->looting_pushButton, &QPushButton::clicked, this, &BotView::openLootingViewRequested);
@@ -52,7 +45,6 @@ BotView::BotView(QWidget *parent)
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         m_tray = new QSystemTrayIcon(this);
         m_tray->setIcon(QIcon(":/Icon.jpg"));
-        m_tray->setToolTip(tr("EasyBot"));
 
         m_trayMenu = new QMenu(this);
         m_restoreAction = m_trayMenu->addAction(tr("Restore"));
