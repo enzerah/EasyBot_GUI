@@ -11,7 +11,8 @@ BotController::BotController(BotView *botView, QObject *parent)
     m_scriptsController(nullptr),
     m_agentAIController(nullptr),
     m_alarmsController(nullptr),
-    m_miscellaneousController(nullptr)
+    m_miscellaneousController(nullptr),
+    m_navigationController(nullptr)
 {
     connect(m_botView, &BotView::openWalkerView, this, &BotController::openWalkerView);
     connect(m_botView, &BotView::openTargetingViewRequested, this, &BotController::onShowTargetingModule);
@@ -22,6 +23,7 @@ BotController::BotController(BotView *botView, QObject *parent)
     connect(m_botView, &BotView::openAgentAIViewRequested, this, &BotController::onShowAgentAIModule);
     connect(m_botView, &BotView::openAlarmsViewRequested, this, &BotController::onShowAlarmsModule);
     connect(m_botView, &BotView::openMiscellaneousViewRequested, this, &BotController::onShowMiscellaneousModule);
+    connect(m_botView, &BotView::openNavigationViewRequested, this, &BotController::onShowNavigationModule);
 
 
     // Start All
@@ -204,9 +206,6 @@ void BotController::onLoadRequested(const QString &name, const QString &category
     }
 }
 
-
-
-
 void BotController::openWalkerView() {
     if (!m_walkerController)
     {
@@ -288,5 +287,14 @@ void BotController::onShowMiscellaneousModule() {
         m_miscellaneousController = new MiscellaneousController();
     } else {
         m_miscellaneousController->showView();
+    }
+}
+
+void BotController::onShowNavigationModule() {
+    if (!m_navigationController)
+    {
+        m_navigationController = new NavigationController();
+    } else {
+        m_navigationController->showView();
     }
 }

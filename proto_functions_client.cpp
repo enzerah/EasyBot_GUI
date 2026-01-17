@@ -4,8 +4,11 @@ std::mutex BotClient::mutex;
 
 
 BotClient::BotClient() {
-    std::string server_address("localhost:50051");
-    std::shared_ptr<Channel> channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
+    this->connect("localhost:50051");
+}
+
+void BotClient::connect(std::string address) {
+    std::shared_ptr<Channel> channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
     stub = BotService::NewStub(channel);
 }
 

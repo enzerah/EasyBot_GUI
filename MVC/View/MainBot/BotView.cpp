@@ -21,6 +21,7 @@ BotView::BotView(QWidget *parent)
     connect(ui->ai_pushButton, &QPushButton::clicked, this, &BotView::openAgentAIViewRequested);
     connect(ui->alarms_pushButton, &QPushButton::clicked, this, &BotView::openAlarmsViewRequested);
     connect(ui->miscellaneous_pushButton, &QPushButton::clicked, this, &BotView::openMiscellaneousViewRequested);
+    connect(ui->navigation_pushButton, &QPushButton::clicked, this, &BotView::openNavigationViewRequested);
 
 
     connect(ui->all_checkBox, &QCheckBox::toggled, this, &BotView::startAll_signal);

@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
 #ifndef WALKERMODEL_H
 #define WALKERMODEL_H
 #include <QObject>

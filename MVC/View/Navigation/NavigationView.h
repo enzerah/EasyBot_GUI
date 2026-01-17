@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 08.01.2026.
-//
-
 #ifndef NAVIGATIONVIEW_H
 #define NAVIGATIONVIEW_H
 
@@ -18,6 +14,10 @@ Q_OBJECT
 public:
     explicit NavigationView(QWidget *parent = nullptr);
     ~NavigationView() override;
+    void addItem(const QString &clientName, bool status);
+signals:
+    void refreshSevers_signal();
+
 
 private:
     Ui::Navigation_View *ui;

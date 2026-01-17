@@ -14,6 +14,7 @@
 #include "AgentAI/AgentAIController.h"
 #include "Alarms/AlarmsController.h"
 #include "Miscellaneous/MiscellaneousController.h"
+#include "Navigation/NavigationController.h"
 
 
 class BotController : public QObject
@@ -33,6 +34,7 @@ private slots:
     void onShowAgentAIModule();
     void onShowAlarmsModule();
     void onShowMiscellaneousModule();
+    void onShowNavigationModule();
 
     void onSaveRequested(const QString &name, const QString &category);
     void onLoadRequested(const QString &name, const QString &category);
@@ -52,6 +54,7 @@ private:
     AgentAIController *m_agentAIController;
     AlarmsController *m_alarmsController;
     MiscellaneousController *m_miscellaneousController;
+    NavigationController *m_navigationController;
 };
 
 

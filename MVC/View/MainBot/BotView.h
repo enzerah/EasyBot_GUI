@@ -42,6 +42,7 @@ public:
     void openAgentAIViewRequested();
     void openAlarmsViewRequested();
     void openMiscellaneousViewRequested();
+    void openNavigationViewRequested();
 
     void startAll_signal(bool state);
     void startWalker_signal(bool state);
