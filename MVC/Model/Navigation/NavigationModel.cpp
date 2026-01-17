@@ -4,7 +4,7 @@
 
 NavigationModel::NavigationModel(QObject *parent)
     : QObject(parent) {
-    connectedPorts.push_back(50051);
+    connectedPort = 50051;
 }
 
 NavigationModel::~NavigationModel() = default;
@@ -21,18 +21,14 @@ void NavigationModel::refreshServers() {
         } else {
             item = QStringLiteral("%1").arg(clientName);
         }
-        bool isConnected = false;
-        for (auto connectedPort : connectedPorts) {
-            isConnected = (port == connectedPort);
-        }
-
+        bool isConnected = (port == connectedPort);
         emit addItem_signal(item, isConnected);
     }
-    proto->connect(connectedPorts[0]);
+    proto->connect(connectedPort);
 }
 
 void NavigationModel::connectPort(int index) {
-    connectedPorts[0] = availablePorts[index];
+    connectedPort = availablePorts[index];
     proto->connect(availablePorts[index]);
 }
 

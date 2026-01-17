@@ -160,7 +160,7 @@ public:
 
 
 private:
-    std::vector<std::unique_ptr<BotService::Stub>> stub;
+    std::unique_ptr<BotService::Stub> stub = nullptr;
 };
 
 

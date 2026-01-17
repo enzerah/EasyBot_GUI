@@ -11,7 +11,7 @@ BotClient::BotClient() {
 
 void BotClient::connect(int port) {
     std::shared_ptr<Channel> channel = grpc::CreateChannel("localhost:" + std::to_string(port), grpc::InsecureChannelCredentials());
-    stub.push_back(BotService::NewStub(channel));
+    stub = BotService::NewStub(channel);
 }
 
 void BotClient::disconnect(int port) {

@@ -18,7 +18,7 @@ public:
     void addItem_signal(const QString &clientName, bool status);
 
 private:
-    std::vector<int> connectedPorts{};
+    int connectedPort = 0;
     std::vector<int> availablePorts{};
 };
 
