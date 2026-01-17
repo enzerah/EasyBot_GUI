@@ -9,6 +9,8 @@ NavigationController::NavigationController(QObject *parent)
 
     // Navigation View requests
     connect(m_view, &NavigationView::refreshSevers_signal, this, &NavigationController::refreshServers_View);
+    connect(m_view, &NavigationView::connectPort_signal, m_model, &NavigationModel::connectPort);
+    connect(m_view, &NavigationView::disconnectPort_signal, m_model, &NavigationModel::disconnectPort);
 
     // Navigation Model requests
     connect(m_model, &NavigationModel::addItem_signal, m_view, &NavigationView::addItem);

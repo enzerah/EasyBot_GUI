@@ -1,15 +1,37 @@
 #include "proto_functions_client.h"
+#include <QTcpSocket>
+#include <string>
 BotClient* BotClient::instance{nullptr};
 std::mutex BotClient::mutex;
 
 
 BotClient::BotClient() {
-    this->connect("localhost:50051");
+    connect(50051);
 }
 
-void BotClient::connect(std::string address) {
-    std::shared_ptr<Channel> channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
-    stub = BotService::NewStub(channel);
+void BotClient::connect(int port) {
+    std::shared_ptr<Channel> channel = grpc::CreateChannel("localhost:" + std::to_string(port), grpc::InsecureChannelCredentials());
+    stub.push_back(BotService::NewStub(channel));
+}
+
+void BotClient::disconnect(int port) {
+    // gRPC channels are automatically managed and closed when stub is replaced
+    // No explicit disconnect needed for current architecture
+}
+
+std::vector<int> BotClient::availablePorts() {
+    std::vector<int> ports;
+    
+    for (int port = 50051; port <= 50060; ++port) {
+        QTcpSocket socket;
+        socket.connectToHost("localhost", port);
+        
+        if (socket.waitForConnected(10)) {
+            ports.push_back(port);
+            socket.disconnectFromHost();
+        }
+    }
+    return ports;
 }
 
 BotClient* BotClient::getInstance()

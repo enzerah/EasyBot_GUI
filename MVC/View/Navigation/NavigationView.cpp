@@ -19,9 +19,25 @@ NavigationView::NavigationView(QWidget *parent) :
         ui->navigation_tableWidget->setRowCount(0);
         emit refreshSevers_signal();
     });
+
+    connect(ui->connect_pushButton, &QPushButton::clicked, this, [this]() {
+        int currentRow = ui->navigation_tableWidget->currentRow();
+        if (currentRow >= 0) {
+            emit connectPort_signal(currentRow);
+            ui->navigation_tableWidget->setRowCount(0);
+            emit refreshSevers_signal();
+        }
+    });
+
+    connect(ui->disconnect_pushButton, &QPushButton::clicked, this, [this]() {
+        int currentRow = ui->navigation_tableWidget->currentRow();
+        if (currentRow >= 0) {
+            emit disconnectPort_signal(currentRow);
+            ui->navigation_tableWidget->setRowCount(0);
+            emit refreshSevers_signal();
+        }
+    });
 }
-
-
 
 
 NavigationView::~NavigationView() {
@@ -31,16 +47,22 @@ NavigationView::~NavigationView() {
 void NavigationView::addItem(const QString &clientName, bool status) {
     int row = ui->navigation_tableWidget->rowCount();
     ui->navigation_tableWidget->insertRow(row);
-    ui->navigation_tableWidget->setItem(row, 0, new QTableWidgetItem(clientName));
+    
+    QTableWidgetItem *nameItem = new QTableWidgetItem(clientName);
+    nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
+    ui->navigation_tableWidget->setItem(row, 0, nameItem);
+    
     QString statusText = status ? "Connected" : "Disconnected";
     QTableWidgetItem *statusItem = new QTableWidgetItem(statusText);
+    statusItem->setFlags(statusItem->flags() & ~Qt::ItemIsEditable);
+    
+    QFont font = statusItem->font();
     if (status) {
         statusItem->setForeground(Qt::green);
+        font.setBold(true);
+        statusItem->setFont(font);
     } else {
         statusItem->setForeground(Qt::red);
     }
-    QFont font = statusItem->font();
-    font.setBold(true);
-    statusItem->setFont(font);
     ui->navigation_tableWidget->setItem(row, 1, statusItem);
 }

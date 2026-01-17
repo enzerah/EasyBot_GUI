@@ -18,8 +18,6 @@ using namespace bot;
 class BotClient {
     static BotClient* instance;
     static std::mutex mutex;
-private:
-    void connect(std::string address);
 protected:
     BotClient();
     ~BotClient()= default;
@@ -27,9 +25,10 @@ public:
     BotClient(BotClient const&) = delete;
     void operator=(const BotClient&) = delete;
     static BotClient* getInstance();
-
+    std::vector<int> availablePorts();
+    void connect(int port);
+    void disconnect(int port);
     // Functions:
-
     // Container
     uintptr_t getItem(uintptr_t container, uint8_t slot);
     std::deque<uintptr_t> getItems(uintptr_t container);
@@ -161,7 +160,7 @@ public:
 
 
 private:
-    std::unique_ptr<BotService::Stub> stub;
+    std::vector<std::unique_ptr<BotService::Stub>> stub;
 };
 
 

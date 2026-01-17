@@ -17,6 +17,8 @@ public:
     void addItem(const QString &clientName, bool status);
 signals:
     void refreshSevers_signal();
+    void connectPort_signal(int index);
+    void disconnectPort_signal(int index);
 
 
 private:

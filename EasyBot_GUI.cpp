@@ -10,20 +10,12 @@
 
 int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
-
-    // ---------------------------------------------------------
-    // Relaunch Logic: Randomize Process Name
-    // ---------------------------------------------------------
     QString appPath = QCoreApplication::applicationFilePath();
     QFileInfo appInfo(appPath);
     QString appName = appInfo.fileName();
 
-    // Check if we are running as the original "EasyBot.exe"
     if (appName.compare("EasyBot.exe", Qt::CaseInsensitive) == 0) {
         QDir dir = appInfo.absoluteDir();
-        
-        // 1. Cleanup old random executables (5 digits .exe)
-        // We include QDir::Hidden to see previous hidden instances
         QStringList filters;
         filters << "[0-9][0-9][0-9][0-9][0-9].exe";
         dir.setNameFilters(filters);
