@@ -79,6 +79,7 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
         }
     } else {
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
+            std::cout << playerPos.x << " " << playerPos.y << " " << playerPos.z << std::endl;
             if (wpt.direction != "C") {
                 auto direction = getDirection(wpt.direction);
                 proto->walk(direction);
