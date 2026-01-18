@@ -28,6 +28,7 @@ public:
     std::vector<int> availablePorts();
     void connect(int port);
     void disconnect(int port);
+
     // Functions:
     // Container
     uintptr_t getItem(uintptr_t container, uint8_t slot);
@@ -38,7 +39,7 @@ public:
     int getContainerId(uintptr_t container);
     uintptr_t getContainerItem(uintptr_t container);
     bool hasParent(uintptr_t container);
-    int getSize(uintptr_t container);
+    int getCapacity(uintptr_t container);
     int getFirstIndex(uintptr_t container);
 
     // Creature
@@ -62,7 +63,7 @@ public:
     void useWith(const uintptr_t &item, const uintptr_t &toThing);
     void useInventoryItem(const uint16_t itemId);
     void useInventoryItemWith(const uint16_t itemId, const uintptr_t& toThing);
-    uintptr_t findItemInContainers(uint32_t itemId, int subType, uint8_t tier);
+    uintptr_t findItemInContainers(uint32_t itemId, int subType, int tier);
     int open(const uintptr_t &item, const uintptr_t &previousContainer);
     void openParent(const uintptr_t &container);
     void close(const uintptr_t &container);
@@ -80,7 +81,7 @@ public:
     void buyItem(const uintptr_t& item, const uint16_t amount, const bool ignoreCapacity, const bool buyWithBackpack);
     void sellItem(const uintptr_t& item, const uint16_t amount, const bool ignoreEquipped);
     void equipItem(const uintptr_t &item);
-    void equipItemId(uint16_t itemId, uint8_t tier);
+    void equipItemId(uint16_t itemId, int tier);
     void mount(bool mountStatus);
     void changeMapAwareRange(const uint8_t xrange, const uint8_t yrange);
     bool canPerformGameAction();
@@ -107,7 +108,6 @@ public:
     std::string getText(uintptr_t item);
 
     // LocalPlayer
-    bool isWalkLocked(uintptr_t localPlayer);
     uint32_t getStates(uintptr_t localPlayer);
     double getHealth(uintptr_t localPlayer);
     double getMaxHealth(uintptr_t localPlayer);
@@ -119,8 +119,8 @@ public:
     uint8_t getSoul(uintptr_t localPlayer);
     uint16_t getStamina(uintptr_t localPlayer);
     uintptr_t getInventoryItem(uintptr_t localPlayer, Otc::InventorySlot inventorySlot);
-    bool hasEquippedItemId(uintptr_t localPlayer, uint16_t itemId, uint8_t tier);
-    int getInventoryCount(uintptr_t localPlayer, uint16_t itemId, uint8_t tier);
+    bool hasEquippedItemId(uintptr_t localPlayer, uint16_t itemId, int tier);
+    int getInventoryCount(uintptr_t localPlayer, uint16_t itemId, int tier);
     bool hasSight(uintptr_t localPlayer, const Position &pos);
     bool isAutoWalking(uintptr_t localPlayer);
     void stopAutoWalk(uintptr_t localPlayer);
@@ -160,7 +160,7 @@ public:
 
 
 private:
-    std::unique_ptr<BotService::Stub> stub = nullptr;
+    std::unique_ptr<BotService::Stub> stub;
 };
 
 

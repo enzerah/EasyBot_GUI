@@ -1,12 +1,18 @@
 #include "TargetingView.h"
-
-
 TargetingView::TargetingView(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::Targeting_View) {
 
     ui->setupUi(this);
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+
+    ui->targets_tableWidget->setColumnCount(5);
+    ui->targets_tableWidget->setHorizontalHeaderLabels({"Name", "Dist", "Count", "Stance", "Attacks"});
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
     connect(ui->add_pushButton, &QPushButton::clicked, this, [this]() {
         QString targetName = ui->name_lineEdit->text();
@@ -27,14 +33,14 @@ TargetingView::TargetingView(QWidget *parent) :
     connect(ui->open_checkBox, &QCheckBox::toggled, this, &TargetingView::openCorpseState_signal);
     connect(ui->dist_horizontalSlider, &QSlider::valueChanged, this, &TargetingView::stayAwayDist_signal);
 
-    connect(ui->targets_listWidget, &QListWidget::itemDoubleClicked, this, [this](){
-        auto currentIndex = ui->targets_listWidget->currentRow();
-        ui->targets_listWidget->takeItem(currentIndex);
-        emit deleteItem_signal(currentIndex);
+    connect(ui->targets_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
+        ui->targets_tableWidget->removeRow(row);
+        emit deleteItem_signal(row);
     });
 
     connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
-       emit clearListWidget();
+       emit clearTableWidget_signal();
+        ui->targets_tableWidget->setRowCount(0);
     });
 
     connect(ui->addTile_pushButton, &QPushButton::clicked, this, [this]() {
@@ -55,12 +61,19 @@ TargetingView::~TargetingView() {
     delete ui;
 }
 
-void TargetingView::addItem(const QString &item) {
-    ui->targets_listWidget->addItem(item);
+void TargetingView::addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks) {
+    int row = ui->targets_tableWidget->rowCount();
+    ui->targets_tableWidget->insertRow(row);
+    QStringList values = {targetName, dist, count, desiredStance, monstersAttacks};
+    for(int col = 0; col < values.size(); ++col) {
+        QTableWidgetItem *item = new QTableWidgetItem(values[col]);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        ui->targets_tableWidget->setItem(row, col, item);
+    }
 }
 
-void TargetingView::clearListWidget() {
-    ui->targets_listWidget->clear();
+void TargetingView::clearTableWidget() {
+    ui->targets_tableWidget->setRowCount(0);
 }
 
 void TargetingView::addBlockedTile(const QString &tile) {

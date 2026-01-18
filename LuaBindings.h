@@ -26,7 +26,6 @@ namespace LuaBindings {
                 .addFunction("getContainerId", &BotClient::getContainerId)
                 .addFunction("getContainerItem", &BotClient::getContainerItem)
                 .addFunction("hasParent", &BotClient::hasParent)
-                .addFunction("getSize", &BotClient::getSize)
                 .addFunction("getFirstIndex", &BotClient::getFirstIndex)
                 // Creature
                 .addFunction("getCreatureName", &BotClient::getCreatureName)
@@ -90,7 +89,6 @@ namespace LuaBindings {
                 .addFunction("getTier", &BotClient::getTier)
                 .addFunction("getText", &BotClient::getText)
                 // LocalPlayer
-                .addFunction("isWalkLocked", &BotClient::isWalkLocked)
                 .addFunction("getStates", &BotClient::getStates)
                 .addFunction("getHealth", &BotClient::getHealth)
                 .addFunction("getMaxHealth", &BotClient::getMaxHealth)

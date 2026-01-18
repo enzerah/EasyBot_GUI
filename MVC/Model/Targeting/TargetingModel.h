@@ -35,7 +35,7 @@ class TargetingModel : public QObject {
 
 
     signals:
-    void addItem_signal(const QString &item);
+    void addItem_signal(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
     void shootableStateChanged_signal(bool state);
     void reachableStateChanged_signal(bool state);
     void openCorpseStateChanged_signal(bool state);

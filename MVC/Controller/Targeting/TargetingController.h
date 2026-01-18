@@ -30,7 +30,7 @@ class TargetingController : public QObject {
 
 
     // TargetingModel Requests
-    void addItem_Model(const QString &item);
+    void addItem_Model(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
     void clearListWidget_Model();
     void addBlockedTile_Model(const QString &tile);
     void clearBlockedTilesListWidget_Model();

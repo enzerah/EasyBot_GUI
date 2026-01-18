@@ -1,5 +1,4 @@
 #include "WalkerView.h"
-
 #include <iostream>
 #include <QButtonGroup>
 
@@ -10,6 +9,14 @@ WalkerView::WalkerView(QWidget *parent)
     ui->setupUi(this);
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+
+    ui->waypoints_tableWidget->setColumnCount(5);
+    ui->waypoints_tableWidget->setHorizontalHeaderLabels({"Option", "Dir", "X", "Y", "Z"});
+    ui->waypoints_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->waypoints_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->waypoints_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    ui->waypoints_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+    ui->waypoints_tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
 
     auto direction_buttonGroup = new QButtonGroup();
     direction_buttonGroup->addButton(ui->n_radioButton, 0);
@@ -52,15 +59,14 @@ WalkerView::WalkerView(QWidget *parent)
         emit recordWaypoints_signal(state, sqmDist, direction, option);
     });
 
-    connect(ui->waypoints_listWidget, &QListWidget::itemDoubleClicked, this, [this](){
-        auto currentIndex = ui->waypoints_listWidget->currentRow();
-        ui->waypoints_listWidget->takeItem(currentIndex);
-        emit deleteItem_signal(currentIndex);
+    connect(ui->waypoints_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
+        ui->waypoints_tableWidget->removeRow(row);
+        emit deleteItem_signal(row);
     });
 
     connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
         emit clearListWidget_signal();
-        ui->waypoints_listWidget->clear();
+        ui->waypoints_tableWidget->setRowCount(0);
     });
 }
 
@@ -68,16 +74,22 @@ WalkerView::~WalkerView() {
     delete ui;
 }
 
-void WalkerView::addItem(const QString &item)
-{
-    ui->waypoints_listWidget->addItem(item);
+void WalkerView::addItem(const QString &option, const QString &direction, uint32_t x, uint32_t y, uint16_t z) {
+    int row = ui->waypoints_tableWidget->rowCount();
+    ui->waypoints_tableWidget->insertRow(row);
+    QStringList values = {option, direction, QString::number(x), QString::number(y), QString::number(z)};
+    for(int col = 0; col < values.size(); ++col) {
+        QTableWidgetItem *item = new QTableWidgetItem(values[col]);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        ui->waypoints_tableWidget->setItem(row, col, item);
+    }
 }
 
 void WalkerView::indexUpdate(int index) {
-    ui->waypoints_listWidget->setCurrentRow(index);
-    ui->waypoints_listWidget->setFocus();
+    ui->waypoints_tableWidget->selectRow(index);
+    ui->waypoints_tableWidget->setFocus();
 }
 
-void WalkerView::clearListWidget() {
-    ui->waypoints_listWidget->clear();
+void WalkerView::clearTableWidget() {
+    ui->waypoints_tableWidget->setRowCount(0);
 }

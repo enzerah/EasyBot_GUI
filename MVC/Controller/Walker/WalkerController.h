@@ -27,7 +27,6 @@ private slots:
     void clearListWidget_View();
 
     // WalkerModel Requests
-    void addItem_Model(const QString &item);
     void indexUpdate_Model(int index);
     void clearListWidget_Model();
 

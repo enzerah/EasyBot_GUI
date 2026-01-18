@@ -1,10 +1,5 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
 #ifndef TARGETINGVIEW_H
 #define TARGETINGVIEW_H
-
 #include <QMainWindow>
 #include "ui_TargetingView.h"
 
@@ -20,15 +15,15 @@ public:
     explicit TargetingView(QWidget *parent = nullptr);
     ~TargetingView() override;
 
-    void addItem(const QString &item);
-    void clearListWidget();
+    void addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
+    void clearTableWidget();
     void addBlockedTile(const QString &tile);
     void clearBlockedTilesListWidget();
 
     signals:
     void addItem_signal(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
     void addBlockedTile_signal(const int &x, const int &y, const int &z);
-    void clearListWidget_signal();
+    void clearTableWidget_signal();
 
     void shootableState_signal(bool state);
     void reachableState_signal(bool state);

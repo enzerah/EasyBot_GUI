@@ -76,17 +76,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QListWidget" name="targets_listWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="viewMode">
-          <enum>QListView::ViewMode::ListMode</enum>
-         </property>
-        </widget>
+        <widget class="QTableWidget" name="targets_tableWidget"/>
        </item>
        <item>
         <widget class="QPushButton" name="clear_pushButton">
@@ -576,22 +566,6 @@
     <hint type="destinationlabel">
      <x>400</x>
      <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>clear_pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>targets_listWidget</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>198</x>
-     <y>198</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>198</x>
-     <y>169</y>
     </hint>
    </hints>
   </connection>

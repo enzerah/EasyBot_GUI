@@ -14,9 +14,9 @@ public:
     explicit WalkerView(QWidget *parent = nullptr);
     ~WalkerView() override;
 
-    void addItem(const QString &item);
+    void addItem(const QString &option, const QString &direction, uint32_t x, uint32_t y, uint16_t z);
     void indexUpdate(int index);
-    void clearListWidget();
+    void clearTableWidget();
 
 signals:
     void addItem_signal(const QString &direction, const QString &option, const QString &action);

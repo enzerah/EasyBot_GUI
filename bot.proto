@@ -14,7 +14,7 @@ service BotService {
   rpc GetContainerId(google.protobuf.UInt64Value) returns (google.protobuf.Int32Value);
   rpc GetContainerItem(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
   rpc HasParent(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
-  rpc GetSize(google.protobuf.UInt64Value) returns (google.protobuf.Int32Value);
+  rpc GetCapacity(google.protobuf.UInt64Value) returns (google.protobuf.Int32Value);
   rpc GetFirstIndex(google.protobuf.UInt64Value) returns (google.protobuf.Int32Value);
 
   // --- Creature.h ---
@@ -82,7 +82,6 @@ service BotService {
   rpc GetText(google.protobuf.UInt64Value) returns (google.protobuf.StringValue);
 
   // --- LocalPlayer.h ---
-  rpc IsWalkLocked(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
   rpc GetStates(google.protobuf.UInt64Value) returns (google.protobuf.UInt32Value);
   rpc GetHealth(google.protobuf.UInt64Value) returns (google.protobuf.DoubleValue);
   rpc GetMaxHealth(google.protobuf.UInt64Value) returns (google.protobuf.DoubleValue);
@@ -214,7 +213,7 @@ message bot_UseInventoryItemWithRequest {
 message bot_FindItemInContainersRequest {
   uint32 itemId = 1;
   int32 subType = 2;
-  uint32 tier = 3;
+  int32 tier = 3;
 }
 
 message bot_OpenRequest {
@@ -254,7 +253,7 @@ message bot_SellItemRequest {
 
 message bot_EquipItemIdRequest {
   uint32 itemId = 1;
-  uint32 tier = 2;
+  int32 tier = 2;
 }
 
 message bot_ChangeMapAwareRangeRequest {
@@ -270,13 +269,13 @@ message bot_GetInventoryItemRequest {
 message bot_HasEquippedItemIdRequest {
   uint64 localPlayer = 1;
   uint32 itemId = 2;
-  uint32 tier = 3;
+  int32 tier = 3;
 }
 
 message bot_GetInventoryCountRequest {
   uint64 localPlayer = 1;
   uint32 itemId = 2;
-  uint32 tier = 3;
+  int32 tier = 3;
 }
 
 message bot_HasSightRequest {
@@ -510,6 +509,3 @@ enum bot_PathFindFlags {
   PathFindAllowNonWalkable = 8;
   PathFindIgnoreCreatures = 16;
 };
-
-
-

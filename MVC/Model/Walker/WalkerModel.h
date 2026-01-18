@@ -27,7 +27,7 @@ public:
 public slots:
     void indexUpdate_slot(int index);
 signals:
-    void addItem_signal(const QString &item);
+    void addItem_signal(const QString &option, const QString &direction, uint32_t x, uint32_t y, uint16_t z);
     void indexUpdate_signal(int index);
     void clearListWidget_signal();
 

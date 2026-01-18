@@ -19,17 +19,19 @@ TargetingModel::~TargetingModel() {
 
 void TargetingModel::addItem(const QString &targetName, const int &dist, const int &count,
     const QString &desiredStance, const QString &monstersAttacks) {
-    auto item = QStringLiteral("%1").arg(targetName);
-    auto tmp_targetName = targetName.toStdString();
-    std::transform(tmp_targetName.begin(), tmp_targetName.end(), tmp_targetName.begin(), ::tolower);
     Target target;
-    target.name = tmp_targetName;
+    target.name = targetName.toStdString();
+    std::transform(target.name .begin(), target.name .end(), target.name .begin(), ::tolower);
+    target.count = count;
+    target.dist = dist;
     target.desiredStance = desiredStance.toStdString();
     target.monstersAttacks = monstersAttacks.toStdString();
-    target.dist = dist;
-    target.count = count;
     targets.push_back(target);
-    emit addItem_signal(item);
+    QString distString = QString::number(dist);
+    if (!dist) {
+        distString = "All";
+    }
+    emit addItem_signal(targetName, distString, QString::number(count), desiredStance, monstersAttacks);
 }
 
 void TargetingModel::shootableState(bool state) {

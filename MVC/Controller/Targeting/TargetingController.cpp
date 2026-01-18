@@ -15,7 +15,7 @@ TargetingController::TargetingController(QObject* parent)
     connect(m_view, &TargetingView::openCorpseState_signal, this, &TargetingController::openCorpseState_View);
     connect(m_view, &TargetingView::stayAwayDist_signal, this, &TargetingController::stayAwayDist_View);
     connect(m_view, &TargetingView::deleteItem_signal, this, &TargetingController::deleteItem_View);
-    connect(m_view, &TargetingView::clearListWidget, this, &TargetingController::clearListWidget_View);
+    connect(m_view, &TargetingView::clearTableWidget_signal, this, &TargetingController::clearListWidget_View);
 
     // Connect blocked tiles signals
     connect(m_view, &TargetingView::addBlockedTile_signal, this, &TargetingController::addBlockedTile_View);
@@ -67,12 +67,13 @@ void TargetingController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
 }
 
-void TargetingController::addItem_Model(const QString &item) {
-    m_view->addItem(item);
+void TargetingController::addItem_Model(const QString &targetName, const QString &dist, const QString &count,
+    const QString &desiredStance, const QString &monstersAttacks) {
+    m_view->addItem(targetName, dist, count, desiredStance, monstersAttacks);
 }
 
 void TargetingController::clearListWidget_Model() {
-    m_view->clearListWidget();
+    m_view->clearTableWidget();
 }
 
 void TargetingController::startTargeting_slot(bool state) {

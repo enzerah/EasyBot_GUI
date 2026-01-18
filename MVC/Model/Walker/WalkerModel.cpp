@@ -23,25 +23,19 @@ WalkerModel::~WalkerModel() {
     }
 }
 
-
 void WalkerModel::addItem(const QString &direction, const QString &option, const QString &action) {
+
     auto localPlayer = proto->getLocalPlayer();
+    auto state = proto->getStates(localPlayer);
+    std::cout << int(state) << std::endl;
     auto position = proto->getPosition(localPlayer);
-    QString item = "";
-    if (option == "Label") {
-        item = QStringLiteral("%1").arg(action);
-    } else if (option == "Action") {
-        item = QStringLiteral("Action");
-    } else {
-        item = QStringLiteral("%1 %2 %3 %4 %5").arg(option, direction).arg(position.x).arg(position.y).arg(position.z);
-    }
     Waypoint wpt;
     wpt.direction = direction.toStdString();
     wpt.position = position;
     wpt.option = option.toStdString();
     wpt.action = action.toStdString();
     waypoints.push_back(wpt);
-    emit addItem_signal(item);
+    emit addItem_signal(option, direction, position.x, position.y, position.z);
 }
 
 void WalkerModel::recordWaypoints(bool state, int sqmDist, const QString &direction, const QString &option) {
@@ -128,15 +122,7 @@ void WalkerModel::fromJson(const QJsonArray &json) {
         wpt.action = action.toStdString();
         wpt.direction = direction.toStdString();
         waypoints.push_back(wpt);
-        QString item = "";
-        if (option == "Label") {
-            item = QStringLiteral("%1").arg(action);
-        } else if (option == "Action") {
-            item = QStringLiteral("Action");
-        } else {
-            item = QStringLiteral("%1 %2 %3 %4 %5").arg(option, direction).arg(pos.x).arg(pos.y).arg(pos.z);
-        }
-        emit addItem_signal(item);
+        emit addItem_signal(option, direction, pos.x, pos.y, pos.z);
     }
 }
 

@@ -79,16 +79,15 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
         }
     } else {
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
+            if (wpt.direction != "C") {
+                auto direction = getDirection(wpt.direction);
+                proto->walk(direction);
+                msleep(500);
+            }
             index = (index + 1) % waypoints.size();
             emit indexUpdate_signal(static_cast<int>(index));
             return;
         }
-    }
-    if (wpt.direction != "C" && wpt.option == "Stand") {
-        auto direction = getDirection(wpt.direction);
-        proto->walk(direction);
-        msleep(500);
-        return;
     }
     proto->autoWalk(localPlayer, wpt.position, true);
 }
@@ -143,22 +142,15 @@ void FollowWaypoints_Thread::performUse(Waypoint wpt, uintptr_t localPlayer, Pos
         index = (index + 1) % waypoints.size();
         emit indexUpdate_signal(static_cast<int>(index));
     } else {
-        auto containers = proto->getContainers();
-        for (auto container : containers) {
-            auto items = proto->getItems(container);
-            for (auto item : items) {
-                if (proto->getItemId(item) == itemId) {
-                    auto tile = proto->getTile(wptPos);
-                    auto topThing = proto->getTopUseThing(tile);
-                    proto->useWith(item, topThing);
-                    msleep(500);
-                    index = (index + 1) % waypoints.size();
-                    emit indexUpdate_signal(static_cast<int>(index));
-                    return;
-                }
-            }
+        auto item = proto->findItemInContainers(itemId, -1, 0);
+        if (item) {
+            auto tile = proto->getTile(wptPos);
+            auto topThing = proto->getTopUseThing(tile);
+            proto->useWith(item, topThing);
+            msleep(500);
+            index = (index + 1) % waypoints.size();
+            emit indexUpdate_signal(static_cast<int>(index));
         }
-        msleep(100);
     }
 }
 
