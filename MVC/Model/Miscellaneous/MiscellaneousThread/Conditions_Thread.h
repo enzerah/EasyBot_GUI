@@ -16,7 +16,7 @@ public:
 
     explicit Conditions_Thread(QObject *parent = nullptr)
         : QThread(parent) {};
-    ~Conditions_Thread() = default;
+    ~Conditions_Thread() override = default;
 
     void updateCondition(const std::string& conditionType, const std::string& spellName, int manaCost, bool state);
     bool hasActiveConditions();

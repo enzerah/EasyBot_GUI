@@ -48,6 +48,7 @@ void Conditions_Thread::run()
             if (shouldCast && currentMp >= data.manaCost) {
                 proto->talk(data.spellName);
             }
+            msleep(100);
         }
 
         msleep(500);

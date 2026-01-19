@@ -8,28 +8,50 @@ MiscellaneousModel::MiscellaneousModel(QObject *parent)
 }
 
 MiscellaneousModel::~MiscellaneousModel() {
-    if (unified_conditionsThread) {
-        unified_conditionsThread->requestInterruption();
-        unified_conditionsThread->quit();
-        unified_conditionsThread->wait();
+    if (conditionsThread) {
+        conditionsThread->requestInterruption();
+        conditionsThread->quit();
+        conditionsThread->wait();
+    }
+    if (othersThread) {
+        othersThread->requestInterruption();
+        othersThread->quit();
+        othersThread->wait();
     }
 }
 
-void MiscellaneousModel::startConditions(const QString& spellName, const int& manaCost, const QString& condition,
-    bool state) {
+void MiscellaneousModel::startConditions(const QString& spellName, const int& manaCost, const QString& condition, bool state) {
     if (state) {
-        if (!unified_conditionsThread) {
-            unified_conditionsThread = new Conditions_Thread(this);
-            connect(unified_conditionsThread, &QThread::finished, unified_conditionsThread, &QObject::deleteLater);
-            connect(unified_conditionsThread, &QThread::finished, this, [this]() {
-                this->unified_conditionsThread = nullptr;
+        if (!conditionsThread) {
+            conditionsThread = new Conditions_Thread(this);
+            connect(conditionsThread, &QThread::finished, conditionsThread, &QObject::deleteLater);
+            connect(conditionsThread, &QThread::finished, this, [this]() {
+                this->conditionsThread = nullptr;
             });
-            unified_conditionsThread->start();
+            conditionsThread->start();
         }
-        unified_conditionsThread->updateCondition(condition.toStdString(), spellName.toStdString(), manaCost, true);
+        conditionsThread->updateCondition(condition.toStdString(), spellName.toStdString(), manaCost, true);
     } else {
-        if (unified_conditionsThread) {
-            unified_conditionsThread->updateCondition(condition.toStdString(), spellName.toStdString(), manaCost, false);
+        if (conditionsThread) {
+            conditionsThread->updateCondition(condition.toStdString(), spellName.toStdString(), manaCost, false);
+        }
+    }
+}
+
+void MiscellaneousModel::startOthers(const int& itemID, const int& option, const int& minValue, bool state) {
+    if (state) {
+        if (!othersThread) {
+            othersThread = new Others_Thread(this);
+            connect(othersThread, &QThread::finished, othersThread, &QObject::deleteLater);
+            connect(othersThread, &QThread::finished, this, [this]() {
+                this->othersThread = nullptr;
+            });
+            othersThread->start();
+        }
+        othersThread->updateCondition("Ammo", itemID, option, minValue, true);
+    } else {
+        if (othersThread) {
+            othersThread->updateCondition("Ammo", itemID, option, minValue, true);
         }
     }
 }
