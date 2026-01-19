@@ -18,6 +18,8 @@ Q_OBJECT
 public:
     explicit MiscellaneousView(QWidget *parent = nullptr);
     ~MiscellaneousView() override;
+signals:
+    void startCondition_signal(const QString &spellName, const int &manaCost, const QString &condition, bool state);
 
 private:
     Ui::Miscellaneous_View *ui;

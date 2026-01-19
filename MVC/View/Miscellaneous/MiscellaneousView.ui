@@ -146,7 +146,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="shield_lineEdit">
+          <widget class="QLineEdit" name="shieldName_lineEdit">
            <property name="minimumSize">
             <size>
              <width>150</width>
@@ -206,7 +206,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="hasteMana_lineEdit">
            <property name="inputMethodHints">
             <set>Qt::InputMethodHint::ImhDigitsOnly|Qt::InputMethodHint::ImhFormattedNumbersOnly|Qt::InputMethodHint::ImhLowercaseOnly</set>
            </property>
@@ -249,7 +249,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="buffName_lineEdit_2">
+          <widget class="QLineEdit" name="ammoID_lineEdit">
            <property name="minimumSize">
             <size>
              <width>150</width>
@@ -263,6 +263,161 @@
          </item>
          <item>
           <widget class="QCheckBox" name="refilAmmo_checkBox">
+           <property name="text">
+            <string>On</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Auto Ring</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ringID_lineEdit">
+           <property name="minimumSize">
+            <size>
+             <width>125</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="placeholderText">
+            <string>Ring ID</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="ringOption_comboBox">
+           <property name="minimumSize">
+            <size>
+             <width>65</width>
+             <height>0</height>
+            </size>
+           </property>
+           <item>
+            <property name="text">
+             <string>HP%</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>MP%</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="lineEdit_2">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maxLength">
+            <number>2</number>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="placeholderText">
+            <string>40</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="autoRing_checkBox">
+           <property name="text">
+            <string>On</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Auto Amulet</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="amuletID_lineEdit">
+           <property name="minimumSize">
+            <size>
+             <width>125</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="placeholderText">
+            <string>Amulet ID</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="amuletOption_comboBox">
+           <property name="minimumSize">
+            <size>
+             <width>65</width>
+             <height>0</height>
+            </size>
+           </property>
+           <item>
+            <property name="text">
+             <string>HP%</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>MP%</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="amuletValue_lineEdit">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="maxLength">
+            <number>2</number>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="placeholderText">
+            <string>40</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="autoAmulet_checkBox">
            <property name="text">
             <string>On</string>
            </property>
