@@ -319,7 +319,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="ringValue_lineEdit">
            <property name="minimumSize">
             <size>
              <width>30</width>

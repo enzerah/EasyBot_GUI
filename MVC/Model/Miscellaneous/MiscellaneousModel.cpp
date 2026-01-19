@@ -38,7 +38,7 @@ void MiscellaneousModel::startConditions(const QString& spellName, const int& ma
     }
 }
 
-void MiscellaneousModel::startOthers(const int& itemID, const int& option, const int& minValue, bool state) {
+void MiscellaneousModel::startOthers(const QString &option, const int &itemID, const int &condition, const int &minValue, bool state) {
     if (state) {
         if (!othersThread) {
             othersThread = new Others_Thread(this);
@@ -48,10 +48,10 @@ void MiscellaneousModel::startOthers(const int& itemID, const int& option, const
             });
             othersThread->start();
         }
-        othersThread->updateCondition("Ammo", itemID, option, minValue, true);
+        othersThread->updateCondition(option.toStdString(), itemID, condition, minValue, true);
     } else {
         if (othersThread) {
-            othersThread->updateCondition("Ammo", itemID, option, minValue, true);
+            othersThread->updateCondition(option.toStdString(), itemID, condition, minValue, false);
         }
     }
 }

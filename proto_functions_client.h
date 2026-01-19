@@ -4,6 +4,7 @@
 #include "bot.grpc.pb.h"
 #include "const.h"
 #include "google/protobuf/empty.pb.h"
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
@@ -16,6 +17,7 @@ using namespace bot;
 
 
 class BotClient {
+private:
     static BotClient* instance;
     static std::mutex mutex;
 protected:

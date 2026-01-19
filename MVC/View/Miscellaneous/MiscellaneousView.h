@@ -20,6 +20,7 @@ public:
     ~MiscellaneousView() override;
 signals:
     void startCondition_signal(const QString &spellName, const int &manaCost, const QString &condition, bool state);
+    void startOthers_signal(const QString &option, const int &itemID, const int &condition, const int &minValue, bool state);
 
 private:
     Ui::Miscellaneous_View *ui;

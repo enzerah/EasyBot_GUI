@@ -42,7 +42,6 @@ int main(int argc, char* argv[]) {
         }
     }
     // ---------------------------------------------------------
-
     std::filesystem::create_directory("Save/");
     QApplication::setQuitOnLastWindowClosed(false);
     QApplication::setStyle(QStyleFactory::create("Fusion"));

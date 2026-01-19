@@ -10,6 +10,7 @@ MiscellaneousController::MiscellaneousController(QObject *parent)
     m_view->show();
     // Miscellaneous View request
     connect(m_view, &MiscellaneousView::startCondition_signal, m_model, &MiscellaneousModel::startConditions);
+    connect(m_view, &MiscellaneousView::startOthers_signal, m_model, &MiscellaneousModel::startOthers);
 
 }
 

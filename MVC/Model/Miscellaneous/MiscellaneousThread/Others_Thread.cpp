@@ -45,27 +45,65 @@ void Others_Thread::run()
                     proto->equipItemId(data.itemId, -1);
                 }
             } else if (other == "Ring") {
-                // 1 - HP%
-                if (data.condition == 1) {
+                auto equippedRing = proto->getInventoryItem(localPlayer, Otc::InventorySlotRing);
+                if (data.condition == 0) {
                     if (hpPct < data.value){
-                        proto->equipItemId(data.itemId, -1);
+                        if (equippedRing) {
+                            auto ringId = proto->getItemId(equippedRing);
+                            if (ringId != data.itemId) proto->equipItemId(data.itemId, -1);
+                        } else {
+                            proto->equipItemId(data.itemId, -1);
+                        }
+                    } else {
+                        if (equippedRing) {
+                            auto ringId = proto->getItemId(equippedRing);
+                            if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
+                        }
                     }
-                } else if (data.condition == 2)
-                {
+                } else {
                     if (mpPct < data.value){
-                        proto->equipItemId(data.itemId, -1);
+                        if (equippedRing) {
+                            auto ringId = proto->getItemId(equippedRing);
+                            if (ringId != data.itemId) proto->equipItemId(data.itemId, -1);
+                        } else {
+                            proto->equipItemId(data.itemId, -1);
+                        }
+                    } else {
+                        if (equippedRing) {
+                            auto ringId = proto->getItemId(equippedRing);
+                            if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
+                        }
                     }
                 }
             } else if (other == "Amulet") {
-                // 1 - HP%
-                if (data.condition == 1) {
+                auto equippedAmulet = proto->getInventoryItem(localPlayer, Otc::InventorySlotNecklace);
+                if (data.condition == 0) {
                     if (hpPct < data.value){
-                        proto->equipItemId(data.itemId, -1);
+                        if (equippedAmulet) {
+                            auto ringId = proto->getItemId(equippedAmulet);
+                            if (ringId != data.itemId) proto->equipItemId(data.itemId, -1);
+                        } else {
+                            proto->equipItemId(data.itemId, -1);
+                        }
+                    } else {
+                        if (equippedAmulet) {
+                            auto ringId = proto->getItemId(equippedAmulet);
+                            if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
+                        }
                     }
-                } else if (data.condition == 2)
-                {
+                } else {
                     if (mpPct < data.value){
-                        proto->equipItemId(data.itemId, -1);
+                        if (equippedAmulet) {
+                            auto ringId = proto->getItemId(equippedAmulet);
+                            if (ringId != data.itemId) proto->equipItemId(data.itemId, -1);
+                        } else {
+                            proto->equipItemId(data.itemId, -1);
+                        }
+                    } else {
+                        if (equippedAmulet) {
+                            auto ringId = proto->getItemId(equippedAmulet);
+                            if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
+                        }
                     }
                 }
             }

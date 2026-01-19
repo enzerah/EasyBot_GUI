@@ -81,8 +81,17 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
             std::cout << playerPos.x << " " << playerPos.y << " " << playerPos.z << std::endl;
             if (wpt.direction != "C") {
+                auto wptPos = wpt.position;
                 auto direction = getDirection(wpt.direction);
-                proto->walk(direction);
+                if (direction == Otc::North) wptPos.y -=1;
+                if (direction == Otc::East) wptPos.x +=1;
+                if (direction == Otc::South) wptPos.y +=1;
+                if (direction == Otc::West) wptPos.x -=1;
+                if (direction == Otc::NorthEast) wptPos.x +=1, wptPos.y -=1;
+                if (direction == Otc::SouthEast) wptPos.x +=1, wptPos.y +=1;
+                if (direction == Otc::SouthWest) wptPos.x -=1, wptPos.y +=1;
+                if (direction == Otc::NorthWest) wptPos.x -=1, wptPos.y -=1;
+                proto->autoWalk(localPlayer, wptPos);
                 msleep(500);
             }
             index = (index + 1) % waypoints.size();
@@ -90,7 +99,7 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
             return;
         }
     }
-    proto->autoWalk(localPlayer, wpt.position, true);
+    proto->autoWalk(localPlayer, wpt.position, false);
 }
 
 void FollowWaypoints_Thread::performAction(Waypoint wpt) {

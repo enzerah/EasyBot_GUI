@@ -9,9 +9,9 @@ class MiscellaneousModel : public QObject {
     Q_OBJECT
 public:
     explicit MiscellaneousModel(QObject *parent = nullptr);
-    ~MiscellaneousModel();
+    ~MiscellaneousModel() override;
     void startConditions(const QString &spellName, const int &manaCost, const QString &condition, bool state);
-    void startOthers(const int &itemID, const int &option, const int &minValue, bool state);
+    void startOthers(const QString &option, const int &itemID, const int &condition, const int &minValue, bool state);
 
 private:
     Conditions_Thread *conditionsThread = nullptr;

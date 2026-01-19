@@ -19,7 +19,15 @@ namespace LuaBindings {
             .beginClass<BotClient>("BotClient")
                 // Container
                 .addFunction("getItem", &BotClient::getItem)
-                .addFunction("getItems", &BotClient::getItems)
+                .addFunction("getItems", [](BotClient* client, uintptr_t container) -> std::vector<uintptr_t> {
+                    auto items = client->getItems(container);
+                    std::vector<uintptr_t> itemsVector;
+                    itemsVector.reserve(items.size());
+                    for(auto item : items) {
+                        itemsVector.push_back(item);
+                    }
+                    return itemsVector;
+                })
                 .addFunction("getItemsCount", &BotClient::getItemsCount)
                 .addFunction("getSlotPosition", &BotClient::getSlotPosition)
                 .addFunction("getContainerName", &BotClient::getContainerName)

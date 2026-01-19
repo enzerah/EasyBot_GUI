@@ -1,6 +1,6 @@
 #include "proto_functions_client.h"
-#include <QTcpSocket>
 #include <string>
+#include <QTcpSocket>
 
 BotClient* BotClient::instance{nullptr};
 std::mutex BotClient::mutex;
@@ -17,7 +17,6 @@ void BotClient::connect(int port) {
 
 void BotClient::disconnect(int port) {
 }
-
 std::vector<int> BotClient::availablePorts() {
     std::vector<int> ports;
     for (int port = 50051; port <= 50060; ++port) {
@@ -380,8 +379,7 @@ void BotClient::refreshContainer(const uintptr_t &container)
     Status status = stub->RefreshContainer(&context, request, &response);
 }
 
-void BotClient::attack(const uintptr_t &creature, bool cancel = false)
-{
+void BotClient::attack(const uintptr_t &creature, bool cancel = false) {
     bot_AttackRequest request;
     request.set_creature(creature);
     request.set_cancel(cancel);
@@ -853,8 +851,7 @@ uintptr_t BotClient::getInventoryItem(uintptr_t localPlayer, Otc::InventorySlot 
     return response.value();
 }
 
-bool BotClient::hasEquippedItemId(uintptr_t localPlayer, uint16_t itemId, int tier)
-{
+bool BotClient::hasEquippedItemId(uintptr_t localPlayer, uint16_t itemId, int tier) {
     bot_HasEquippedItemIdRequest request;
     request.set_localplayer(localPlayer);
     request.set_itemid(itemId);
