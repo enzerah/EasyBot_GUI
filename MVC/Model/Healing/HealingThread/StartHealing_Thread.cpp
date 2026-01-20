@@ -5,17 +5,14 @@ void StartHealing_Thread::run()
 {
     if (heals.empty()) return;
     size_t index = 0;
-    auto client_version = proto->getClientVersion();
     while (!isInterruptionRequested()) {
         auto localPlayer = proto->getLocalPlayer();
         auto current_hp = proto->getHealth(localPlayer);
         auto current_mp = proto->getMana(localPlayer);
         auto max_hp = proto->getMaxHealth(localPlayer);
         auto max_mp = proto->getMaxMana(localPlayer);
-
         double current_hp_pc = current_hp / max_hp * 100;
         double current_mp_pc = current_mp / max_mp * 100;
-
         auto heal = heals[index];
         if (heal.condition == "HP%") {
             if (heal.below >= current_hp_pc && current_hp_pc >= heal.above &&
@@ -25,23 +22,9 @@ void StartHealing_Thread::run()
                 }
                 else if (heal.action == "Use") {
                     int itemId = std::stoi(heal.heal);
-                    if (client_version >= 758) { // Hotkeys Available
-                        proto->useInventoryItemWith(itemId, localPlayer);
-                    } else { // No hotkeys
-                        bool found = false;
-                        auto containers = proto->getContainers();
-                        for (auto container : containers) {
-                            auto items = proto->getItems(container);
-                            for (auto item : items) {
-                                if (proto->getItemId(item) == itemId) {
-                                    proto->useWith(item, localPlayer);
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (found) break;
-                        }
-                    }
+                    proto->useInventoryItemWith(itemId, localPlayer);
+                    proto->useInventoryItem(itemId);
+
                 }
             }
         }
@@ -52,28 +35,12 @@ void StartHealing_Thread::run()
                     proto->talk(heal.heal);
                 } else if (heal.action == "Use") {
                     int itemId = std::stoi(heal.heal);
-                    if (client_version >= 758) { // Hotkeys Available
-                        std::cout << itemId << std::endl;
-                        proto->useInventoryItemWith(itemId, localPlayer);
-                    } else { // No hotkeys
-                        bool found = false;
-                        auto containers = proto->getContainers();
-                        for (auto container : containers) {
-                            auto items = proto->getItems(container);
-                            for (auto item : items) {
-                                if (proto->getItemId(item) == itemId) {
-                                    proto->useWith(item, localPlayer);
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (found) break;
-                        }
-                    }
+                    proto->useInventoryItemWith(itemId, localPlayer);
+                    proto->useInventoryItem(itemId);
                 }
             }
         }
         index = (index + 1) % heals.size();
-        msleep(50);
+        msleep(10);
     }
 }

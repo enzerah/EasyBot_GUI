@@ -9,6 +9,13 @@ HealingView::HealingView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
+    ui->healing_tableWidget->setColumnCount(4);
+    ui->healing_tableWidget->setHorizontalHeaderLabels({"Action", "Type", "Below", "Above"});
+    ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+
     connect(ui->add_pushButton, &QPushButton::clicked, this, [this]() {
         auto action = ui->action_comboBox->currentText();
         auto heal = ui->heal_lineEdit->text();
@@ -27,14 +34,15 @@ HealingView::HealingView(QWidget *parent) :
         ui->minimum_lineEdit->clear();
     });
 
-    connect(ui->healing_listWidget, &QListWidget::itemDoubleClicked, this, [this](){
-        auto currentIndex = ui->healing_listWidget->currentRow();
-        ui->healing_listWidget->takeItem(currentIndex);
-        emit deleteItem_signal(currentIndex);
+    connect(ui->healing_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
+        ui->healing_tableWidget->removeRow(row);
+        emit deleteItem_signal(row);
     });
 
+
     connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
-        emit clearListWidget();
+        emit clearTableWidget();
+        ui->healing_tableWidget->setRowCount(0);
     });
 }
 
@@ -42,10 +50,19 @@ HealingView::~HealingView() {
     delete ui;
 }
 
-void HealingView::addItem(const QString& item) {
-    ui->healing_listWidget->addItem(item);
+void HealingView::addItem(const QString &action, const QString &heal, const QString &condition, const int &random,
+    const int &below, const int &above, const int &minimum) {
+    int row = ui->healing_tableWidget->rowCount();
+    ui->healing_tableWidget->insertRow(row);
+    QString actionString = action + " \'" + heal + "\'";
+    QStringList values = {actionString, condition,QString::number(below), QString::number(above)};
+    for(int col = 0; col < values.size(); ++col) {
+        QTableWidgetItem *item = new QTableWidgetItem(values[col]);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        ui->healing_tableWidget->setItem(row, col, item);
+    }
 }
 
-void HealingView::clearListWidget() {
-    ui->healing_listWidget->clear();
+void HealingView::clearTableWidget() {
+    ui->healing_tableWidget->setRowCount(0);
 }

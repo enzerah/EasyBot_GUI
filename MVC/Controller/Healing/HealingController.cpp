@@ -9,13 +9,13 @@ HealingController::HealingController(QObject *parent)
     m_view->show();
 
     // Healing View requests
-    connect(m_view, &HealingView::addItem_signal, this, &HealingController::addItem_View);
-    connect(m_view, &HealingView::deleteItem_signal, this, &HealingController::deleteItem_View);
-    connect(m_view, &HealingView::clearListWidget, this, &HealingController::clearListWidget_View);
+    connect(m_view, &HealingView::addItem_signal, m_model, &HealingModel::addItem);
+    connect(m_view, &HealingView::deleteItem_signal, m_model, &HealingModel::deleteItem);
+    connect(m_view, &HealingView::clearTableWidget_signal, m_model, &HealingModel::clearTableWidget);
 
     // Healing Model requests
-    connect(m_model, &HealingModel::addItem_signal, this, &HealingController::addItem_Model);
-    connect(m_model, &HealingModel::clearListWidget_signal, this, &HealingController::clearListWidget_Model);
+    connect(m_model, &HealingModel::addItem_signal, m_view, &HealingView::addItem);
+    connect(m_model, &HealingModel::clearTableWidget_signal, m_view, &HealingView::clearTableWidget);
 
 
 }
@@ -26,27 +26,6 @@ HealingController::~HealingController() {
 void HealingController::showView() {
     m_view->showNormal();
     m_view->show();
-}
-
-void HealingController::addItem_View(const QString &action, const QString &heal, const QString &condition, const int &random,
-        const int &below, const int &above, const int &minimum) {
-    m_model->addItem(action, heal, condition, random, below, above, minimum);
-}
-
-void HealingController::deleteItem_View(const int& index) {
-    m_model->deleteItem(index);
-}
-
-void HealingController::clearListWidget_View() {
-    m_model->clearListWidget();
-}
-
-void HealingController::addItem_Model(const QString& item) {
-    m_view->addItem(item);
-}
-
-void HealingController::clearListWidget_Model() {
-    m_view->clearListWidget();
 }
 
 void HealingController::startHealing_slot(bool state) {

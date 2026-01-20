@@ -18,21 +18,20 @@ HealingModel::~HealingModel() {
     }
 }
 
-void HealingModel::addItem(const QString &action, const QString &heal_text, const QString &condition, const int &random,
-        const int &below, const int &above, const int &minimum) {
-    auto item = QStringLiteral("%1 \"%2\" %3>%4>%5%").arg(action).arg(heal_text).arg(below).arg(condition).arg(above);
-    Heal heal;
-    heal.action = action.toStdString();
-    heal.heal = heal_text.toStdString();
-    heal.condition = condition.toStdString();
-    heal.random = random;
-    heal.below = below;
-    heal.above = above;
-    heal.minimum = minimum;
-    heals.push_back(heal);
-    emit addItem_signal(item);
-
+void HealingModel::addItem(const QString &action, const QString &heal, const QString &condition, const int &random,
+    const int &below, const int &above, const int &minimum) {
+    Heal healing;
+    healing.action = action.toStdString();
+    healing.heal = heal.toStdString();
+    healing.condition = condition.toStdString();
+    healing.random = random;
+    healing.below = below;
+    healing.above = above;
+    healing.minimum = minimum;
+    heals.push_back(healing);
+    emit addItem_signal(action, heal, condition, random, below, above, minimum);
 }
+
 
 void HealingModel::deleteItem(const int& index) {
     heals.erase(heals.begin() + index);
@@ -74,7 +73,7 @@ QJsonArray HealingModel::toJson() const {
 
 void HealingModel::fromJson(const QJsonArray &json) {
     heals.clear();
-    emit clearListWidget_signal();
+    emit clearTableWidget_signal();
     for (const auto &val : json) {
         QJsonObject obj = val.toObject();
         QString action = obj["action"].toString();
@@ -88,7 +87,7 @@ void HealingModel::fromJson(const QJsonArray &json) {
     }
 }
 
-void HealingModel::clearListWidget() {
+void HealingModel::clearTableWidget() {
     heals.clear();
 }
 

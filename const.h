@@ -744,16 +744,14 @@ struct Heal
 
 struct Spell
 {
-    std::string targets;
+    std::string targetName;
     int dist;
     int count;
-    std::string option;
-    std::string name;
-    int type;
-    int from;
-    int to;
+    int option;
+    std::string spellName;
     int minHp;
-    int minMp;
+    int costMp;
+    bool requiresTarget;
 };
 
 struct Script {

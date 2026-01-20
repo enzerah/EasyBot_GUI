@@ -16,14 +16,7 @@ protected:
 
 
 private:
-    void targetSpell(Spell spell, uintptr_t localPlayer, double current_hp_pc, double current_mp);
-    void areaSpell(Spell spell, uintptr_t localPlayer, double current_hp_pc, double current_mp);
-    void runeSpell(Spell spell, uintptr_t localPlayer, double current_hp_pc, double current_mp);
     std::vector<Spell> m_spells;
-    bool hotkeys = false;
-
 };
-
-
 
 #endif //USESPELL_THREAD_H

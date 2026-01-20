@@ -58,14 +58,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QListWidget" name="healing_listWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="QTableWidget" name="healing_tableWidget"/>
        </item>
        <item>
         <widget class="QPushButton" name="clear_pushButton">
@@ -310,22 +303,5 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>clear_pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>healing_listWidget</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>95</x>
-     <y>366</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>170</x>
-     <y>283</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

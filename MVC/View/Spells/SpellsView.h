@@ -16,15 +16,13 @@ public:
     explicit SpellsView(QWidget *parent = nullptr);
     ~SpellsView() override;
 
-    void addItem(const QString &item);
-    void clearListWidget();
+    void addItem(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
+    void clearTableWidget();
 
     signals:
-    void addItem_signal(const QString &target_name, const int &dist, const int &count, const QString &spell,
-        const QString &spell_name, const int &type, const int &from, const int &to, const int &minHp, const int &minMp);
+    void addItem_signal(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
     void deleteItem_signal(const int &index);
-    void clearListWidget_signal();
-
+    void clearTableWidget_signal();
 
 private:
     Ui::Spells_View *ui;

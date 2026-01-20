@@ -8,53 +8,68 @@ SpellsView::SpellsView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
-    ui->spells_tableWidget->setColumnCount(4);
-    ui->spells_tableWidget->setHorizontalHeaderLabels({"Target", "Action", "Count", "Dist"});
-    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->setColumnCount(6);
+    ui->spells_tableWidget->setHorizontalHeaderLabels({"Target", "Action", "Count", "Dist", "HP%", "Cost"});
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
 
     connect(ui->add_pushButton, &QPushButton::clicked, this,[this] {
-        auto target_name = ui->name_lineEdit->text();
-        auto dist = ui->dist_comboBox->currentIndex();
+        auto target = ui->targetName_lineEdit->text();
+        auto option = ui->option_comboBox->currentIndex(); // Say or Use
+        auto spellName = ui->spellName_lineEdit->text();
         auto count = ui->count_comboBox->currentIndex() + 1;
-        auto spell = ui->spell_comboBox->currentText();
-        auto spell_name = ui->spell_lineEdit->text();
-        auto type = ui->type_comboBox->currentIndex();
-        auto minHp = ui->playerHp_lineEdit->text().toInt();
-        auto minMp = ui->playerMp_lineEdit->text().toInt();
+        auto dist = ui->dist_comboBox->currentIndex() + 1;
+        auto minHp = ui->minHp_lineEdit->text().toInt();
+        auto costMp = ui->costMp_lineEdit->text().toInt();
+        bool requiresTarget = ui->requiresTarget_checkBox->isChecked();
+        emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, requiresTarget);
 
-        emit addItem_signal(target_name, dist, count, spell, spell_name,type,minHp, minMp);
-
-        ui->name_lineEdit->clear();
-        ui->dist_comboBox->setCurrentIndex(0);
+        ui->spellName_lineEdit->clear();
+        ui->targetName_lineEdit->clear();
+        ui->minHp_lineEdit->clear();
+        ui->costMp_lineEdit->clear();
         ui->count_comboBox->setCurrentIndex(0);
-        ui->spell_comboBox->setCurrentIndex(0);
-        ui->spell_lineEdit->clear();
-        ui->type_comboBox->setCurrentIndex(0);
-        ui->playerHp_lineEdit->clear();
-        ui->playerMp_lineEdit->clear();
+        ui->option_comboBox->setCurrentIndex(0);
+        ui->dist_comboBox->setCurrentIndex(0);
+        ui->requiresTarget_checkBox->setChecked(false);
     });
-    connect(ui->spells_listWidget, &QListWidget::itemDoubleClicked, this, [this](){
-        auto currentIndex = ui->spells_listWidget->currentRow();
-        ui->spells_listWidget->takeItem(currentIndex);
-        emit deleteItem_signal(currentIndex);
+
+    connect(ui->spells_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
+        ui->spells_tableWidget->removeRow(row);
+        emit deleteItem_signal(row);
     });
+
 
     connect(ui->clear_pushButton, &QPushButton::clicked, this, [this]() {
-        emit clearListWidget();
+        emit clearTableWidget();
+        ui->spells_tableWidget->setRowCount(0);
     });
+
 }
 
 SpellsView::~SpellsView() {
     delete ui;
 }
 
-void SpellsView::addItem(const QString& item) {
-    ui->spells_listWidget->addItem(item);
+void SpellsView::addItem(const QString &target, const int &option, const QString &spellName, const int &count,
+    const int &dist, const int &minHp, const int &costMp, bool requiresTarget) {
+    int row = ui->spells_tableWidget->rowCount();
+    ui->spells_tableWidget->insertRow(row);
+    QString action = option ? "Rune" : "Say";
+    action += " \'" + spellName + "\'";
+    QStringList values = {target, action, QString::number(count), QString::number(dist), QString::number(minHp), QString::number(costMp)};
+    for(int col = 0; col < values.size(); ++col) {
+        QTableWidgetItem *item = new QTableWidgetItem(values[col]);
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        ui->spells_tableWidget->setItem(row, col, item);
+    }
 }
 
-void SpellsView::clearListWidget() {
-    ui->spells_listWidget->clear();
+
+void SpellsView::clearTableWidget() {
+    ui->spells_tableWidget->setRowCount(0);
 }

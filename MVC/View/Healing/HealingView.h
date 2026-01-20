@@ -16,14 +16,15 @@ public:
     explicit HealingView(QWidget *parent = nullptr);
     ~HealingView() override;
 
-    void addItem(const QString &item);
-    void clearListWidget();
+    void addItem(const QString &action, const QString &heal, const QString &condition, const int &random,
+        const int &below, const int &above, const int &minimum);
+    void clearTableWidget();
 
     signals:
     void addItem_signal(const QString &action, const QString &heal, const QString &condition, const int &random,
         const int &below, const int &above, const int &minimum);
     void deleteItem_signal(const int &index);
-    void clearListWidget_signal();
+    void clearTableWidget_signal();
 
 private:
     Ui::Healing_View *ui;

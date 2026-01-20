@@ -9,11 +9,10 @@ LootingView::LootingView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
-    ui->loot_tableWidget->setColumnCount(3);
-    ui->loot_tableWidget->setHorizontalHeaderLabels({"ItemID", "Destination", "Delay"});
+    ui->loot_tableWidget->setColumnCount(2);
+    ui->loot_tableWidget->setHorizontalHeaderLabels({"ItemID", "Destination"});
     ui->loot_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->loot_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    ui->loot_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->loot_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 
 
     connect(ui->add_pushButton, &QPushButton::clicked, this, [this]() {
@@ -45,7 +44,7 @@ LootingView::~LootingView() {
 void LootingView::addItem(const QString &srcItem, const QString &dstItem, const QString &delay) {
     int row = ui->loot_tableWidget->rowCount();
     ui->loot_tableWidget->insertRow(row);
-    QStringList values = {srcItem, dstItem, delay};
+    QStringList values = {srcItem, dstItem};
     for(int col = 0; col < values.size(); ++col) {
         QTableWidgetItem *item = new QTableWidgetItem(values[col]);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);

@@ -54,7 +54,7 @@ void Others_Thread::run()
                         } else {
                             proto->equipItemId(data.itemId, -1);
                         }
-                    } else {
+                    } else if (hpPct > data.value + 5) {
                         if (equippedRing) {
                             auto ringId = proto->getItemId(equippedRing);
                             if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
@@ -68,7 +68,7 @@ void Others_Thread::run()
                         } else {
                             proto->equipItemId(data.itemId, -1);
                         }
-                    } else {
+                    } else if (mpPct > data.value + 5) {
                         if (equippedRing) {
                             auto ringId = proto->getItemId(equippedRing);
                             if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
@@ -85,7 +85,7 @@ void Others_Thread::run()
                         } else {
                             proto->equipItemId(data.itemId, -1);
                         }
-                    } else {
+                    } else if (hpPct > data.value + 5){
                         if (equippedAmulet) {
                             auto ringId = proto->getItemId(equippedAmulet);
                             if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);
@@ -99,7 +99,7 @@ void Others_Thread::run()
                         } else {
                             proto->equipItemId(data.itemId, -1);
                         }
-                    } else {
+                    } else if (mpPct > data.value + 5) {
                         if (equippedAmulet) {
                             auto ringId = proto->getItemId(equippedAmulet);
                             if (ringId == data.itemId) proto->equipItemId(data.itemId, -1);

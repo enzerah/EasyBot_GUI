@@ -11,19 +11,18 @@ public:
     explicit SpellsModel(QObject *parent = nullptr);
     ~SpellsModel();
 
-    void addItem(const QString &target_name, const int &dist, const int &count, const QString &spell_option,
-        const QString &spell_name, const int &type, const int &from, const int &to, const int &minHp, const int &minMp);
+    void addItem(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
     void startSpells(bool state);
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
 
     void deleteItem(const int &index);
-    void clearListWidget();
+    void clearTableWidget();
 
     signals:
-    void addItem_signal(const QString &item);
-    void clearListWidget_signal();
+    void addItem_signal(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
+    void clearTableWidget_signal();
 
 
 

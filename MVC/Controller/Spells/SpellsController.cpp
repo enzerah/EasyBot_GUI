@@ -10,13 +10,13 @@ SpellsController::SpellsController(QObject *parent)
     m_view->show();
 
     // Targeting View requests
-    connect(m_view, &SpellsView::addItem_signal, this, &SpellsController::addItem_View);
-    connect(m_view, &SpellsView::deleteItem_signal, this, &SpellsController::deleteItem_View);
-    connect(m_view, &SpellsView::clearListWidget_signal, this, &SpellsController::clearListWidget_View);
+    connect(m_view, &SpellsView::addItem_signal, m_model, &SpellsModel::addItem);
+    connect(m_view, &SpellsView::deleteItem_signal, m_model, &SpellsModel::deleteItem);
+    connect(m_view, &SpellsView::clearTableWidget_signal, m_model, &SpellsModel::clearTableWidget);
 
     // Targeting Model requests
-    connect(m_model, &SpellsModel::addItem_signal, this, &SpellsController::addItem_Model);
-    connect(m_model, &SpellsModel::clearListWidget_signal, this, &SpellsController::clearListWidget_Model);
+    connect(m_model, &SpellsModel::addItem_signal, m_view, &SpellsView::addItem);
+    connect(m_model, &SpellsModel::clearTableWidget_signal, m_view, &SpellsView::clearTableWidget);
 }
 
 SpellsController::~SpellsController() {
@@ -38,26 +38,5 @@ void SpellsController::loadSettings(const QJsonArray& json) {
 
 void SpellsController::startSpells_slot(bool state) {
     m_model->startSpells(state);
-}
-
-void SpellsController::addItem_View(const QString& target_name, const int& dist, const int& count,
-    const QString& spell, const QString& spell_name, const int& type, const int &from, const int &to, const int &minHp, const int &minMp) {
-    m_model->addItem(target_name, dist, count, spell, spell_name, type, from, to, minHp, minMp);
-}
-
-void SpellsController::deleteItem_View(const int& index) {
-    m_model->deleteItem(index);
-}
-
-void SpellsController::clearListWidget_View() {
-    m_model->clearListWidget();
-}
-
-void SpellsController::addItem_Model(const QString& item) {
-    m_view->addItem(item);
-}
-
-void SpellsController::clearListWidget_Model() {
-    m_view->clearListWidget();
 }
 

@@ -16,19 +16,6 @@ public:
     QJsonArray saveSettings() const;
     void loadSettings(const QJsonArray &json);
 
-
-    private slots:
-    // HealingView Requests
-    void addItem_View(const QString &action, const QString &heal, const QString &condition, const int &random,
-        const int &below, const int &above, const int &minimum);
-    void deleteItem_View(const int &index);
-    void clearListWidget_View();
-
-
-    // HealingModel Requests
-    void addItem_Model(const QString &item);
-    void clearListWidget_Model();
-
 public slots:
 void startHealing_slot(bool state);
 

@@ -24,11 +24,12 @@ public:
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
-    void clearListWidget();
+    void clearTableWidget();
 
     signals:
-    void addItem_signal(const QString &item);
-    void clearListWidget_signal();
+    void addItem_signal(const QString &action, const QString &heal, const QString &condition, const int &random,
+        const int &below, const int &above, const int &minimum);
+    void clearTableWidget_signal();
 
 private:
     std::vector<Heal> heals;
