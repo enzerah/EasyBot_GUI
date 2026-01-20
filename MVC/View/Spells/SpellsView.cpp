@@ -8,6 +8,13 @@ SpellsView::SpellsView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
+    ui->spells_tableWidget->setColumnCount(4);
+    ui->spells_tableWidget->setHorizontalHeaderLabels({"Target", "Action", "Count", "Dist"});
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+
     connect(ui->add_pushButton, &QPushButton::clicked, this,[this] {
         auto target_name = ui->name_lineEdit->text();
         auto dist = ui->dist_comboBox->currentIndex();
@@ -15,12 +22,10 @@ SpellsView::SpellsView(QWidget *parent) :
         auto spell = ui->spell_comboBox->currentText();
         auto spell_name = ui->spell_lineEdit->text();
         auto type = ui->type_comboBox->currentIndex();
-        auto from = ui->from_lineEdit->text().toInt();
-        auto to = ui->to_lineEdit->text().toInt();
         auto minHp = ui->playerHp_lineEdit->text().toInt();
         auto minMp = ui->playerMp_lineEdit->text().toInt();
 
-        emit addItem_signal(target_name, dist, count, spell, spell_name,type, from, to,minHp, minMp);
+        emit addItem_signal(target_name, dist, count, spell, spell_name,type,minHp, minMp);
 
         ui->name_lineEdit->clear();
         ui->dist_comboBox->setCurrentIndex(0);
@@ -28,8 +33,6 @@ SpellsView::SpellsView(QWidget *parent) :
         ui->spell_comboBox->setCurrentIndex(0);
         ui->spell_lineEdit->clear();
         ui->type_comboBox->setCurrentIndex(0);
-        ui->from_lineEdit->clear();
-        ui->to_lineEdit->clear();
         ui->playerHp_lineEdit->clear();
         ui->playerMp_lineEdit->clear();
     });

@@ -724,11 +724,10 @@ struct Target
     std::string monstersAttacks;
 };
 
-struct Item
-{
+struct Item {
     int itemID;
     std::string destination;
-    int lootingSpeed;
+    int delay;
     Position itemPosition;
 };
 

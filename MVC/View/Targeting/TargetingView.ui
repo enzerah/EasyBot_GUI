@@ -338,6 +338,13 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="open_checkBox">
+         <property name="text">
+          <string>Open Corpse</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="add_pushButton">
          <property name="text">
           <string>Add</string>
@@ -527,21 +534,14 @@
        <item>
         <widget class="QCheckBox" name="shootable_checkBox">
          <property name="text">
-          <string>Target  must be shootable</string>
+          <string>Targets must be shootable</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="reachable_checkBox">
          <property name="text">
-          <string>Target must be reachable</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="open_checkBox">
-         <property name="text">
-          <string>Open Corpse</string>
+          <string>Targets must be reachable</string>
          </property>
         </widget>
        </item>

@@ -1,7 +1,3 @@
-//
-// Created by blazz on 12.10.2025.
-//
-
 #ifndef LOOTINGVIEW_H
 #define LOOTINGVIEW_H
 
@@ -19,15 +15,13 @@ public:
     explicit LootingView(QWidget *parent = nullptr);
     ~LootingView() override;
 
-    void addItem(const QString &item);
-    void clearListWidget();
+    void addItem(const QString &srcItem, const QString &dstItem, const QString &delay);
+    void clearTableWidget();
 
     signals:
-    void addItem_signal(const int &itemID, const QString &destination, const int &lootingSpeed);
-    void nextBpState_signal(bool state);
-    void corpseBpState_signal(bool state);
+    void addItem_signal(const QString &srcItem, const QString &dstItem, const QString &delay);
     void deleteItem_signal(const int &index);
-    void clearListWidget_signal();
+    void clearTableWidget_signal();
 
 
 private:

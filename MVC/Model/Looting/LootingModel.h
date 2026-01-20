@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
 #ifndef LOOTINGMODEL_H
 #define LOOTINGMODEL_H
 #include <QObject>
@@ -14,29 +10,23 @@ public:
     explicit LootingModel(QObject *parent = nullptr);
     ~LootingModel();
 
-    void addItem(const int &itemID, const QString &destination, const int &lootingSpeed);
+    void addItem(const QString &srcItem, const QString &dstItem, const QString &delay);
     void startLooting(bool state);
-    void nextBpState(bool state);
-    void corpseBpState(bool state);
 
     QJsonArray toJson() const;
     void fromJson(const QJsonArray &json);
 
     void deleteItem(const int &index);
-    void clearListWidget();
+    void clearTableWidget();
 
     signals:
-    void addItem_signal(const QString &item);
-    void nextBpStateChanged_signal(bool state);
-    void corpseBpStateChanged_signal(bool state);
-    void clearListWidget_signal();
+    void addItem_signal(const QString &srcItem, const QString &dstItem, const QString &delay);
+    void clearTableWidget_signal();
 
 
 private:
     std::vector<Item> items;
     LootItems_Thread *lootItemsThread = nullptr;
-    bool m_nextBpState = false;
-    bool m_corpseBpState = false;
 };
 
 

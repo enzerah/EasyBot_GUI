@@ -16,19 +16,6 @@ public:
     QJsonArray saveSettings() const;
     void loadSettings(const QJsonArray &json);
 
-
-    private slots:
-    // LootingView Requests
-    void addItem_View(const int &itemID, const QString &destination, const int &lootingSpeed);
-    void nextBpState_View(bool state);
-    void corpseBpState_View(bool state);
-    void deleteItem_View(const int &index);
-    void clearListWidget_View();
-
-    // LootingModel Requests
-    void addItem_Model(const QString &item);
-    void clearListWidget_Model();
-
 public slots:
     void startLooting_slot(bool state);
 

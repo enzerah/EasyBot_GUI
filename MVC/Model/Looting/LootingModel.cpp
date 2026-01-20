@@ -18,26 +18,21 @@ LootingModel::~LootingModel() {
     }
 }
 
-void LootingModel::addItem(const int& itemID, const QString& destination, const int& lootingSpeed) {
-    auto str = QStringLiteral("%1 -> %2").arg(itemID).arg(destination);
+void LootingModel::addItem(const QString &srcItem, const QString &dstItem, const QString &delay) {
     Item item;
-    item.itemID = itemID;
-    auto dest= destination.toStdString();
+    item.itemID = srcItem.toInt();
+    auto dest= dstItem.toStdString();
     std::transform(dest.begin(), dest.end(), dest.begin(), ::tolower);
     item.destination = dest;
-    item.lootingSpeed = lootingSpeed;
+    item.delay = delay.toInt();
     items.push_back(item);
-    emit addItem_signal(str);
+    emit addItem_signal(srcItem, dstItem, delay);
 }
 
 void LootingModel::startLooting(bool state) {
     if (state) {
         if (!lootItemsThread) {
-            lootItemsThread = new LootItems_Thread(items, m_nextBpState, m_corpseBpState, this);
-            connect(this, &LootingModel::nextBpStateChanged_signal,
-                    lootItemsThread, &LootItems_Thread::nextBpStateChange);
-            connect(this, &LootingModel::corpseBpStateChanged_signal,
-                    lootItemsThread, &LootItems_Thread::corpseBpStateChange);
+            lootItemsThread = new LootItems_Thread(items, this);
             connect(lootItemsThread, &QThread::finished, lootItemsThread, &QObject::deleteLater);
             connect(lootItemsThread, &QThread::finished, this, [this]() {
                 this->lootItemsThread = nullptr;
@@ -52,13 +47,6 @@ void LootingModel::startLooting(bool state) {
     }
 }
 
-void LootingModel::nextBpState(bool state) {
-    m_nextBpState = state;
-}
-
-void LootingModel::corpseBpState(bool state) {
-    m_corpseBpState = state;
-}
 
 QJsonArray LootingModel::toJson() const {
     QJsonArray jsonArray;
@@ -66,7 +54,7 @@ QJsonArray LootingModel::toJson() const {
         QJsonObject jsonObj;
         jsonObj["id"] = item.itemID;
         jsonObj["destination"] = QString::fromStdString(item.destination);
-        jsonObj["speed"] = item.lootingSpeed;
+        jsonObj["delay"] = item.delay;
         jsonArray.append(jsonObj);
     }
     return jsonArray;
@@ -74,13 +62,13 @@ QJsonArray LootingModel::toJson() const {
 
 void LootingModel::fromJson(const QJsonArray &json) {
     items.clear();
-    emit clearListWidget_signal();
+    emit clearTableWidget_signal();
     for (const auto &val : json) {
         QJsonObject obj = val.toObject();
-        int id = obj["id"].toInt();
+        QString srcItem = obj["id"].toString();
         QString dest = obj["destination"].toString();
-        int speed = obj["speed"].toInt();
-        addItem(id, dest, speed);
+        QString delay = obj["delay"].toString();
+        addItem(srcItem, dest, delay);
     }
 }
 
@@ -88,7 +76,7 @@ void LootingModel::deleteItem(const int& index) {
     items.erase(items.begin() + index);
 }
 
-void LootingModel::clearListWidget() {
+void LootingModel::clearTableWidget() {
     items.clear();
 }
 
