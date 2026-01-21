@@ -11,7 +11,7 @@ public:
     explicit SpellsModel(QObject *parent = nullptr);
     ~SpellsModel();
 
-    void addItem(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
+    void addItem(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, int priority);
     void startSpells(bool state);
 
     QJsonArray toJson() const;
@@ -21,7 +21,7 @@ public:
     void clearTableWidget();
 
     signals:
-    void addItem_signal(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, bool requiresTarget);
+    void addItem_signal(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, int priority);
     void clearTableWidget_signal();
 
 

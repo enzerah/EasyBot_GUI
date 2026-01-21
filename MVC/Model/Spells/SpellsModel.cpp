@@ -18,7 +18,7 @@ SpellsModel::~SpellsModel() {
 }
 
 void SpellsModel::addItem(const QString &target, const int &option, const QString &spellName, const int &count,
-    const int &dist, const int &minHp, const int &costMp, bool requiresTarget) {
+    const int &dist, const int &minHp, const int &costMp, int priority) {
     Spell spell;
     spell.targetName = target.toStdString();
     std::transform(spell.targetName.begin(), spell.targetName.end(), spell.targetName.begin(), ::tolower);
@@ -28,9 +28,9 @@ void SpellsModel::addItem(const QString &target, const int &option, const QStrin
     spell.dist = dist;
     spell.minHp = minHp;
     spell.costMp = costMp;
-    spell.requiresTarget = requiresTarget;
+    spell.priority = priority;
     spells.push_back(spell);
-    emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, requiresTarget);
+    emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, priority);
 }
 
 void SpellsModel::startSpells(bool state) {
@@ -60,7 +60,7 @@ QJsonArray SpellsModel::toJson() const {
         jsonObj["count"] = spell.count;
         jsonObj["option"] = spell.option;
         jsonObj["spellName"] = QString::fromStdString(spell.spellName);
-        jsonObj["requiresTarget"] = spell.requiresTarget;
+        jsonObj["priority"] = spell.priority;
         jsonObj["minHp"] = spell.minHp;
         jsonObj["costMp"] = spell.costMp;
         jsonArray.append(jsonObj);
@@ -80,8 +80,8 @@ void SpellsModel::fromJson(const QJsonArray &json) {
         int count = obj["count"].toInt();
         int minHp = obj["minHp"].toInt();
         int costMp = obj["costMp"].toInt();
-        int requiresTarget = obj["requiresTarget"].toBool();
-        addItem(target, option, spellName, count, dist, minHp, costMp, requiresTarget);
+        int priority = obj["priority"].toInt();
+        addItem(target, option, spellName, count, dist, minHp, costMp, priority);
     }
 }
 

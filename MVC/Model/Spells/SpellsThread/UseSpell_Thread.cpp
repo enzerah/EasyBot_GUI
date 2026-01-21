@@ -1,9 +1,87 @@
 #include "UseSpell_Thread.h"
-
+#include <algorithm>
+#include <cmath>
+#include <string>
+#include <vector>
 
 void UseSpell_Thread::run() {
     if (m_spells.empty()) return;
-    while (!isInterruptionRequested()) {
 
+    // Sort spells by priority (highest first)
+    std::sort(m_spells.begin(), m_spells.end(), [](const Spell& a, const Spell& b) {
+        return a.priority > b.priority;
+    });
+
+    while (!isInterruptionRequested()) {
+        while (proto->isAttacking()) {
+            if (isInterruptionRequested()) break;
+
+            uintptr_t localPlayer = proto->getLocalPlayer();
+            if (!localPlayer) break;
+
+            int playerHpPercent = proto->getHealthPercent(localPlayer);
+            double playerMana = proto->getMana(localPlayer);
+            Position playerPos = proto->getPosition(localPlayer);
+            uintptr_t currentTarget = proto->getAttackingCreature();
+
+            size_t nSpells = m_spells.size();
+            std::vector<int> countsToFind(nSpells);
+            std::vector<uintptr_t> bestCandidates(nSpells, 0);
+
+            for (size_t i = 0; i < nSpells; ++i) {
+                countsToFind[i] = m_spells[i].count;
+            }
+
+            auto spectators = proto->getSpectators(playerPos, false);
+            for (uintptr_t creature : spectators) {
+                if (creature == localPlayer) continue;
+                if (!proto->isMonster(creature)) continue;
+
+                Position creaturePos = proto->getPosition(creature);
+                int dx = std::abs(static_cast<int>(playerPos.x) - static_cast<int>(creaturePos.x));
+                int dy = std::abs(static_cast<int>(playerPos.y) - static_cast<int>(creaturePos.y));
+                int distance = std::max(dx, dy);
+
+                auto creatureName = proto->getCreatureName(creature);
+                std::transform(creatureName.begin(), creatureName.end(), creatureName.begin(), ::tolower);
+
+                for (size_t i = 0; i < nSpells; ++i) {
+                    const auto& spell = m_spells[i];
+                    if (distance > spell.dist) continue;
+                    if (spell.targetName != "*" && creatureName != spell.targetName) continue;
+
+                    countsToFind[i]--;
+                    // Priority candidate tracking for Use option
+                    if (!bestCandidates[i] || creature == currentTarget) {
+                        bestCandidates[i] = creature;
+                    }
+                }
+            }
+
+            for (size_t i = 0; i < nSpells; ++i) {
+                const auto& spell = m_spells[i];
+                if (countsToFind[i] <= 0) {
+                    if (playerHpPercent < spell.minHp) continue;
+                    if (playerMana < spell.costMp) continue;
+
+                    if (spell.option == 0) { // Say
+                        proto->talk(spell.spellName);
+                    } else if (spell.option == 1) { // Use
+                        uintptr_t useOn = currentTarget ? currentTarget : bestCandidates[i];
+                        if (useOn) {
+                            try {
+                                uint32_t itemId = std::stoul(spell.spellName);
+                                proto->useInventoryItemWith(itemId, useOn);
+                            } catch (...) {
+                                // Invalid ID
+                            }
+                        }
+                    }
+                    break; // Process one spell per tick
+                }
+            }
+            msleep(100);
+        }
+        msleep(300);
     }
 }

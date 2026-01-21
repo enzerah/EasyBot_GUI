@@ -751,7 +751,7 @@ struct Spell
     std::string spellName;
     int minHp;
     int costMp;
-    bool requiresTarget;
+    int priority;
 };
 
 struct Script {

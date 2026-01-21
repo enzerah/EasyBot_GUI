@@ -8,14 +8,15 @@ SpellsView::SpellsView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
-    ui->spells_tableWidget->setColumnCount(6);
-    ui->spells_tableWidget->setHorizontalHeaderLabels({"Target", "Action", "Count", "Dist", "HP%", "Cost"});
+    ui->spells_tableWidget->setColumnCount(7);
+    ui->spells_tableWidget->setHorizontalHeaderLabels({"Target", "Action", "Count", "Dist", "HP%", "Cost", "Priority"});
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
     ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
+    ui->spells_tableWidget->horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 
     connect(ui->add_pushButton, &QPushButton::clicked, this,[this] {
         auto target = ui->targetName_lineEdit->text();
@@ -25,17 +26,17 @@ SpellsView::SpellsView(QWidget *parent) :
         auto dist = ui->dist_comboBox->currentIndex() + 1;
         auto minHp = ui->minHp_lineEdit->text().toInt();
         auto costMp = ui->costMp_lineEdit->text().toInt();
-        bool requiresTarget = ui->requiresTarget_checkBox->isChecked();
-        emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, requiresTarget);
+        auto priority = ui->priority_lineEdit->text().toInt();
+        emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, priority);
 
         ui->spellName_lineEdit->clear();
         ui->targetName_lineEdit->clear();
         ui->minHp_lineEdit->clear();
         ui->costMp_lineEdit->clear();
+        ui->priority_lineEdit->clear();
         ui->count_comboBox->setCurrentIndex(0);
         ui->option_comboBox->setCurrentIndex(0);
         ui->dist_comboBox->setCurrentIndex(0);
-        ui->requiresTarget_checkBox->setChecked(false);
     });
 
     connect(ui->spells_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
@@ -56,12 +57,12 @@ SpellsView::~SpellsView() {
 }
 
 void SpellsView::addItem(const QString &target, const int &option, const QString &spellName, const int &count,
-    const int &dist, const int &minHp, const int &costMp, bool requiresTarget) {
+    const int &dist, const int &minHp, const int &costMp, int priority) {
     int row = ui->spells_tableWidget->rowCount();
     ui->spells_tableWidget->insertRow(row);
     QString action = option ? "Rune" : "Say";
     action += " \'" + spellName + "\'";
-    QStringList values = {target, action, QString::number(count), QString::number(dist), QString::number(minHp), QString::number(costMp)};
+    QStringList values = {target, action, QString::number(count), QString::number(dist), QString::number(minHp), QString::number(costMp), QString::number(priority)};
     for(int col = 0; col < values.size(); ++col) {
         QTableWidgetItem *item = new QTableWidgetItem(values[col]);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
