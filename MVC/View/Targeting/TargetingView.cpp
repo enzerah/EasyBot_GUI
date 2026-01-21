@@ -64,7 +64,11 @@ TargetingView::~TargetingView() {
 void TargetingView::addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks) {
     int row = ui->targets_tableWidget->rowCount();
     ui->targets_tableWidget->insertRow(row);
-    QStringList values = {targetName, dist, count, desiredStance, monstersAttacks};
+    QString newCount = count;
+    if (count == "0") {
+        newCount = "All";
+    }
+    QStringList values = {targetName, dist, newCount, desiredStance, monstersAttacks};
     for(int col = 0; col < values.size(); ++col) {
         QTableWidgetItem *item = new QTableWidgetItem(values[col]);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);

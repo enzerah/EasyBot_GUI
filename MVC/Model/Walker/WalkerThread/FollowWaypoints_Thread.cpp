@@ -31,6 +31,15 @@ void FollowWaypoints_Thread::run() {
             continue;
         }
 
+        if (playerPos.z != wpt.position.z) findNextValidWaypoint();
+
+        if (wpt.option != "Lure" && engine->hasTarget) {
+            proto->stopAutoWalk(localPlayer);
+            msleep(100);
+            proto->stop();
+            msleep(100);
+        }
+
         // If we are stuck on same waypoint for more than 20 seconds
         if (index != lastIndex) {
             lastIndex = index;
@@ -79,7 +88,6 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
         }
     } else {
         if (playerPos.x == wpt.position.x && playerPos.y == wpt.position.y && playerPos.z == wpt.position.z) {
-            std::cout << playerPos.x << " " << playerPos.y << " " << playerPos.z << std::endl;
             if (wpt.direction != "C") {
                 auto wptPos = wpt.position;
                 auto direction = getDirection(wpt.direction);
@@ -133,7 +141,6 @@ void FollowWaypoints_Thread::performUse(Waypoint wpt, uintptr_t localPlayer, Pos
         proto->autoWalk(localPlayer, wpt.position, false);
         return;
     }
-    int itemId = std::stoi(wpt.action);
     auto wptPos = wpt.position;
     auto direction = getDirection(wpt.direction);
     if (direction == Otc::North) wptPos.y -=1;
@@ -144,20 +151,21 @@ void FollowWaypoints_Thread::performUse(Waypoint wpt, uintptr_t localPlayer, Pos
     if (direction == Otc::SouthEast) wptPos.x +=1, wptPos.y +=1;
     if (direction == Otc::SouthWest) wptPos.x -=1, wptPos.y +=1;
     if (direction == Otc::NorthWest) wptPos.x -=1, wptPos.y -=1;
-    if (itemId == 0) {
+    if (wpt.action.empty()) {
         auto tile = proto->getTile(wptPos);
         auto topThing = proto->getTopUseThing(tile);
         proto->use(topThing);
-        msleep(500);
+        msleep(1000);
         index = (index + 1) % waypoints.size();
         emit indexUpdate_signal(static_cast<int>(index));
     } else {
+        int itemId = std::stoi(wpt.action);
         auto item = proto->findItemInContainers(itemId, -1, 0);
         if (item) {
             auto tile = proto->getTile(wptPos);
             auto topThing = proto->getTopUseThing(tile);
             proto->useWith(item, topThing);
-            msleep(500);
+            msleep(1000);
             index = (index + 1) % waypoints.size();
             emit indexUpdate_signal(static_cast<int>(index));
         }
@@ -202,7 +210,7 @@ void FollowWaypoints_Thread::findNextValidWaypoint() {
     auto playerPos = proto->getPosition(localPlayer);
     for (int i = index; i < waypoints.size(); ++i) {
         const auto& wpt = waypoints[i];
-        if ((playerPos.z != wpt.position.z || wpt.direction != "C") && (wpt.option != "Node" || wpt.option != "Stand")) {
+        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) {
             continue;
         }
         int dist = std::max(

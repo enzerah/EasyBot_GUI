@@ -7,10 +7,12 @@
 void AttackTargets_Thread::run() {
     if (m_targets.empty()) return;
 
+    std::cout << m_targets[0].count << std::endl;
+
+
     engine->hasTarget = false;
     currentTarget = {};
 
-    bool lootCorpse = false;
 
     while (!isInterruptionRequested()) {
         msleep(50);
@@ -19,46 +21,14 @@ void AttackTargets_Thread::run() {
         auto playerPos = proto->getPosition(localPlayer);
 
         // If player is not attacking
-        if (!proto->isAttacking()) {
-            if (m_openCorpseState && lootCorpse) {
-                lootCorpse = false;
-                int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(currentTarget.truePos.x)),
-                    std::abs(static_cast<int>(playerPos.y) - static_cast<int>(currentTarget.truePos.y)));
-                QElapsedTimer walkToCorpseTimer;
-                walkToCorpseTimer.start();
-                while (dist > 1) {
-                    if (walkToCorpseTimer.hasExpired(5000)) break;
-                    dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(currentTarget.truePos.x)),
-                        std::abs(static_cast<int>(playerPos.y) - static_cast<int>(currentTarget.truePos.y)));
-                    playerPos = proto->getPosition(localPlayer);
-                    std::cout << "Autowalking to corpse because dist is " << dist << std::endl;
-                    proto->autoWalk(localPlayer, currentTarget.truePos, false);
-                    msleep(100);
-                }
-                for (int x =-1; x <= 1; x++) {
-                    for (int y =-1; y <= 1; y++) {
-                        auto openPos = playerPos;
-                        openPos.x += x;
-                        openPos.y += y;
-                        auto tile = proto->getTile(openPos);
-                        auto topUseThing = proto->getTopUseThing(tile);
-                        if (proto->isContainer(topUseThing)) {
-                            proto->open(topUseThing, 0);
-                            msleep(100);
-                        }
-                    }
-                }
-                engine->isLooting = true;
-                QElapsedTimer lootingTimer;
-                lootingTimer.start();
-                while (engine->isLooting) {
-                    // Loot for only 5 sec
-                    if (lootingTimer.hasExpired(5000)) break;
-                    msleep(50);
-                }
-            }
+        if (!proto->isAttacking() || engine->hasTarget == false) {
             currentTarget = {};
             auto spectators = proto->getSpectators(playerPos, false);
+
+            std::map<std::string, int> countsToFind;
+            for (const auto& target : m_targets) {
+                countsToFind[target.name] = target.count;
+            }
             // Iterate over all spectators
             std::vector<MonsterCandidate> monsters;
             for (auto spectator : spectators) {
@@ -71,6 +41,7 @@ void AttackTargets_Thread::run() {
                     int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(monsterPos.x)),
                         std::abs(static_cast<int>(playerPos.y) - static_cast<int>(monsterPos.y)));
                     if (target.dist > 0 && dist > target.dist) continue;
+                    countsToFind[target.name] -= 1;
                     monsters.push_back({dist, spectator, monsterPos, target});
                     break; // One target can only match one name
                 }
@@ -85,14 +56,24 @@ void AttackTargets_Thread::run() {
             std::sort(monsters.begin(), monsters.end(), [](const MonsterCandidate& a, const MonsterCandidate& b) {
                 return a.dist < b.dist;
             });
+            proto->setChaseMode(Otc::DontChase);
             // Rest of checks
             for (const auto& monster : monsters) {
+
                 bool reachable = true;
                 bool shootable = true;
                 // If monster stays above us we consider it as reachable and shootable
                 if (monster.dist < 2) {
-                    engine->hasTarget = true;
-                    proto->attack(monster.id, false);
+                    if (countsToFind[monster.target.name] <= 0) {
+                        std::cout << "Blocking Walker " << std::endl;
+                        std::cout << countsToFind[monster.target.name] << std::endl;
+                        engine->hasTarget = true;
+                    } else {
+                        std::cout << "Unlocking Walker " << std::endl;
+                        std::cout << countsToFind[monster.target.name] << std::endl;
+                        engine->hasTarget = false;
+                    }
+                    if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
                     msleep(100);
                     currentTarget = monster;
                     break;
@@ -104,15 +85,21 @@ void AttackTargets_Thread::run() {
                     shootable = isShootable(monster.id, monster.dist);
                 }
                 if (reachable && shootable) {
-                    engine->hasTarget = true;
-                    proto->attack(monster.id, false);
+                    if (countsToFind[monster.target.name] <= 0) {
+                        std::cout << "Blocking Walker " << std::endl;
+                        std::cout << countsToFind[monster.target.name] << std::endl;
+                    } else {
+                        std::cout << "Unlocking Walker " << std::endl;
+                        std::cout << countsToFind[monster.target.name] << std::endl;
+                        engine->hasTarget = false;
+                    }
+                    if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
                     msleep(100);
                     currentTarget = monster;
                     break;
                 }
             }
-        } else {
-            lootCorpse = true;
+        } else if (engine->hasTarget) {
             bool reachable = true;
             bool shootable = true;
             if (proto->isDead(currentTarget.id)) {
@@ -140,11 +127,14 @@ void AttackTargets_Thread::run() {
                 msleep(100);
                 proto->cancelAttackAndFollow();
                 msleep(100);
-                lootCorpse = false;
                 continue;
             }
             // If Target is reachable and shootable
-            desiredStance(localPlayer, playerPos, currentTarget.truePos);
+            if (engine->hasTarget) {
+                desiredStance(localPlayer, playerPos, currentTarget.truePos);
+            } else {
+                proto->setChaseMode(Otc::DontChase);
+            }
         }
     }
 }

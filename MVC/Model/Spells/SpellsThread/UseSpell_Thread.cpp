@@ -26,7 +26,6 @@ void UseSpell_Thread::run() {
 
             size_t nSpells = m_spells.size();
             std::vector<int> countsToFind(nSpells);
-            std::vector<uintptr_t> bestCandidates(nSpells, 0);
 
             for (size_t i = 0; i < nSpells; ++i) {
                 countsToFind[i] = m_spells[i].count;
@@ -49,12 +48,7 @@ void UseSpell_Thread::run() {
                     const auto& spell = m_spells[i];
                     if (distance > spell.dist) continue;
                     if (spell.targetName != "*" && creatureName != spell.targetName) continue;
-
                     countsToFind[i]--;
-                    // Priority candidate tracking for Use option
-                    if (!bestCandidates[i] || creature == currentTarget) {
-                        bestCandidates[i] = creature;
-                    }
                 }
             }
 
@@ -67,15 +61,7 @@ void UseSpell_Thread::run() {
                     if (spell.option == 0) { // Say
                         proto->talk(spell.spellName);
                     } else if (spell.option == 1) { // Use
-                        uintptr_t useOn = currentTarget ? currentTarget : bestCandidates[i];
-                        if (useOn) {
-                            try {
-                                uint32_t itemId = std::stoul(spell.spellName);
-                                proto->useInventoryItemWith(itemId, useOn);
-                            } catch (...) {
-                                // Invalid ID
-                            }
-                        }
+
                     }
                     break; // Process one spell per tick
                 }
