@@ -217,7 +217,7 @@ void FollowWaypoints_Thread::findNextValidWaypoint() {
             std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y))
         );
-        if (dist < 7) {
+        if (dist < 150) {
             index = i;
             return;
         }
