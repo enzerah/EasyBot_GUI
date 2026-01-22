@@ -109,6 +109,7 @@ namespace LuaBindings {
                 .addFunction("getStamina", &BotClient::getStamina)
                 .addFunction("hasEquippedItemId", &BotClient::hasEquippedItemId)
                 .addFunction("getInventoryCount", &BotClient::getInventoryCount)
+                .addFunction("getInventoryItem", [](BotClient* client, uintptr_t localPlayer, int mode) { return client->getInventoryItem(localPlayer, (Otc::InventorySlot)mode); })
                 .addFunction("hasSight", &BotClient::hasSight)
                 .addFunction("isAutoWalking", &BotClient::isAutoWalking)
                 .addFunction("stopAutoWalk", &BotClient::stopAutoWalk)
