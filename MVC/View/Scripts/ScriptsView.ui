@@ -38,16 +38,6 @@
       <attribute name="verticalHeaderCascadingSectionResizes">
        <bool>false</bool>
       </attribute>
-      <column>
-       <property name="text">
-        <string>Scripts</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Status</string>
-       </property>
-      </column>
      </widget>
     </item>
    </layout>

@@ -15,6 +15,8 @@ public:
     void requestStop();
     std::string getReturnedString() const { return m_returnedString; }
 
+    static std::string preprocess(const std::string& script);
+
 protected:
     void run() override;
 

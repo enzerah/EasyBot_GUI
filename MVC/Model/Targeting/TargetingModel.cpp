@@ -18,7 +18,7 @@ TargetingModel::~TargetingModel() {
 }
 
 void TargetingModel::addItem(const QString &targetName, const int &dist, const int &count,
-    const QString &desiredStance, const QString &monstersAttacks) {
+    const QString &desiredStance, const QString &monstersAttacks, bool openCorpse) {
     Target target;
     target.name = targetName.toStdString();
     std::transform(target.name .begin(), target.name .end(), target.name .begin(), ::tolower);
@@ -26,12 +26,14 @@ void TargetingModel::addItem(const QString &targetName, const int &dist, const i
     target.dist = dist;
     target.desiredStance = desiredStance.toStdString();
     target.monstersAttacks = monstersAttacks.toStdString();
+    target.openCorpse = openCorpse;
     targets.push_back(target);
     QString distString = QString::number(dist);
-    if (!dist) {
-        distString = "All";
-    }
-    emit addItem_signal(targetName, distString, QString::number(count), desiredStance, monstersAttacks);
+    QString countString = QString::number(count);
+
+    if (!dist) distString = "All";
+    if (count == 1) countString = "Any";
+    emit addItem_signal(targetName, distString, countString, desiredStance, monstersAttacks, openCorpse);
 }
 
 void TargetingModel::shootableState(bool state) {
@@ -50,13 +52,6 @@ void TargetingModel::reachableState(bool state) {
 }
 
 
-void TargetingModel::openCorpseState(bool state) {
-    m_openCorpse = state;
-    if (attackTargetsThread) {
-        emit openCorpseStateChanged_signal(state);
-    }
-}
-
 void TargetingModel::stayAwayDist(int currentDist) {
     m_stayAwayDist = currentDist;
     if (attackTargetsThread) {
@@ -68,10 +63,9 @@ void TargetingModel::stayAwayDist(int currentDist) {
 void TargetingModel::startTargeting(bool state) {
     if (state) {
         if (!attackTargetsThread) {
-            attackTargetsThread = new AttackTargets_Thread(targets, m_reachable, m_shootable, m_openCorpse, m_stayAwayDist, blockedTiles, this);
+            attackTargetsThread = new AttackTargets_Thread(targets, m_reachable, m_shootable, m_stayAwayDist, blockedTiles, this);
             connect(this, &TargetingModel::shootableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::shootableStateChange);
             connect(this, &TargetingModel::reachableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::reachableStateChange);
-            connect(this, &TargetingModel::openCorpseStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::openCorpseStateChange);
             connect(this, &TargetingModel::stayAwayDistChanged_signal,attackTargetsThread, &AttackTargets_Thread::stayAwayDistChange);
             connect(attackTargetsThread, &QThread::finished, attackTargetsThread, &QObject::deleteLater);
             connect(attackTargetsThread, &QThread::finished, this, [this]() {
@@ -96,6 +90,7 @@ QJsonArray TargetingModel::toJson() const {
         jsonObj["count"] = target.count;
         jsonObj["stance"] = QString::fromStdString(target.desiredStance);
         jsonObj["attack"] = QString::fromStdString(target.monstersAttacks);
+        jsonObj["open"] = target.openCorpse;
         jsonArray.append(jsonObj);
     }
     QJsonArray blockedTilesArray;
@@ -131,7 +126,8 @@ void TargetingModel::fromJson(const QJsonArray &json) {
                 int count = obj["count"].toInt();
                 QString stance = obj["stance"].toString();
                 QString attack = obj["attack"].toString();
-                addItem(name, dist, count, stance, attack);
+                bool open = obj["open"].toBool();
+                addItem(name, dist, count, stance, attack, open);
             }
         }
         if (mainObj.contains("blockedTiles")) {
@@ -152,7 +148,8 @@ void TargetingModel::fromJson(const QJsonArray &json) {
             int count = obj["count"].toInt();
             QString stance = obj["stance"].toString();
             QString attack = obj["attack"].toString();
-            addItem(name, dist, count, stance, attack);
+            bool open = obj["open"].toBool();
+            addItem(name, dist, count, stance, attack, open);
         }
     }
 }

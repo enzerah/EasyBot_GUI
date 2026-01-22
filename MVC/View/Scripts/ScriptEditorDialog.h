@@ -5,6 +5,7 @@
 #include "CodeEditor.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QListWidget>
 #include <QLineEdit>
 
 class ScriptEditorDialog : public QDialog {
@@ -17,8 +18,18 @@ public:
     QString getName() const;
 
 private:
+    void populateLists();
     QLineEdit *m_nameEdit;
     CodeEditor *m_codeEditor;
+
+    QListWidget *m_gameList;
+    QListWidget *m_localPlayerList;
+    QListWidget *m_containerList;
+    QListWidget *m_creatureList;
+    QListWidget *m_itemList;
+    QListWidget *m_mapList;
+    QListWidget *m_thingList;
+    QListWidget *m_tileList;
 };
 
 #endif // SCRIPTEDITORDIALOG_H

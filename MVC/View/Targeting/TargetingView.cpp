@@ -6,13 +6,14 @@ TargetingView::TargetingView(QWidget *parent) :
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
-    ui->targets_tableWidget->setColumnCount(5);
-    ui->targets_tableWidget->setHorizontalHeaderLabels({"Name", "Dist", "Count", "Stance", "Attacks"});
+    ui->targets_tableWidget->setColumnCount(6);
+    ui->targets_tableWidget->setHorizontalHeaderLabels({"Name", "Dist", "Count", "Stance", "Attacks", "Open"});
     ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
     ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
+    ui->targets_tableWidget->horizontalHeader()->setSectionResizeMode(5, QHeaderView::ResizeToContents);
 
     connect(ui->add_pushButton, &QPushButton::clicked, this, [this]() {
         QString targetName = ui->name_lineEdit->text();
@@ -20,17 +21,18 @@ TargetingView::TargetingView(QWidget *parent) :
         int count = ui->count_comboBox->currentIndex() + 1;
         QString desiredStance = ui->stance_comboBox->currentText();
         QString monstersAttacks = ui->monsterAttacks_comboBox->currentText();
-        emit addItem_signal(targetName, dist, count, desiredStance, monstersAttacks);
+        bool openCorpse = ui->open_checkBox->isChecked();
+        emit addItem_signal(targetName, dist, count, desiredStance, monstersAttacks, openCorpse);
         ui->name_lineEdit->clear();
         ui->dist_comboBox->setCurrentIndex(0);
         ui->stance_comboBox->setCurrentIndex(0);
         ui->count_comboBox->setCurrentIndex(0);
         ui->monsterAttacks_comboBox->setCurrentIndex(0);
+        ui->open_checkBox->setChecked(false);
     });
 
     connect(ui->shootable_checkBox, &QCheckBox::toggled, this, &TargetingView::shootableState_signal);
     connect(ui->reachable_checkBox, &QCheckBox::toggled, this, &TargetingView::reachableState_signal);
-    connect(ui->open_checkBox, &QCheckBox::toggled, this, &TargetingView::openCorpseState_signal);
     connect(ui->dist_horizontalSlider, &QSlider::valueChanged, this, &TargetingView::stayAwayDist_signal);
 
     connect(ui->targets_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
@@ -61,14 +63,11 @@ TargetingView::~TargetingView() {
     delete ui;
 }
 
-void TargetingView::addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks) {
+void TargetingView::addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse) {
     int row = ui->targets_tableWidget->rowCount();
     ui->targets_tableWidget->insertRow(row);
-    QString newCount = count;
-    if (count == "0") {
-        newCount = "All";
-    }
-    QStringList values = {targetName, dist, newCount, desiredStance, monstersAttacks};
+    QString open = openCorpse ? "Yes" : "No";
+    QStringList values = {targetName, dist, count, desiredStance, monstersAttacks, open};
     for(int col = 0; col < values.size(); ++col) {
         QTableWidgetItem *item = new QTableWidgetItem(values[col]);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);

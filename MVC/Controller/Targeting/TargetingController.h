@@ -18,10 +18,8 @@ class TargetingController : public QObject {
 
     private slots:
     // TargetingView Requests
-    void addItem_View(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
     void shootableState_View(bool state);
     void reachableState_View(bool state);
-    void openCorpseState_View(bool state);
     void stayAwayDist_View(int value);
     void deleteItem_View(const int &index);
     void addBlockedTile_View(const int &x, const int &y, const int &z);
@@ -29,8 +27,7 @@ class TargetingController : public QObject {
     void clearListWidget_View();
 
 
-    // TargetingModel Requests
-    void addItem_Model(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
+    // TargetingModel Requests;
     void clearListWidget_Model();
     void addBlockedTile_Model(const QString &tile);
     void clearBlockedTilesListWidget_Model();

@@ -17,10 +17,9 @@ class TargetingModel : public QObject {
     explicit TargetingModel(QObject *parent = nullptr);
     ~TargetingModel();
 
-    void addItem(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
+    void addItem(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
     void shootableState(bool state);
     void reachableState(bool state);
-    void openCorpseState(bool state);
     void stayAwayDist(int currentDist);
     void startTargeting(bool state);
     void addBlockedTile(const int &x, const int &y, const int &z);
@@ -35,10 +34,9 @@ class TargetingModel : public QObject {
 
 
     signals:
-    void addItem_signal(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
+    void addItem_signal(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
     void shootableStateChanged_signal(bool state);
     void reachableStateChanged_signal(bool state);
-    void openCorpseStateChanged_signal(bool state);
     void stayAwayDistChanged_signal(int currentDist);
     void clearListWidget_signal();
     void addBlockedTile_signal(const QString &tile);
@@ -50,7 +48,6 @@ private:
     AttackTargets_Thread *attackTargetsThread = nullptr;
     bool m_shootable = false;
     bool m_reachable = false;
-    bool m_openCorpse = false;
     int m_stayAwayDist = 2;
 
 };

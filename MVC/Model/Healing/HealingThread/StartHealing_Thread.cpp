@@ -30,7 +30,7 @@ void StartHealing_Thread::run()
         }
         if (heal.condition == "MP%") {
             if (heal.below >= current_mp_pc && current_mp_pc >= heal.above &&
-                current_hp >= heal.minimum) {
+                current_hp_pc >= heal.minimum) {
                 if (heal.action == "Say") {
                     proto->talk(heal.heal);
                 } else if (heal.action == "Use") {

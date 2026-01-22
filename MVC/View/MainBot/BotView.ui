@@ -66,6 +66,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="looting_pushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Looting</string>
         </property>
@@ -318,6 +321,9 @@
          </item>
          <item row="2" column="1">
           <widget class="QCheckBox" name="looting_checkBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Looting</string>
            </property>

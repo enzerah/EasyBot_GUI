@@ -161,5 +161,4 @@ void AttackTargets_Thread::desiredStance(uintptr_t localPlayer, Position playerP
 
 void AttackTargets_Thread::shootableStateChange(bool state) { m_shootableState = state; }
 void AttackTargets_Thread::reachableStateChange(bool state) { m_reachableState = state; }
-void AttackTargets_Thread::openCorpseStateChange(bool state) { m_openCorpseState = state; }
 void AttackTargets_Thread::stayAwayDistChange(int currentDist){ m_stayAwayDistance = currentDist; }

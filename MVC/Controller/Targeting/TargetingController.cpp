@@ -9,10 +9,9 @@ TargetingController::TargetingController(QObject* parent)
     m_view = new TargetingView();
 
     // Targeting View requests
-    connect(m_view, &TargetingView::addItem_signal, this, &TargetingController::addItem_View);
+    connect(m_view, &TargetingView::addItem_signal, m_model, &TargetingModel::addItem);
     connect(m_view, &TargetingView::shootableState_signal, this, &TargetingController::shootableState_View);
     connect(m_view, &TargetingView::reachableState_signal, this, &TargetingController::reachableState_View);
-    connect(m_view, &TargetingView::openCorpseState_signal, this, &TargetingController::openCorpseState_View);
     connect(m_view, &TargetingView::stayAwayDist_signal, this, &TargetingController::stayAwayDist_View);
     connect(m_view, &TargetingView::deleteItem_signal, this, &TargetingController::deleteItem_View);
     connect(m_view, &TargetingView::clearTableWidget_signal, this, &TargetingController::clearListWidget_View);
@@ -22,7 +21,7 @@ TargetingController::TargetingController(QObject* parent)
     connect(m_view, &TargetingView::deleteBlockedTile_signal, this, &TargetingController::deleteBlockedTile_View);
 
     // Targeting Model requests
-    connect(m_model, &TargetingModel::addItem_signal, this, &TargetingController::addItem_Model);
+    connect(m_model, &TargetingModel::addItem_signal, m_view, &TargetingView::addItem);
     connect(m_model, &TargetingModel::clearListWidget_signal, this, &TargetingController::clearListWidget_Model);
     
     // Connect blocked tiles model signals
@@ -42,11 +41,6 @@ void TargetingController::showView()
     m_view->show();
 }
 
-void TargetingController::addItem_View(const QString &targetName, const int &dist, const int &count,
-    const QString &desiredStance, const QString &monstersAttacks) {
-    m_model->addItem(targetName, dist, count, desiredStance, monstersAttacks);
-}
-
 void TargetingController::shootableState_View(bool state) {
     m_model->shootableState(state);
 }
@@ -55,9 +49,6 @@ void TargetingController::reachableState_View(bool state) {
     m_model->reachableState(state);
 }
 
-void TargetingController::openCorpseState_View(bool state) {
-    m_model->openCorpseState(state);
-}
 
 void TargetingController::stayAwayDist_View(int value) {
     m_model->stayAwayDist(value +1);
@@ -65,11 +56,6 @@ void TargetingController::stayAwayDist_View(int value) {
 
 void TargetingController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
-}
-
-void TargetingController::addItem_Model(const QString &targetName, const QString &dist, const QString &count,
-    const QString &desiredStance, const QString &monstersAttacks) {
-    m_view->addItem(targetName, dist, count, desiredStance, monstersAttacks);
 }
 
 void TargetingController::clearListWidget_Model() {

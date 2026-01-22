@@ -8,12 +8,11 @@
 class AttackTargets_Thread : public QThread {
     Q_OBJECT
     public:
-    explicit AttackTargets_Thread(const std::vector<Target> &targets, bool reachableSate, bool shootableState, bool openCorpseState, int stayAwayDist, const std::vector<Position> &blockedTiles,QObject *parent = nullptr)
-        : QThread(parent), m_targets(targets), m_reachableState(reachableSate), m_shootableState(shootableState), m_openCorpseState(openCorpseState), m_stayAwayDistance(stayAwayDist), m_blockedTiles(blockedTiles) {}
+    explicit AttackTargets_Thread(const std::vector<Target> &targets, bool reachableSate, bool shootableState, int stayAwayDist, const std::vector<Position> &blockedTiles,QObject *parent = nullptr)
+        : QThread(parent), m_targets(targets), m_reachableState(reachableSate), m_shootableState(shootableState), m_stayAwayDistance(stayAwayDist), m_blockedTiles(blockedTiles) {}
 public slots:
     void shootableStateChange(bool state);
     void reachableStateChange(bool state);
-    void openCorpseStateChange(bool state);
     void stayAwayDistChange(int currentDist);
 protected:
     void run() override;
@@ -21,7 +20,6 @@ private:
     std::vector<Target> m_targets;
     bool m_shootableState = false;
     bool m_reachableState = false;
-    bool m_openCorpseState = false;
     int m_stayAwayDistance = 1;
     std::vector<Position> m_blockedTiles{};
 

@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
+#include <regex>
+#include <sstream>
 
 
 void LuaEngine::run() {
@@ -22,7 +24,7 @@ void LuaEngine::run() {
         }
     }
 
-    executeLuaScript(scriptToExecute);
+    executeLuaScript(preprocess(scriptToExecute));
     closeLua();
 }
 
@@ -106,4 +108,64 @@ void LuaEngine::luaHookCallback(lua_State* L, lua_Debug* ar) {
         // Throw a Lua error to stop execution
         luaL_error(L, "Script interrupted");
     }
+}
+
+std::string LuaEngine::preprocess(const std::string& script) {
+    std::istringstream stream(script);
+    std::string line;
+    std::string result;
+    int blockLevel = 0;
+
+    // Regex to match if/elseif/while/for/function/repeat
+    std::regex blockStartRegex(R"(^\s*(if|elseif|while|for|function|repeat)\b)", std::regex_constants::icase);
+    // Regex to match then/do/until/end
+    std::regex blockEndRegex(R"(\b(then|do|until|end)\s*$)", std::regex_constants::icase);
+    // Regex to match end specifically
+    std::regex endRegex(R"(^\s*end\b)", std::regex_constants::icase);
+    // Regex to match repeat specifically
+    std::regex repeatRegex(R"(^\s*repeat\b)", std::regex_constants::icase);
+
+    while (std::getline(stream, line)) {
+        std::smatch match;
+        std::string trimmedLine = line;
+        trimmedLine.erase(0, trimmedLine.find_first_not_of(" \t\r\n"));
+        trimmedLine.erase(trimmedLine.find_last_not_of(" \t\r\n") + 1);
+
+        if (trimmedLine.empty()) {
+            result += line + "\n";
+            continue;
+        }
+
+        // Check for end
+        if (std::regex_search(trimmedLine, match, endRegex)) {
+            blockLevel--;
+        } else if (std::regex_search(trimmedLine, match, blockStartRegex)) {
+            std::string keyword = match[1];
+            bool hasBlockEnd = std::regex_search(trimmedLine, match, blockEndRegex);
+
+            if (keyword == "if" || keyword == "elseif") {
+                if (!hasBlockEnd && trimmedLine.find(" then") == std::string::npos && trimmedLine.back() != ':') {
+                    line += " then";
+                }
+            } else if (keyword == "while" || keyword == "for") {
+                if (!hasBlockEnd && trimmedLine.find(" do") == std::string::npos) {
+                    line += " do";
+                }
+            }
+
+            if (keyword != "elseif") {
+                 blockLevel++;
+            }
+        }
+
+        result += line + "\n";
+    }
+
+    // Close remaining blocks
+    while (blockLevel > 0) {
+        result += "end\n";
+        blockLevel--;
+    }
+
+    return result;
 }

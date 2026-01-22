@@ -15,19 +15,18 @@ public:
     explicit TargetingView(QWidget *parent = nullptr);
     ~TargetingView() override;
 
-    void addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks);
+    void addItem(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
     void clearTableWidget();
     void addBlockedTile(const QString &tile);
     void clearBlockedTilesListWidget();
 
     signals:
-    void addItem_signal(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks);
+    void addItem_signal(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
     void addBlockedTile_signal(const int &x, const int &y, const int &z);
     void clearTableWidget_signal();
 
     void shootableState_signal(bool state);
     void reachableState_signal(bool state);
-    void openCorpseState_signal(bool state);
     void stayAwayDist_signal(int distance);
     void deleteItem_signal(const int &index);
     void deleteBlockedTile_signal(const int &index);

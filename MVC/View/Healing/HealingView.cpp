@@ -16,6 +16,14 @@ HealingView::HealingView(QWidget *parent) :
     ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
     ui->healing_tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
 
+    connect(ui->condition_comboBox, &QComboBox::currentIndexChanged, this, [this](int index) {
+        if (index == 0) {
+            ui->label_10->setText("Min. MP");
+        } else {
+            ui->label_10->setText("Min. HP%");
+        }
+    });
+
     connect(ui->add_pushButton, &QPushButton::clicked, this, [this]() {
         auto action = ui->action_comboBox->currentText();
         auto heal = ui->heal_lineEdit->text();
