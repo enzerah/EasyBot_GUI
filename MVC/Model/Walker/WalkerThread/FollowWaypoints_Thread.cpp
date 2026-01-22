@@ -191,9 +191,7 @@ void FollowWaypoints_Thread::findClosestWaypoint() {
     auto playerPos = proto->getPosition(localPlayer);
     for (int i = 0; i < waypoints.size(); ++i) {
         const auto& wpt = waypoints[i];
-        if (playerPos.z != wpt.position.z || wpt.direction != "C") {
-            continue;
-        }
+        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) continue;
         int dist = std::max(
             std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y))
@@ -210,19 +208,18 @@ void FollowWaypoints_Thread::findNextValidWaypoint() {
     auto playerPos = proto->getPosition(localPlayer);
     for (int i = index; i < waypoints.size(); ++i) {
         const auto& wpt = waypoints[i];
-        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) {
-            continue;
-        }
+        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) continue;
         int dist = std::max(
             std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y))
         );
-        if (dist < 150) {
+        if (dist < 7) {
             index = i;
             return;
         }
     }
-
+    // If not found any ValidWpt finds closest
+    findClosestWaypoint();
 }
 
 
