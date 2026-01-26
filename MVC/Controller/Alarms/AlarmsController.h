@@ -13,10 +13,14 @@ public:
 
     void showView();
 
+private slots:
+    void onSettingsChanged();
+
 private:
     AlarmsView *m_view;
     AlarmsModel *m_model;
 };
+
 
 
 #endif //ALARMSCONTROLLER_H
