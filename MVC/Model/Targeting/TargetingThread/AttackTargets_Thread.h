@@ -14,6 +14,7 @@ public slots:
     void shootableStateChange(bool state);
     void reachableStateChange(bool state);
     void stayAwayDistChange(int currentDist);
+    void updateData(std::vector<Target>);
 protected:
     void run() override;
 private:

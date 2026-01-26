@@ -22,6 +22,7 @@ public:
     signals:
     void addItem_signal(const QString &srcItem, const QString &dstItem, const QString &delay);
     void clearTableWidget_signal();
+    void updateData_signal(std::vector<Item>);
 
 
 private:

@@ -9,6 +9,8 @@ class StartHealing_Thread : public QThread {
     public:
     explicit StartHealing_Thread(const std::vector<Heal> &heals, QObject *parent = nullptr)
     : QThread(parent), heals(heals) {}
+    public slots:
+    void updateData(std::vector<Heal>);
 protected:
     void run() override;
 private:

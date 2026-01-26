@@ -67,6 +67,7 @@ void TargetingModel::startTargeting(bool state) {
             connect(this, &TargetingModel::shootableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::shootableStateChange);
             connect(this, &TargetingModel::reachableStateChanged_signal,attackTargetsThread, &AttackTargets_Thread::reachableStateChange);
             connect(this, &TargetingModel::stayAwayDistChanged_signal,attackTargetsThread, &AttackTargets_Thread::stayAwayDistChange);
+            connect(this, &TargetingModel::updateData_signal,attackTargetsThread, &AttackTargets_Thread::updateData);
             connect(attackTargetsThread, &QThread::finished, attackTargetsThread, &QObject::deleteLater);
             connect(attackTargetsThread, &QThread::finished, this, [this]() {
                 this->attackTargetsThread = nullptr;

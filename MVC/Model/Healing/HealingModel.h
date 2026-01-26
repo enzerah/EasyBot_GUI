@@ -30,6 +30,7 @@ public:
     void addItem_signal(const QString &action, const QString &heal, const QString &condition, const int &random,
         const int &below, const int &above, const int &minimum);
     void clearTableWidget_signal();
+    void updateData_signal(std::vector<Heal>);
 
 private:
     std::vector<Heal> heals;

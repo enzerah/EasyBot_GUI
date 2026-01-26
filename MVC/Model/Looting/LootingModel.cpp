@@ -34,6 +34,7 @@ void LootingModel::startLooting(bool state) {
         if (!lootItemsThread) {
             lootItemsThread = new LootItems_Thread(items, this);
             connect(lootItemsThread, &QThread::finished, lootItemsThread, &QObject::deleteLater);
+            connect(this, &LootingModel::updateData_signal,lootItemsThread, &LootItems_Thread::updateData);
             connect(lootItemsThread, &QThread::finished, this, [this]() {
                 this->lootItemsThread = nullptr;
             });

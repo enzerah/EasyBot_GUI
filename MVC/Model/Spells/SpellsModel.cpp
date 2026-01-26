@@ -39,6 +39,7 @@ void SpellsModel::startSpells(bool state) {
     if (state) {
         if (!useSpellThread) {
             useSpellThread = new UseSpell_Thread(spells, this);
+            connect(this, &SpellsModel::updateData_signal,useSpellThread, &UseSpell_Thread::updateData);
             connect(useSpellThread, &QThread::finished, useSpellThread, &QObject::deleteLater);
             connect(useSpellThread, &QThread::finished, this, [this]() {
                 this->useSpellThread = nullptr;

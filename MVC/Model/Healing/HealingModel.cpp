@@ -42,6 +42,7 @@ void HealingModel::startHealing(bool state) {
         if (!startHealingThread) {
             startHealingThread = new StartHealing_Thread(heals, this);
             connect(startHealingThread, &QThread::finished, startHealingThread, &QObject::deleteLater);
+            connect(this, &HealingModel::updateData_signal,startHealingThread, &StartHealing_Thread::updateData);
             connect(startHealingThread, &QThread::finished, this, [this]() {
                 this->startHealingThread = nullptr;
             });

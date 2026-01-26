@@ -23,6 +23,7 @@ public:
     signals:
     void addItem_signal(const QString &target, const int &option, const QString &spellName, const int &count, const int &dist, const int &minHp, const int &costMp, int priority, bool requiresTarget, bool playerProtection);
     void clearTableWidget_signal();
+    void updateData_signal(std::vector<Spell>);
 
 
 

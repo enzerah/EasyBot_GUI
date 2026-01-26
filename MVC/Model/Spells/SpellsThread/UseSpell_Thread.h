@@ -11,6 +11,9 @@ class UseSpell_Thread : public QThread {
     explicit UseSpell_Thread(const std::vector<Spell> &spells, QObject *parent = nullptr)
     : QThread(parent), m_spells(spells) {}
 
+    public slots:
+    void updateData(std::vector<Spell>);
+
 protected:
     void run() override;
 

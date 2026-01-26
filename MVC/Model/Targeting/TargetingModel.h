@@ -41,6 +41,7 @@ class TargetingModel : public QObject {
     void clearListWidget_signal();
     void addBlockedTile_signal(const QString &tile);
     void clearBlockedTilesListWidget_signal();
+    void updateData_signal(std::vector<Target> targets);
 
 private:
     std::vector<Target> targets;

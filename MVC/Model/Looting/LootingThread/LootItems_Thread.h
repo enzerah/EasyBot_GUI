@@ -11,6 +11,7 @@ class LootItems_Thread : public QThread {
     explicit LootItems_Thread(const std::vector<Item> &items, QObject *parent = nullptr)
         : QThread(parent), items(items) {}
 public slots:
+    void updateData(std::vector<Item>);
 protected:
     void run() override;
 private:
