@@ -339,6 +339,9 @@
        </item>
        <item>
         <widget class="QCheckBox" name="open_checkBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Open Corpse</string>
          </property>

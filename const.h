@@ -753,6 +753,8 @@ struct Spell
     int minHp;
     int costMp;
     int priority;
+    bool requiresTarget;
+    bool playerProtection;
 };
 
 struct Script {

@@ -397,11 +397,29 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="add_pushButton">
-         <property name="text">
-          <string>Add</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="requiredTarget_checkBox">
+           <property name="text">
+            <string>Required Target</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="playerProtection_checkBox">
+           <property name="text">
+            <string>Player Protection</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="add_pushButton">
+           <property name="text">
+            <string>Add</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

@@ -7,9 +7,6 @@
 void AttackTargets_Thread::run() {
     if (m_targets.empty()) return;
 
-    std::cout << m_targets[0].count << std::endl;
-
-
     engine->hasTarget = false;
     currentTarget = {};
 
@@ -56,7 +53,6 @@ void AttackTargets_Thread::run() {
             std::sort(monsters.begin(), monsters.end(), [](const MonsterCandidate& a, const MonsterCandidate& b) {
                 return a.dist < b.dist;
             });
-            proto->setChaseMode(Otc::DontChase);
             // Rest of checks
             for (const auto& monster : monsters) {
 
@@ -65,12 +61,8 @@ void AttackTargets_Thread::run() {
                 // If monster stays above us we consider it as reachable and shootable
                 if (monster.dist < 2) {
                     if (countsToFind[monster.target.name] <= 0) {
-                        std::cout << "Blocking Walker " << std::endl;
-                        std::cout << countsToFind[monster.target.name] << std::endl;
                         engine->hasTarget = true;
                     } else {
-                        std::cout << "Unlocking Walker " << std::endl;
-                        std::cout << countsToFind[monster.target.name] << std::endl;
                         engine->hasTarget = false;
                     }
                     if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
@@ -86,11 +78,7 @@ void AttackTargets_Thread::run() {
                 }
                 if (reachable && shootable) {
                     if (countsToFind[monster.target.name] <= 0) {
-                        std::cout << "Blocking Walker " << std::endl;
-                        std::cout << countsToFind[monster.target.name] << std::endl;
                     } else {
-                        std::cout << "Unlocking Walker " << std::endl;
-                        std::cout << countsToFind[monster.target.name] << std::endl;
                         engine->hasTarget = false;
                     }
                     if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
@@ -130,17 +118,13 @@ void AttackTargets_Thread::run() {
                 continue;
             }
             // If Target is reachable and shootable
-            if (engine->hasTarget) {
-                desiredStance(localPlayer, playerPos, currentTarget.truePos);
-            } else {
-                proto->setChaseMode(Otc::DontChase);
-            }
+            desiredStance(localPlayer, playerPos, currentTarget.truePos);
         }
     }
 }
 
 bool AttackTargets_Thread::isReachable(Position playerPos, Position spectatorPos) {
-    auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
+    auto path = proto->findPath(playerPos, spectatorPos, 15, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
     if (path.empty()) return false;
     return true;
 }
@@ -151,9 +135,6 @@ bool AttackTargets_Thread::isShootable(uintptr_t spectator, int dist) {
 
 void AttackTargets_Thread::desiredStance(uintptr_t localPlayer, Position playerPos, Position spectatorPos) {
     if (currentTarget.target.desiredStance == "Chase") {
-        for (auto blockedTile : m_blockedTiles) {
-            if (blockedTile.x == currentTarget.truePos.x && blockedTile.y == currentTarget.truePos.y && blockedTile.z == currentTarget.truePos.z) return;
-        }
         proto->setChaseMode(Otc::ChaseOpponent);
     }
 }

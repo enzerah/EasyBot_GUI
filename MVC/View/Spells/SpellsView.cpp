@@ -27,7 +27,9 @@ SpellsView::SpellsView(QWidget *parent) :
         auto minHp = ui->minHp_lineEdit->text().toInt();
         auto costMp = ui->costMp_lineEdit->text().toInt();
         auto priority = ui->priority_lineEdit->text().toInt();
-        emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, priority);
+        auto requiresTarget = ui->requiredTarget_checkBox->isChecked();
+        auto playerProtection = ui->playerProtection_checkBox->isChecked();
+        emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, priority, requiresTarget, playerProtection);
 
         ui->spellName_lineEdit->clear();
         ui->targetName_lineEdit->clear();
@@ -37,6 +39,8 @@ SpellsView::SpellsView(QWidget *parent) :
         ui->count_comboBox->setCurrentIndex(0);
         ui->option_comboBox->setCurrentIndex(0);
         ui->dist_comboBox->setCurrentIndex(0);
+        ui->requiredTarget_checkBox->setChecked(false);
+        ui->playerProtection_checkBox->setChecked(false);
     });
 
     connect(ui->spells_tableWidget, &QTableWidget::cellDoubleClicked, this, [this](int row, int column){
@@ -57,7 +61,7 @@ SpellsView::~SpellsView() {
 }
 
 void SpellsView::addItem(const QString &target, const int &option, const QString &spellName, const int &count,
-    const int &dist, const int &minHp, const int &costMp, int priority) {
+    const int &dist, const int &minHp, const int &costMp, int priority, bool requiresTarget, bool playerProtection) {
     int row = ui->spells_tableWidget->rowCount();
     ui->spells_tableWidget->insertRow(row);
     QString action = option ? "Rune" : "Say";
