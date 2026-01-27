@@ -1,6 +1,4 @@
 #include "BotEngine.h"
-
-#include "proto_functions_client.h"
 BotEngine* BotEngine::instance{nullptr};
 std::mutex BotEngine::mutex;
 

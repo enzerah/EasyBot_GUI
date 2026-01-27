@@ -425,13 +425,6 @@
          </item>
         </layout>
        </item>
-       <item>
-        <widget class="QCheckBox" name="lightHack_checkBox">
-         <property name="text">
-          <string>Light Hack</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>

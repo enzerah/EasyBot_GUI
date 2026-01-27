@@ -60,20 +60,27 @@ void UseSpell_Thread::run() {
                 countsToFind[i]--;
             }
         }
-
+        auto isAttacking = proto->isAttacking();
         for (size_t i = 0; i < nSpells; ++i) {
             const auto& spell = spellsCopy[i];
             if (countsToFind[i] <= 0) {
                 if (playerHpPercent < spell.minHp) continue;
                 if (playerMana < spell.costMp) continue;
                 if (spell.requiresTarget) {
-                    if (!proto->isAttacking()) continue;
+                    if (!isAttacking) continue;
                 }
                 if (spell.option == 0) { // Say
                     proto->talk(spell.spellName);
                     msleep(300);
-                } else if (spell.option == 1) { // Use
-
+                } else if (spell.option == 1) { // Rune
+                    auto runeId = std::stoi(spell.spellName);
+                    if (isAttacking) {
+                        auto currentTarget = proto->getAttackingCreature();
+                        proto->useInventoryItemWith(runeId, currentTarget);
+                    } else {
+                        proto->useInventoryItemWith(runeId, localPlayer);
+                    }
+                    msleep(300);
                 }
                 break; // Process one spell per tick
             }

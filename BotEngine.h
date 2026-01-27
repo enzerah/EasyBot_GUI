@@ -2,7 +2,7 @@
 #define BOTENGINE_H
 #include <vector>
 #include <mutex>
-
+#include "proto_functions_client.h"
 #define engine BotEngine::getInstance()
 
 class BotEngine {
