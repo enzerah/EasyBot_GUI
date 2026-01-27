@@ -1,5 +1,6 @@
 #ifndef BOTENGINE_H
 #define BOTENGINE_H
+#include <vector>
 #include <mutex>
 
 #define engine BotEngine::getInstance()
@@ -20,6 +21,11 @@ public:
     bool hasTarget = false;
     bool isLooting = false;
     bool isWalking = false;
+
+    // Client Custom Functions
+    std::vector<int> countItems(std::vector<int> itemId);
+    void depositItems(std::vector<int> itemId, std::string containerToDeposit);
+    void findDeposit(std::vector<int> depoId);
 };
 
 

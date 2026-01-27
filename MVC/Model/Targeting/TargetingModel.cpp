@@ -158,10 +158,12 @@ void TargetingModel::fromJson(const QJsonArray &json) {
 
 void TargetingModel::deleteItem(const int& index) {
     targets.erase(targets.begin() + index);
+    emit updateData_signal(targets);
 }
 
 void TargetingModel::clearListWidget() {
     targets.clear();
+    emit updateData_signal(targets);
 }
 
 void TargetingModel::addBlockedTile(const int &x, const int &y, const int &z) {

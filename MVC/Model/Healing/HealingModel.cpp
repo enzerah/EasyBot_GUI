@@ -36,6 +36,7 @@ void HealingModel::addItem(const QString &action, const QString &heal, const QSt
 
 void HealingModel::deleteItem(const int& index) {
     heals.erase(heals.begin() + index);
+    emit updateData_signal(heals);
 }
 
 void HealingModel::startHealing(bool state) {
@@ -91,5 +92,6 @@ void HealingModel::fromJson(const QJsonArray &json) {
 
 void HealingModel::clearTableWidget() {
     heals.clear();
+    emit updateData_signal(heals);
 }
 

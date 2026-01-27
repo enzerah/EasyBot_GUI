@@ -95,9 +95,11 @@ void SpellsModel::fromJson(const QJsonArray &json) {
 
 void SpellsModel::deleteItem(const int& index) {
     spells.erase(spells.begin() + index);
+    emit updateData_signal(spells);
 }
 
 void SpellsModel::clearTableWidget() {
     spells.clear();
+    emit updateData_signal(spells);
 }
 

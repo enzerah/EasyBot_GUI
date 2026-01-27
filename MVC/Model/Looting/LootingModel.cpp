@@ -76,10 +76,12 @@ void LootingModel::fromJson(const QJsonArray &json) {
 
 void LootingModel::deleteItem(const int& index) {
     items.erase(items.begin() + index);
+    emit updateData_signal(items);
 }
 
 void LootingModel::clearTableWidget() {
     items.clear();
+    emit updateData_signal(items);
 }
 
 
