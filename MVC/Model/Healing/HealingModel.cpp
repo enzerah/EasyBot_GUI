@@ -30,6 +30,7 @@ void HealingModel::addItem(const QString &action, const QString &heal, const QSt
     healing.minimum = minimum;
     heals.push_back(healing);
     emit addItem_signal(action, heal, condition, random, below, above, minimum);
+    emit updateData_signal(heals);
 }
 
 

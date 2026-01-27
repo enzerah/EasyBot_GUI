@@ -1,6 +1,7 @@
 #ifndef ATTACKCREATURES_THREAD_H
 #define ATTACKCREATURES_THREAD_H
 #include <Qthread>
+#include <QMutex>
 #include "../../const.h"
 #include "../../proto_functions_client.h"
 
@@ -14,7 +15,7 @@ public slots:
     void shootableStateChange(bool state);
     void reachableStateChange(bool state);
     void stayAwayDistChange(int currentDist);
-    void updateData(std::vector<Target>);
+    void updateData(std::vector<Target> targets);
 protected:
     void run() override;
 private:
@@ -23,6 +24,7 @@ private:
     bool m_reachableState = false;
     int m_stayAwayDistance = 1;
     std::vector<Position> m_blockedTiles{};
+    QMutex m_mutex;
 
     struct MonsterCandidate {
         int dist;

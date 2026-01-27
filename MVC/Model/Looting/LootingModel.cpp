@@ -27,6 +27,7 @@ void LootingModel::addItem(const QString &srcItem, const QString &dstItem, const
     item.delay = delay.toInt();
     items.push_back(item);
     emit addItem_signal(srcItem, dstItem, delay);
+    emit updateData_signal(items);
 }
 
 void LootingModel::startLooting(bool state) {

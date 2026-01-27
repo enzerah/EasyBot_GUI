@@ -1,6 +1,7 @@
 #ifndef USESPELL_THREAD_H
 #define USESPELL_THREAD_H
 #include <QThread>
+#include <QMutex>
 #include "../../const.h"
 #include "../../proto_functions_client.h"
 
@@ -12,7 +13,7 @@ class UseSpell_Thread : public QThread {
     : QThread(parent), m_spells(spells) {}
 
     public slots:
-    void updateData(std::vector<Spell>);
+    void updateData(std::vector<Spell> spells);
 
 protected:
     void run() override;
@@ -20,6 +21,7 @@ protected:
 
 private:
     std::vector<Spell> m_spells;
+    QMutex m_mutex;
 };
 
 #endif //USESPELL_THREAD_H

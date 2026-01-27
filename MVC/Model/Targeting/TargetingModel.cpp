@@ -34,6 +34,7 @@ void TargetingModel::addItem(const QString &targetName, const int &dist, const i
     if (!dist) distString = "All";
     if (count == 1) countString = "Any";
     emit addItem_signal(targetName, distString, countString, desiredStance, monstersAttacks, openCorpse);
+    emit updateData_signal(targets);
 }
 
 void TargetingModel::shootableState(bool state) {

@@ -33,6 +33,7 @@ void SpellsModel::addItem(const QString &target, const int &option, const QStrin
     spell.playerProtection = playerProtection;
     spells.push_back(spell);
     emit addItem_signal(target, option, spellName, count, dist, minHp, costMp, priority, requiresTarget, playerProtection);
+    emit updateData_signal(spells);
 }
 
 void SpellsModel::startSpells(bool state) {

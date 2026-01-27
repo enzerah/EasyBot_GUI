@@ -4,13 +4,21 @@
 #include <string>
 #include <vector>
 
-void UseSpell_Thread::run() {
-    if (m_spells.empty()) return;
+void UseSpell_Thread::updateData(std::vector<Spell> spells) {
+    QMutexLocker locker(&m_mutex);
+    m_spells = spells;
+    std::sort(m_spells.begin(), m_spells.end(), [](const Spell& a, const Spell& b) {
+        return a.priority > b.priority;
+    });
+}
 
+void UseSpell_Thread::run() {
+    m_mutex.lock();
     // Sort spells by priority (highest first)
     std::sort(m_spells.begin(), m_spells.end(), [](const Spell& a, const Spell& b) {
         return a.priority > b.priority;
     });
+    m_mutex.unlock();
 
     while (!isInterruptionRequested()) {
         uintptr_t localPlayer = proto->getLocalPlayer();
@@ -18,12 +26,19 @@ void UseSpell_Thread::run() {
         double playerMana = proto->getMana(localPlayer);
         Position playerPos = proto->getPosition(localPlayer);
 
+        m_mutex.lock();
+        if (m_spells.empty()) {
+            m_mutex.unlock();
+            msleep(10);
+            continue;
+        }
         size_t nSpells = m_spells.size();
         std::vector<int> countsToFind(nSpells);
-
         for (size_t i = 0; i < nSpells; ++i) {
             countsToFind[i] = m_spells[i].count;
         }
+        auto spellsCopy = m_spells;
+        m_mutex.unlock();
 
         auto spectators = proto->getSpectators(playerPos, false);
         for (uintptr_t creature : spectators) {
@@ -37,7 +52,7 @@ void UseSpell_Thread::run() {
             std::transform(creatureName.begin(), creatureName.end(), creatureName.begin(), ::tolower);
             auto isPlayer = proto->isPlayer(creature);
             for (size_t i = 0; i < nSpells; ++i) {
-                const auto& spell = m_spells[i];
+                const auto& spell = spellsCopy[i];
                 if (distance > spell.dist) continue;
                 if (isPlayer && spell.playerProtection) countsToFind[i] = 999; // Prevent to use spell when there is a player in distance
                 if (spell.targetName != "*" && creatureName != spell.targetName) continue;
@@ -47,7 +62,7 @@ void UseSpell_Thread::run() {
         }
 
         for (size_t i = 0; i < nSpells; ++i) {
-            const auto& spell = m_spells[i];
+            const auto& spell = spellsCopy[i];
             if (countsToFind[i] <= 0) {
                 if (playerHpPercent < spell.minHp) continue;
                 if (playerMana < spell.costMp) continue;

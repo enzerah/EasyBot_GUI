@@ -5,12 +5,8 @@
 
 
 void AttackTargets_Thread::run() {
-    if (m_targets.empty()) return;
-
     engine->hasTarget = false;
     currentTarget = {};
-
-
     while (!isInterruptionRequested()) {
         msleep(50);
 
@@ -22,17 +18,26 @@ void AttackTargets_Thread::run() {
             currentTarget = {};
             auto spectators = proto->getSpectators(playerPos, false);
 
+            m_mutex.lock();
+            if (m_targets.empty()) {
+                m_mutex.unlock();
+                msleep(50);
+                continue;
+            }
             std::map<std::string, int> countsToFind;
             for (const auto& target : m_targets) {
                 countsToFind[target.name] = target.count;
             }
+            auto targetsCopy = m_targets;
+            m_mutex.unlock();
+            
             // Iterate over all spectators
             std::vector<MonsterCandidate> monsters;
             for (auto spectator : spectators) {
                 if (!proto->isMonster(spectator)) continue;
                 auto specName = proto->getCreatureName(spectator); // Grabs name of the monster
                 std::transform(specName.begin(), specName.end(), specName.begin(), ::tolower);
-                for (const auto& target : m_targets) {
+                for (const auto& target : targetsCopy) {
                     if (specName != target.name && target.name != "*") continue;
                     auto monsterPos = proto->getPosition(spectator);
                     int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(monsterPos.x)),
@@ -143,3 +148,8 @@ void AttackTargets_Thread::desiredStance(uintptr_t localPlayer, Position playerP
 void AttackTargets_Thread::shootableStateChange(bool state) { m_shootableState = state; }
 void AttackTargets_Thread::reachableStateChange(bool state) { m_reachableState = state; }
 void AttackTargets_Thread::stayAwayDistChange(int currentDist){ m_stayAwayDistance = currentDist; }
+
+void AttackTargets_Thread::updateData(std::vector<Target> targets) {
+    QMutexLocker locker(&m_mutex);
+    m_targets = targets;
+}
