@@ -23,7 +23,7 @@ WalkerModel::~WalkerModel() {
     }
 }
 
-void WalkerModel::addItem(const QString &direction, QString &option, const QString &action) {
+void WalkerModel::addItem(const QString &direction, QString option, const QString &action) {
 
     auto localPlayer = proto->getLocalPlayer();
     auto position = proto->getPosition(localPlayer);

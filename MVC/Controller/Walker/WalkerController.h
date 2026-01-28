@@ -17,7 +17,6 @@ public:
 
 private slots:
     // WalkerView Requests
-    void recordWaypoints_View(bool state, int sqmDist, const QString &direction, const QString &option);
     void deleteItem_View(const int &index);
     void clearListWidget_View();
 

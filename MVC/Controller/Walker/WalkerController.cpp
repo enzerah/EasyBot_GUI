@@ -9,7 +9,7 @@ WalkerController::WalkerController(QObject *parent)
 
     // Walker View requests
     connect(m_view, &WalkerView::addItem_signal, m_model, &WalkerModel::addItem);
-    connect(m_view, &WalkerView::recordWaypoints_signal, this, &WalkerController::recordWaypoints_View);
+    connect(m_view, &WalkerView::recordWaypoints_signal, m_model, &WalkerModel::recordWaypoints);
     connect(m_view, &WalkerView::deleteItem_signal, this, &WalkerController::deleteItem_View);
     connect(m_view, &WalkerView::clearListWidget_signal, this, &WalkerController::clearListWidget_View);
 
@@ -44,11 +44,6 @@ void WalkerController::loadSettings(const QJsonArray &json) {
 
 
 // Walker View Requests
-void WalkerController::recordWaypoints_View(bool state, int sqmDist, const QString &direction, const QString &option)
-{
-    m_model->recordWaypoints(state, sqmDist, direction, option);
-}
-
 void WalkerController::deleteItem_View(const int& index) {
     m_model->deleteItem(index);
 }
