@@ -40,7 +40,7 @@ void FollowWaypoints_Thread::run() {
             msleep(100);
         }
 
-        // If we are stuck on same waypoint for more than 20 seconds
+        // If we are stuck on same waypoint for more than 10 seconds
         if (index != lastIndex) {
             lastIndex = index;
             stuckTimer.restart();
@@ -81,7 +81,7 @@ void FollowWaypoints_Thread::performWalk(Waypoint wpt, uintptr_t localPlayer, Po
     if (wpt.option == "Node") {
         int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y)));
-        if (dist <= 2) {
+        if (dist <= 1) {
             index = (index + 1) % waypoints.size();
             emit indexUpdate_signal(static_cast<int>(index));
             return;
@@ -191,7 +191,7 @@ void FollowWaypoints_Thread::findClosestWaypoint() {
     auto playerPos = proto->getPosition(localPlayer);
     for (int i = 0; i < waypoints.size(); ++i) {
         const auto& wpt = waypoints[i];
-        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) continue;
+        if (playerPos.z != wpt.position.z && (wpt.option != "Node" && wpt.option != "Stand")) continue;
         int dist = std::max(
             std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y))
@@ -208,7 +208,7 @@ void FollowWaypoints_Thread::findNextValidWaypoint() {
     auto playerPos = proto->getPosition(localPlayer);
     for (int i = index; i < waypoints.size(); ++i) {
         const auto& wpt = waypoints[i];
-        if (playerPos.z != wpt.position.z && (wpt.option != "Node" || wpt.option != "Stand")) continue;
+        if (playerPos.z != wpt.position.z && (wpt.option != "Node" && wpt.option != "Stand")) continue;
         int dist = std::max(
             std::abs(static_cast<int>(playerPos.x) - static_cast<int>(wpt.position.x)),
             std::abs(static_cast<int>(playerPos.y) - static_cast<int>(wpt.position.y))

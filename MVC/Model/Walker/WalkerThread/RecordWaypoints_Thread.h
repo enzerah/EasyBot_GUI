@@ -17,7 +17,7 @@ class RecordWaypoints_Thread : public QThread {
     protected:
     void run() override;
     signals:
-    void addWaypoint_signal(const QString &direction, const QString &option, const QString &action);
+    void addWaypoint_signal(const QString &direction, QString &option, const QString &action);
 private:
     int sqmDist;
     QString direction, option;

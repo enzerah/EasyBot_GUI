@@ -23,16 +23,15 @@ WalkerModel::~WalkerModel() {
     }
 }
 
-void WalkerModel::addItem(const QString &direction, const QString &option, const QString &action) {
+void WalkerModel::addItem(const QString &direction, QString &option, const QString &action) {
 
     auto localPlayer = proto->getLocalPlayer();
-    auto state = proto->getStates(localPlayer);
-    std::cout << int(state) << std::endl;
     auto position = proto->getPosition(localPlayer);
     Waypoint wpt;
     wpt.direction = direction.toStdString();
     wpt.position = position;
     wpt.option = option.toStdString();
+    if (wpt.option == "Label") option = action;
     wpt.action = action.toStdString();
     waypoints.push_back(wpt);
     emit addItem_signal(option, direction, position.x, position.y, position.z);
@@ -119,6 +118,7 @@ void WalkerModel::fromJson(const QJsonArray &json) {
         Waypoint wpt;
         wpt.position = pos;
         wpt.option = option.toStdString();
+        if (wpt.option == "Label") option = action;
         wpt.action = action.toStdString();
         wpt.direction = direction.toStdString();
         waypoints.push_back(wpt);

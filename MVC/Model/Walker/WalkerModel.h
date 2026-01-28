@@ -13,7 +13,7 @@ public:
     explicit WalkerModel(QObject *parent = nullptr);
     ~WalkerModel() override;
 
-    void addItem(const QString &direction, const QString &option, const QString &action);
+    void addItem(const QString &direction, QString &option, const QString &action);
 
     void recordWaypoints(bool state, int sqmDist, const QString &direction, const QString &option);
     void startWalker(bool state);

@@ -1,7 +1,3 @@
-//
-// Created by Wojciech on 11.10.2025.
-//
-
 #ifndef WALKERCONTROLLER_H
 #define WALKERCONTROLLER_H
 #include <QObject>
@@ -21,7 +17,6 @@ public:
 
 private slots:
     // WalkerView Requests
-    void addItem_View(const QString &direction, const QString &option, const QString &action);
     void recordWaypoints_View(bool state, int sqmDist, const QString &direction, const QString &option);
     void deleteItem_View(const int &index);
     void clearListWidget_View();

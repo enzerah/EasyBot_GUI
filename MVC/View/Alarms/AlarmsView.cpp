@@ -18,10 +18,6 @@ AlarmsView::AlarmsView(QWidget *parent) :
     connect(ui->lowHealth_lineEdit, &QLineEdit::textChanged, this, &AlarmsView::settingsChanged);
     connect(ui->lowMana_checkBox, &QCheckBox::stateChanged, this, &AlarmsView::settingsChanged);
     connect(ui->lowMana_lineEdit, &QLineEdit::textChanged, this, &AlarmsView::settingsChanged);
-    connect(ui->playerBlackList_radioButton, &QRadioButton::toggled, this, &AlarmsView::settingsChanged);
-    connect(ui->playerWhite_List_radioButton, &QRadioButton::toggled, this, &AlarmsView::settingsChanged);
-    connect(ui->playerBlackList_textEdit, &QTextEdit::textChanged, this, &AlarmsView::settingsChanged);
-    connect(ui->playerWhiteList_textEdit, &QTextEdit::textChanged, this, &AlarmsView::settingsChanged);
 }
 
 AlarmsView::~AlarmsView() {
@@ -38,16 +34,7 @@ PlayAlarm_Thread::AlarmSettings AlarmsView::getSettings() const {
     settings.lowManaValue = ui->lowMana_lineEdit->text().toInt();
     if (settings.lowManaValue == 0) settings.lowManaValue = ui->lowMana_lineEdit->placeholderText().toInt();
 
-    settings.playerBlackListMode = ui->playerBlackList_radioButton->isChecked();
-    QStringList players;
-    if (settings.playerBlackListMode) {
-        players = ui->playerBlackList_textEdit->toPlainText().split('\n', Qt::SkipEmptyParts);
-    } else {
-        players = ui->playerWhiteList_textEdit->toPlainText().split('\n', Qt::SkipEmptyParts);
-    }
-    for (const QString& name : players) {
-        settings.playerList.insert(name.trimmed().toStdString());
-    }
+
 
 
 
