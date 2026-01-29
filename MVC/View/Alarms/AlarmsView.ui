@@ -27,6 +27,47 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="minimumSize">
+         <size>
+          <width>60</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Low Mana</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lowMana_lineEdit">
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
+        <property name="placeholderText">
+         <string>20</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>%</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="lowMana_checkBox">
+        <property name="text">
+         <string>On</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -68,7 +109,7 @@
       </item>
      </layout>
     </item>
-    <item row="6" column="0">
+    <item row="10" column="0">
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
        <string>Creature Detected</string>
@@ -117,66 +158,40 @@
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QCheckBox" name="privateMessage_checkBox">
-      <property name="text">
-       <string>Private Message</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="defaultMessage_checkBox">
-      <property name="text">
-       <string>Default Message</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QLabel" name="label_3">
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
+       <widget class="QCheckBox" name="privateMessage_checkBox">
         <property name="text">
-         <string>Low Mana</string>
+         <string>Private Message</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lowMana_lineEdit">
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-        <property name="placeholderText">
-         <string>20</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QCheckBox" name="defaultMessage_checkBox">
         <property name="text">
-         <string>%</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="lowMana_checkBox">
-        <property name="text">
-         <string>On</string>
+         <string>Default Message</string>
         </property>
        </widget>
       </item>
      </layout>
     </item>
-    <item row="5" column="0">
-     <widget class="QCheckBox" name="disconnect_checkBox">
-      <property name="text">
-       <string>Disconnect</string>
-      </property>
-     </widget>
+    <item row="7" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <widget class="QCheckBox" name="creatureDetected_checkBox">
+        <property name="text">
+         <string>Creature Detected</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="disconnect_checkBox">
+        <property name="text">
+         <string>Disconnect</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

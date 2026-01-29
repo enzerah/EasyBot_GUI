@@ -13,6 +13,9 @@ public:
 
     void showView();
 
+public slots:
+    void startAlarms_slot(bool state);
+
 private slots:
     void onSettingsChanged();
 

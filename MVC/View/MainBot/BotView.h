@@ -30,6 +30,7 @@ public:
     void setSpellsChecked(bool state);
     void setScriptsChecked(bool state);
     void setAgentAIChecked(bool state);
+    void setAlarmsChecked(bool state);
 
     signals:
 
@@ -52,6 +53,7 @@ public:
     void startSpells_signal(bool state);
     void startScripts_signal(bool state);
     void startAgent_signal(bool state);
+    void startAlarms_signal(bool state);
 
 
     void saveRequested(const QString &name, const QString &category);

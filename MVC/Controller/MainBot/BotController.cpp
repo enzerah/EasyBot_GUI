@@ -49,6 +49,9 @@ BotController::BotController(BotView *botView, QObject *parent)
         if (m_agentAIController) {
             m_botView->setAgentAIChecked(checked);
         }
+        if (m_alarmsController) {
+            m_botView->setAlarmsChecked(checked);
+        }
     });
 
     // Walker
@@ -97,6 +100,13 @@ BotController::BotController(BotView *botView, QObject *parent)
     connect(m_botView, &BotView::startAgent_signal, this, [this](bool checked){
         if (m_agentAIController) {
             m_agentAIController->startAgent_slot(checked);
+        }
+    });
+
+    // Alarms
+    connect(m_botView, &BotView::startAlarms_signal, this, [this](bool checked){
+        if (m_alarmsController) {
+            m_alarmsController->startAlarms_slot(checked);
         }
     });
 

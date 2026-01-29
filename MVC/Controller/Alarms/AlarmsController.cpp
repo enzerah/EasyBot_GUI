@@ -9,13 +9,17 @@ AlarmsController::AlarmsController(QObject *parent)
     m_view = new AlarmsView();
 
     connect(m_view, &AlarmsView::settingsChanged, this, &AlarmsController::onSettingsChanged);
-
-    m_model->updateAlarmSettings(m_view->getSettings());
-    m_model->setAlarmEnabled(true);
 }
 
 AlarmsController::~AlarmsController() {
     delete m_view;
+}
+
+void AlarmsController::startAlarms_slot(bool state) {
+    if (state) {
+        m_model->updateAlarmSettings(m_view->getSettings());
+    }
+    m_model->setAlarmEnabled(state);
 }
 
 void AlarmsController::onSettingsChanged() {

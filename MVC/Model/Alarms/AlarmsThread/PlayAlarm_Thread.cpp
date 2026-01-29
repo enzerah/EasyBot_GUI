@@ -37,6 +37,8 @@ void PlayAlarm_Thread::playAlarmSound() {
 }
 
 void PlayAlarm_Thread::run() {
+    proto->clearMessages(); // Initial clear
+    
     while (!isInterruptionRequested()) {
         {
             QMutexLocker locker(&mutex);
@@ -44,60 +46,94 @@ void PlayAlarm_Thread::run() {
         }
 
         bool triggerAlarm = false;
-        
-        uintptr_t localPlayer = proto->getLocalPlayer();
-        if (localPlayer != 0) {
-            AlarmSettings currentSettings;
-            {
-                QMutexLocker locker(&mutex);
-                currentSettings = settings;
+        AlarmSettings currentSettings;
+        {
+            QMutexLocker locker(&mutex);
+            currentSettings = settings;
+        }
+
+        // Disconnect Alarm
+        if (currentSettings.disconnectEnabled) {
+            if (!proto->getLocalPlayer()) {
+                triggerAlarm = true;
             }
+        }
 
-            // Low Health
-            if (currentSettings.lowHealthEnabled) {
-                double hp = proto->getHealth(localPlayer);
-                double maxHp = proto->getMaxHealth(localPlayer);
-                if (maxHp > 0 && (hp / maxHp) * 100 <= currentSettings.lowHealthValue) {
-                    triggerAlarm = true;
-                }
-            }
-
-            // Low Mana
-            if (!triggerAlarm && currentSettings.lowManaEnabled) {
-                double mp = proto->getMana(localPlayer);
-                double maxMp = proto->getMaxMana(localPlayer);
-                if (maxMp > 0 && (mp / maxMp) * 100 <= currentSettings.lowManaValue) {
-                    triggerAlarm = true;
-                }
-            }
-
-            // Player/Creature Detected
-            if (!triggerAlarm && (currentSettings.playerDetectedEnabled || currentSettings.creatureDetectedEnabled)) {
-                Position pos = proto->getPosition(localPlayer);
-                auto spectators = proto->getSpectators(pos);
-                for (auto spectator : spectators) {
-                    if (spectator == localPlayer) continue;
-
-                    if (currentSettings.playerDetectedEnabled && proto->isPlayer(spectator)) {
-                        std::string name = proto->getCreatureName(spectator);
-                        bool inList = currentSettings.playerList.count(name) > 0;
-                        if (currentSettings.playerBlackListMode) {
-                            if (inList) { triggerAlarm = true; break; }
-                        } else {
-                            if (!inList) { triggerAlarm = true; break; }
-                        }
+        if (!triggerAlarm) {
+            uintptr_t localPlayer = proto->getLocalPlayer();
+            if (localPlayer != 0) {
+                // Low Health
+                if (currentSettings.lowHealthEnabled) {
+                    double hp = proto->getHealth(localPlayer);
+                    double maxHp = proto->getMaxHealth(localPlayer);
+                    if (maxHp > 0 && (hp / maxHp) * 100 <= currentSettings.lowHealthValue) {
+                        triggerAlarm = true;
                     }
+                }
 
-                    if (currentSettings.creatureDetectedEnabled && proto->isMonster(spectator)) {
+                // Low Mana
+                if (!triggerAlarm && currentSettings.lowManaEnabled) {
+                    double mp = proto->getMana(localPlayer);
+                    double maxMp = proto->getMaxMana(localPlayer);
+                    if (maxMp > 0 && (mp / maxMp) * 100 <= currentSettings.lowManaValue) {
+                        triggerAlarm = true;
+                    }
+                }
+
+                // Creature Detected
+                if (!triggerAlarm && currentSettings.creatureDetectedEnabled) {
+                    Position pos = proto->getPosition(localPlayer);
+                    auto spectators = proto->getSpectators(pos);
+                    std::string myName = proto->getCharacterName();
+
+                    for (auto spectator : spectators) {
+                        if (spectator == localPlayer) continue;
+                        if (!proto->isMonster(spectator) && !proto->isPlayer(spectator)) continue;
+
                         std::string name = proto->getCreatureName(spectator);
                         bool inList = currentSettings.creatureList.count(name) > 0;
+
                         if (currentSettings.creatureBlackListMode) {
-                            if (inList) { triggerAlarm = true; break; }
+                            // Reaguje na wszystkie nicki prócz danego wpisanego
+                            if (!inList) {
+                                triggerAlarm = true;
+                                break;
+                            }
                         } else {
-                            if (!inList) { triggerAlarm = true; break; }
+                            // Reaguje tylko na nazwy wpisane
+                            if (inList) {
+                                triggerAlarm = true;
+                                break;
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        // Message Alarms
+        if (!triggerAlarm && (currentSettings.defaultMessageEnabled || currentSettings.privateMessageEnabled)) {
+            auto messages = proto->getMessages(10);
+            std::string myName = proto->getCharacterName();
+
+            for (const auto& msg : messages) {
+                bool isPrivate = (msg.mode == Otc::MessagePrivateFrom || msg.mode == Otc::MessageGamemasterPrivateFrom);
+                bool isDefault = (msg.mode == Otc::MessageSay || msg.mode == Otc::MessageYell || msg.mode == Otc::MessageWhisper);
+
+                if (currentSettings.privateMessageEnabled && isPrivate) {
+                    triggerAlarm = true;
+                    break;
+                }
+
+                if (currentSettings.defaultMessageEnabled && isDefault) {
+                    if (msg.name != myName) {
+                        triggerAlarm = true;
+                        break;
+                    }
+                }
+            }
+            if (!messages.empty()) {
+                proto->clearMessages();
             }
         }
 

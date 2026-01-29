@@ -32,6 +32,7 @@ BotView::BotView(QWidget *parent)
     connect(ui->spells_checkBox, &QCheckBox::toggled, this, &BotView::startSpells_signal);
     connect(ui->scripts_checkBox, &QCheckBox::toggled, this, &BotView::startScripts_signal);
     connect(ui->ai_checkBox, &QCheckBox::toggled, this, &BotView::startAgent_signal);
+    connect(ui->alarms_checkBox, &QCheckBox::toggled, this, &BotView::startAlarms_signal);
 
     connect(ui->save_pushButton, &QPushButton::clicked, this, &BotView::onSaveClicked);
     connect(ui->load_pushButton, &QPushButton::clicked, this, &BotView::onLoadClicked);
@@ -135,6 +136,10 @@ void BotView::setScriptsChecked(bool state) {
 
 void BotView::setAgentAIChecked(bool state) {
     ui->ai_checkBox->setChecked(state);
+}
+
+void BotView::setAlarmsChecked(bool state) {
+    ui->alarms_checkBox->setChecked(state);
 }
 
 

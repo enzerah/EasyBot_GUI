@@ -24,6 +24,10 @@ public:
         bool creatureDetectedEnabled = false;
         bool creatureBlackListMode = true;
         std::set<std::string> creatureList;
+
+        bool defaultMessageEnabled = false;
+        bool privateMessageEnabled = false;
+        bool disconnectEnabled = false;
     };
 
     explicit PlayAlarm_Thread(QObject *parent = nullptr);
