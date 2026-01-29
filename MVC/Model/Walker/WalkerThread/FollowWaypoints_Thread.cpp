@@ -19,7 +19,7 @@ void FollowWaypoints_Thread::run() {
 
 
     while (!isInterruptionRequested()) {
-        if (engine->hasTarget) stuckTimer.restart();
+        if (g_Engine->hasTarget) stuckTimer.restart();
         auto localPlayer = proto->getLocalPlayer();
         auto playerPos = proto->getPosition(localPlayer);
         isAutoWalking = proto->isAutoWalking(localPlayer);
@@ -33,7 +33,7 @@ void FollowWaypoints_Thread::run() {
 
         if (playerPos.z != wpt.position.z) findNextValidWaypoint();
 
-        if (wpt.option != "Lure" && engine->hasTarget) {
+        if (wpt.option != "Lure" && g_Engine->hasTarget) {
             proto->stopAutoWalk(localPlayer);
             msleep(100);
             proto->stop();
@@ -51,7 +51,7 @@ void FollowWaypoints_Thread::run() {
             emit indexUpdate_signal(static_cast<int>(index));
         }
         // Only walks if we do not have target, or we want to make Lure
-        if (!engine->hasTarget || wpt.option == "Lure") {
+        if (!g_Engine->hasTarget || wpt.option == "Lure") {
             if (wpt.position.z != playerPos.z && wpt.direction == "C" && wpt.option == "Stand") {
                 findNextValidWaypoint();
                 stuckTimer.restart();

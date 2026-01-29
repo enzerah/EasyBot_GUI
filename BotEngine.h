@@ -3,7 +3,7 @@
 #include <vector>
 #include <mutex>
 #include "proto_functions_client.h"
-#define engine BotEngine::getInstance()
+#define g_Engine BotEngine::getInstance()
 
 class BotEngine {
 private:

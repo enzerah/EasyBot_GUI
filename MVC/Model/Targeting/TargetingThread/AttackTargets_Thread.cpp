@@ -5,7 +5,7 @@
 
 
 void AttackTargets_Thread::run() {
-    engine->hasTarget = false;
+    g_Engine->hasTarget = false;
     currentTarget = {};
     while (!isInterruptionRequested()) {
         msleep(50);
@@ -14,7 +14,7 @@ void AttackTargets_Thread::run() {
         auto playerPos = proto->getPosition(localPlayer);
 
         // If player is not attacking
-        if (!proto->isAttacking() || engine->hasTarget == false) {
+        if (!proto->isAttacking() || g_Engine->hasTarget == false) {
             currentTarget = {};
             auto spectators = proto->getSpectators(playerPos, false);
 
@@ -50,7 +50,7 @@ void AttackTargets_Thread::run() {
             }
             // If there is no Targets
             if (monsters.empty()) {
-                engine->hasTarget = false;
+                g_Engine->hasTarget = false;
                 msleep(50);
                 continue;
             }
@@ -66,9 +66,9 @@ void AttackTargets_Thread::run() {
                 // If monster stays above us we consider it as reachable and shootable
                 if (monster.dist < 2) {
                     if (countsToFind[monster.target.name] <= 0) {
-                        engine->hasTarget = true;
+                        g_Engine->hasTarget = true;
                     } else {
-                        engine->hasTarget = false;
+                        g_Engine->hasTarget = false;
                     }
                     if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
                     msleep(100);
@@ -84,7 +84,7 @@ void AttackTargets_Thread::run() {
                 if (reachable && shootable) {
                     if (countsToFind[monster.target.name] <= 0) {
                     } else {
-                        engine->hasTarget = false;
+                        g_Engine->hasTarget = false;
                     }
                     if (proto->getAttackingCreature() != monster.id) proto->attack(monster.id, false);
                     msleep(100);
@@ -92,7 +92,7 @@ void AttackTargets_Thread::run() {
                     break;
                 }
             }
-        } else if (engine->hasTarget) {
+        } else if (g_Engine->hasTarget) {
             bool reachable = true;
             bool shootable = true;
             if (proto->isDead(currentTarget.id)) {

@@ -38,15 +38,24 @@ void LuaEngine::initLua() {
     
     LuaBindings::registerAll(L);
 
-    // Globalize proto functions
+    // Globalize proto and engine functions
     const char* globalizeSnippet =
         "setmetatable(_G, {"
         "  __index = function(_, key)"
         "    local val = proto[key]"
-        "    if type(val) == 'function' then"
-        "      return function(...) return val(proto, ...) end"
+        "    if val ~= nil then"
+        "      if type(val) == 'function' then"
+        "        return function(...) return val(proto, ...) end"
+        "      end"
+        "      return val"
         "    end"
-        "    return val"
+        "    val = engine[key]"
+        "    if val ~= nil then"
+        "      if type(val) == 'function' then"
+        "        return function(...) return val(engine, ...) end"
+        "      end"
+        "      return val"
+        "    end"
         "  end"
         "})";
 
@@ -101,10 +110,10 @@ void LuaEngine::requestStop() {
 void LuaEngine::luaHookCallback(lua_State* L, lua_Debug* ar) {
     // Retrieve the LuaEngine instance from registry
     lua_getfield(L, LUA_REGISTRYINDEX, "LuaEngine_instance");
-    LuaEngine* engine = static_cast<LuaEngine*>(lua_touserdata(L, -1));
+    LuaEngine* luaEngine = static_cast<LuaEngine*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
     
-    if (engine && engine->m_shouldStop.load()) {
+    if (luaEngine && luaEngine->m_shouldStop.load()) {
         // Throw a Lua error to stop execution
         luaL_error(L, "Script interrupted");
     }

@@ -10,7 +10,7 @@ void LootItems_Thread::updateData(std::vector<Item> items)
 void LootItems_Thread::run() {
     while (!isInterruptionRequested()) {
         // Signal to start loot
-        if (engine->isLooting) {
+        if (g_Engine->isLooting) {
             m_mutex.lock();
             auto itemsCopy = m_items;
             m_mutex.unlock();
@@ -33,7 +33,7 @@ void LootItems_Thread::run() {
                 auto destPos = item.itemPosition;
                 auto sleepTime = item.delay;
             }
-            engine->isLooting = false;
+            g_Engine->isLooting = false;
         }
         msleep(50);
     }

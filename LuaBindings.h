@@ -5,6 +5,7 @@
 #include <luabridge3/LuaBridge/Vector.h>
 #include "../../const.h"
 #include "../../proto_functions_client.h"
+#include "BotEngine.h"
 
 namespace LuaBindings {
     inline void registerAll(lua_State* L) {
@@ -15,7 +16,11 @@ namespace LuaBindings {
                 .addProperty("y", &Position::y)
                 .addProperty("z", &Position::z)
             .endClass()
-
+            .beginClass<BotEngine>("BotEngine")
+                .addFunction("countItems", &BotEngine::countItems)
+                .addFunction("depositItems", &BotEngine::depositItems)
+                .addFunction("findDeposit", &BotEngine::findDeposit)
+            .endClass()
             .beginClass<BotClient>("BotClient")
                 // Container
                 .addFunction("getItem", &BotClient::getItem)
@@ -45,7 +50,12 @@ namespace LuaBindings {
                 .addFunction("canShoot", &BotClient::canShoot)
                 // Game
                 .addFunction("walk", [](BotClient* client, int dir) { client->walk((Otc::Direction)dir); })
-                .addFunction("autoWalkGame", &BotClient::autoWalkGame)
+                .addFunction("autoWalkGame", [](BotClient* client, std::vector<int> dirs, const Position& startPos) {
+                    std::vector<Otc::Direction> otcDirs;
+                    otcDirs.reserve(dirs.size());
+                    for(int d : dirs) otcDirs.push_back((Otc::Direction)d);
+                    client->autoWalkGame(otcDirs, startPos);
+                })
                 .addFunction("turn", [](BotClient* client, int dir) { client->turn((Otc::Direction)dir); })
                 .addFunction("stop", &BotClient::stop)
                 .addFunction("move", &BotClient::move)
@@ -176,8 +186,9 @@ namespace LuaBindings {
                 .addProperty("InventorySlotAmmo", []{ return (int)Otc::InventorySlotAmmo; })
             .endNamespace();
 
-        // Register proto instance as a global variable
+        // Register instances as global variables
         luabridge::setGlobal(L, BotClient::getInstance(), "proto");
+        luabridge::setGlobal(L, BotEngine::getInstance(), "engine");
 
         // Helper: msleep
         luabridge::getGlobalNamespace(L)

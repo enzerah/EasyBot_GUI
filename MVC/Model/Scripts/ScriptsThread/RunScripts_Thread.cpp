@@ -32,22 +32,22 @@ void RunScripts_Thread::run() {
     std::cout << "Stopping all Lua scripts..." << std::endl;
     
     // Request all Lua threads to stop
-    for (auto* engine : luaEngines) {
-        engine->requestStop();
+    for (auto* luaEngine : luaEngines) {
+        luaEngine->requestStop();
     }
     
     // Wait for all Lua threads to finish (with timeout)
-    for (auto* engine : luaEngines) {
-        if (!engine->wait(1000)) { // 1 second timeout
+    for (auto* luaEngine : luaEngines) {
+        if (!luaEngine->wait(1000)) { // 1 second timeout
             std::cerr << "Warning: Lua thread did not finish in time, terminating forcefully" << std::endl;
-            engine->terminate();
-            engine->wait();
+            luaEngine->terminate();
+            luaEngine->wait();
         }
     }
     
     // Clean up
-    for (auto* engine : luaEngines) {
-        delete engine;
+    for (auto* luaEngine : luaEngines) {
+        delete luaEngine;
     }
     luaEngines.clear();
     
