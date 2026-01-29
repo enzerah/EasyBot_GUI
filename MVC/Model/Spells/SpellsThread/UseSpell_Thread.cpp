@@ -54,9 +54,7 @@ void UseSpell_Thread::run() {
             for (size_t i = 0; i < nSpells; ++i) {
                 const auto& spell = spellsCopy[i];
                 if (distance > spell.dist) continue;
-                if (isPlayer && spell.playerProtection) {
-                    if (distance <= spell.dist + 1) countsToFind[i] = 999; // Prevent to use spell when there is a player in distance
-                }
+                if (isPlayer && spell.playerProtection) countsToFind[i] = 999; // Prevent to use spell when there is a player in distance
                 if (spell.targetName != "*" && creatureName != spell.targetName) continue;
 
                 countsToFind[i]--;

@@ -200,26 +200,6 @@
                  <string>Scripts</string>
                 </property>
                </item>
-               <item>
-                <property name="text">
-                 <string>Alarms</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Heal Friend</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>AI</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Rune Maker</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>

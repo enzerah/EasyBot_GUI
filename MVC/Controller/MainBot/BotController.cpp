@@ -103,13 +103,6 @@ BotController::BotController(BotView *botView, QObject *parent)
         }
     });
 
-    // Alarms
-    connect(m_botView, &BotView::startAlarms_signal, this, [this](bool checked){
-        if (m_alarmsController) {
-            m_alarmsController->startAlarms_slot(checked);
-        }
-    });
-
     // Save & Load
     connect(m_botView, &BotView::saveRequested, this, &BotController::onSaveRequested);
     connect(m_botView, &BotView::loadRequested, this, &BotController::onLoadRequested);

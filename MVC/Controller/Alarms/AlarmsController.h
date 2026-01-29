@@ -2,7 +2,6 @@
 #define ALARMSCONTROLLER_H
 #include <QObject>
 #include "Alarms/AlarmsView.h"
-#include "Alarms/AlarmsModel.h"
 
 
 class AlarmsController : public QObject {
@@ -13,15 +12,8 @@ public:
 
     void showView();
 
-public slots:
-    void startAlarms_slot(bool state);
-
-private slots:
-    void onSettingsChanged();
-
 private:
     AlarmsView *m_view;
-    AlarmsModel *m_model;
 };
 
 
