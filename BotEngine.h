@@ -22,6 +22,15 @@ public:
     bool isLooting = false;
     bool isWalking = false;
 
+    bool walkerState = true;
+    bool targetState = true;
+    bool agentAIState = true;
+    bool alarmsState = true;
+    bool lootingState = true;
+    bool miscellaneousState = true;
+    bool scriptsState = true;
+    bool spellsState = true;
+
     // Client Custom Functions
     std::vector<int> countItems(std::vector<int> itemId);
     void depositItems(std::vector<int> itemId, std::string containerToDeposit);
