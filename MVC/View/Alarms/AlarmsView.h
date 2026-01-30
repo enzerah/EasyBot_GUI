@@ -15,7 +15,7 @@ public:
     ~AlarmsView() override;
 
     signals:
-    void addItem_signal(const QString& option, const int &value, const std::vector<QString> list);
+    void addItem_signal(const QString& option, const int &value, const std::vector<QString> list, bool enabled);
 
 private:
     Ui::Alarms_View *ui;

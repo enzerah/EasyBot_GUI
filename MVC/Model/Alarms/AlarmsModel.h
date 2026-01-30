@@ -2,6 +2,7 @@
 #define ALARMSMODEL_H
 #include <QObject>
 #include <QVariant>
+#include <map>
 #include "../../const.h"
 #include "AlarmsThread/StartAlarms_Thread.h"
 
@@ -14,10 +15,10 @@ public:
 
     void startAlarms(bool state);
 
-    void addItem(const QString& option, const int &value, const std::vector<QString> list);
+    void addItem(const QString& option, const int &value, const std::vector<QString> list, bool enabled);
 
 private:
-    std::vector<Alarm> alarms;
+    std::map<std::string, Alarm> alarms;
     StartAlarms_Thread *startAlarmsThread = nullptr;
 };
 

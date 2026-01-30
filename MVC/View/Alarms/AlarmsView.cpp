@@ -13,44 +13,42 @@ AlarmsView::AlarmsView(QWidget *parent) :
 
     connect(ui->lowHealth_checkBox, &QCheckBox::clicked, this, [this](bool checked){
         ui->lowHealth_lineEdit->setEnabled(!checked);
-        emit addItem_signal("Low Health", ui->lowHealth_lineEdit->text().toInt(), {""});
+        emit addItem_signal("Low Health", ui->lowHealth_lineEdit->text().toInt(), {""}, checked);
     });
 
     connect(ui->lowMana_checkBox, &QCheckBox::clicked, this, [this](bool checked){
         ui->lowMana_lineEdit->setEnabled(!checked);
-        emit addItem_signal("Low Mana", ui->lowMana_lineEdit->text().toInt(), {""});
+        emit addItem_signal("Low Mana", ui->lowMana_lineEdit->text().toInt(), {""}, checked);
     });
 
-    connect(ui->creatureDetected_checkBox, &QCheckBox::clicked, this, [this](bool checked){
+    auto updateCreatureDetected = [this](){
+        bool checked = ui->creatureDetected_checkBox->isChecked();
         ui->groupBox->setEnabled(!checked);
         std::vector<QString> names{};
+        int value = 0; // Blacklist
+        QString plainText;
         if (ui->creatureBlackList_radioButton->isChecked()) {
-            auto plainText = ui->creatureBlackList_textEdit->toPlainText();
-            QStringList lines = plainText.split(QRegularExpression("[\n]+"),Qt::SkipEmptyParts);
-            for (auto name : lines) {
-                names.push_back(name);
-            }
-            emit addItem_signal("Creature Detected", 0, names);
+            plainText = ui->creatureBlackList_textEdit->toPlainText();
+            value = 0;
         } else {
-            auto plainText = ui->creatureWhiteList_textEdit->toPlainText();
-            QStringList lines = plainText.split(QRegularExpression("[\n]+"),Qt::SkipEmptyParts);
-            for (auto name : lines) {
-                names.push_back(name);
-            }
-            emit addItem_signal("Creature Detected", 1, names);
+            plainText = ui->creatureWhiteList_textEdit->toPlainText();
+            value = 1; // Whitelist
         }
-    });
+        QStringList lines = plainText.split(QRegularExpression("[\n]+"), Qt::SkipEmptyParts);
+        for (const auto& name : lines) {
+            names.push_back(name);
+        }
+        emit addItem_signal("Creature Detected", value, names, checked);
+    };
 
-    connect(ui->privateMessage_checkBox, &QCheckBox::clicked, this, [this](bool checked) {
-        emit addItem_signal("Private Message", 0, {""});
-    });
-
-    connect(ui->defaultMessage_checkBox, &QCheckBox::clicked, this, [this](bool checked) {
-        emit addItem_signal("Default Message", 0, {""});
-    });
+    connect(ui->creatureDetected_checkBox, &QCheckBox::clicked, this, updateCreatureDetected);
+    connect(ui->creatureBlackList_radioButton, &QRadioButton::clicked, this, updateCreatureDetected);
+    connect(ui->creatureWhiteList_radioButton, &QRadioButton::clicked, this, updateCreatureDetected);
+    connect(ui->creatureBlackList_textEdit, &QTextEdit::textChanged, this, updateCreatureDetected);
+    connect(ui->creatureWhiteList_textEdit, &QTextEdit::textChanged, this, updateCreatureDetected);
 
     connect(ui->disconnect_checkBox, &QCheckBox::clicked, this, [this](bool checked) {
-        emit addItem_signal("Disconnect", 0, {""});
+        emit addItem_signal("Disconnect", 0, {""}, checked);
     });
 
 }

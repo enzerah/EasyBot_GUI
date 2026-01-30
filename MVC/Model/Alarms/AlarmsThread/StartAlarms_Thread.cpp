@@ -23,14 +23,16 @@ void StartAlarms_Thread::run() {
                 if (alarm.option == "Low Mana" && localPlayer) {
                     auto mana = proto->getMana(localPlayer);
                     auto maxMana = proto->getMaxMana(localPlayer);
-                    auto mpPc = (mana/maxMana) * 100;
-                    if (mpPc <= alarm.value) {
-                        PlaySoundA("Sounds/Low_Mana.wav", NULL, SND_FILENAME | SND_SYNC);
-                        playedSound = true;
+                    if (maxMana > 0) {
+                        auto mpPc = (mana * 100) / maxMana;
+                        if (mpPc <= alarm.value) {
+                            PlaySoundA("Sounds/Low_Mana.wav", NULL, SND_FILENAME | SND_SYNC);
+                            playedSound = true;
+                        }
                     }
                 }
                 if (alarm.option == "Disconnect") {
-                    if (!localPlayer) {
+                    if (localPlayer == 0) {
                         PlaySoundA("Sounds/ding.wav", NULL, SND_FILENAME | SND_SYNC);
                         playedSound = true;
                     }
@@ -38,32 +40,30 @@ void StartAlarms_Thread::run() {
                 if (alarm.option == "Creature Detected" && localPlayer) {
                     auto playerPos = proto->getPosition(localPlayer);
                     auto spectators = proto->getSpectators(playerPos);
-                    // Black list
-                    if (alarm.value == 0) {
-                        for (auto spectator : spectators) {
-                            if (proto->isLocalPlayer(spectator)) continue;
-                            auto spectatorName = proto->getCreatureName(spectator);
-                            for (auto name : alarm.names) {
-                                if (name != spectatorName) {
-                                    PlaySoundA("Sounds/Creature_Detected.wav", NULL, SND_FILENAME | SND_SYNC);
-                                    playedSound = true;
-                                    break;
-                                }
+                    
+                    for (auto spectator : spectators) {
+                        if (proto->isLocalPlayer(spectator)) continue;
+                        auto spectatorName = proto->getCreatureName(spectator);
+                        bool nameInList = false;
+                        for (const auto& name : alarm.names) {
+                            if (name == spectatorName) {
+                                nameInList = true;
+                                break;
                             }
-                            if (playedSound) break;
                         }
-                    } else {
-                        for (auto spectator : spectators) {
-                            if (proto->isLocalPlayer(spectator)) continue;
-                            auto spectatorName = proto->getCreatureName(spectator);
-                            for (auto name : alarm.names) {
-                                if (name == spectatorName) {
-                                    PlaySoundA("Sounds/Creature_Detected.wav", NULL, SND_FILENAME | SND_SYNC);
-                                    playedSound = true;
-                                    break;
-                                }
+
+                        if (alarm.value == 0) { // Black list: Alarm if NOT in list
+                            if (!nameInList) {
+                                PlaySoundA("Sounds/Creature_Detected.wav", NULL, SND_FILENAME | SND_SYNC);
+                                playedSound = true;
+                                break;
                             }
-                            if (playedSound) break;
+                        } else { // White list: Alarm if IN list
+                            if (nameInList) {
+                                PlaySoundA("Sounds/Creature_Detected.wav", NULL, SND_FILENAME | SND_SYNC);
+                                playedSound = true;
+                                break;
+                            }
                         }
                     }
                 }
