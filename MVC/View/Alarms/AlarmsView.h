@@ -14,6 +14,9 @@ public:
     explicit AlarmsView(QWidget *parent = nullptr);
     ~AlarmsView() override;
 
+    signals:
+    void addItem_signal(const QString& option, const int &value, const std::vector<QString> list);
+
 private:
     Ui::Alarms_View *ui;
 };

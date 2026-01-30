@@ -1,7 +1,6 @@
 #ifndef HEALINGCONTROLLER_H
 #define HEALINGCONTROLLER_H
 #include <QObject>
-
 #include "Healing/HealingModel.h"
 #include "Healing/HealingView.h"
 

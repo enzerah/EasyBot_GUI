@@ -764,6 +764,12 @@ struct Script {
     int sleepTime = 100;
 };
 
+struct Alarm {
+    std::string option;
+    int value;
+    std::vector<std::string> names;
+};
+
 struct MessageStruct {
     std::string name;
     uint16_t level;

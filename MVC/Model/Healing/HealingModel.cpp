@@ -1,5 +1,4 @@
 #include "HealingModel.h"
-#include <iostream>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
