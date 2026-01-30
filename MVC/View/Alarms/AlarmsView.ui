@@ -128,7 +128,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="creatureWhite_List_radioButton">
+          <widget class="QRadioButton" name="creatureWhiteList_radioButton">
            <property name="text">
             <string>White List</string>
            </property>
