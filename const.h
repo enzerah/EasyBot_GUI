@@ -721,7 +721,6 @@ struct Target
     int dist;
     int count;
     std::string desiredStance;
-    std::string monstersAttacks;
     bool openCorpse;
 };
 

@@ -47,18 +47,21 @@ public:
     // Creature
     std::string getCreatureName(uintptr_t creature);
     uint8_t getHealthPercent(uintptr_t creature);
+    uint8_t getManaPercent(uintptr_t creature);
+    uint8_t getSkull(uintptr_t creature);
     Otc::Direction getDirection(uintptr_t creature);
+    bool isWalking(uintptr_t creature);
     bool isDead(uintptr_t creature);
     bool canBeSeen(uintptr_t creature);
     bool isCovered(uintptr_t creature);
     bool canShoot(uintptr_t creature, int distance);
 
     // Game
+    void safeLogout();
     void walk(Otc::Direction direction);
     void autoWalkGame(const std::vector<Otc::Direction> &dirs, const Position &startPos);
     void turn(Otc::Direction direction);
     void stop();
-    void look(const uintptr_t& thing, const bool isBattleList);
     void move(const uintptr_t &thing, const Position& toPos, int count);
     void moveToParentContainer(const uintptr_t& thing, const int count);
     void use(const uintptr_t &thing);
@@ -78,6 +81,8 @@ public:
     void talkChannel(const Otc::MessageMode mode, const uint16_t channelId, const std::string& message);
     void talkPrivate(const Otc::MessageMode msgMode, const std::string& receiver, const std::string& message);
     void openPrivateChannel(const std::string& receiver);
+    int getChaseMode();
+    int getFightMode();
     void setChaseMode(Otc::ChaseModes mode);
     void setFightMode(Otc::FightModes mode);
     void buyItem(const uintptr_t& item, const uint16_t amount, const bool ignoreCapacity, const bool buyWithBackpack);
@@ -133,7 +138,6 @@ public:
     uintptr_t getTile(Position tilePos);
     std::vector<uintptr_t> getSpectators(const Position &centerPos, bool multiFloor = false);
     std::vector<Otc::Direction> findPath(const Position& startPos, const Position& goalPos, int maxComplexity, int flags);
-    bool isWalkable(const Position& pos, bool ignoreCreatures);
     bool isSightClear(const Position& fromPos, const Position& toPos);
 
     // Thing
@@ -154,6 +158,7 @@ public:
     uintptr_t getTopThing(uintptr_t tile);
     uintptr_t getTopUseThing(uintptr_t tile);
     std::vector<uintptr_t> getTileItems(uintptr_t tile);
+    bool isWalkable(uintptr_t tile, bool ignoreCreatures);
 
     // Custom Functions
     std::vector<MessageStruct> getMessages(int messageNumber);

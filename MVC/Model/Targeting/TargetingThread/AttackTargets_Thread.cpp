@@ -142,6 +142,47 @@ void AttackTargets_Thread::desiredStance(uintptr_t localPlayer, Position playerP
     if (currentTarget.target.desiredStance == "Chase") {
         proto->setChaseMode(Otc::ChaseOpponent);
     }
+    if (currentTarget.target.desiredStance == "Stay Away") {
+        proto->setChaseMode(Otc::DontChase);
+
+        int dist = std::max(std::abs(static_cast<int>(playerPos.x) - static_cast<int>(spectatorPos.x)),
+                           std::abs(static_cast<int>(playerPos.y) - static_cast<int>(spectatorPos.y)));
+
+        if (dist < m_stayAwayDistance && !proto->isAutoWalking(localPlayer)) {
+            std::vector<Otc::Direction> directions = { Otc::North, Otc::East, Otc::South, Otc::West, 
+                                                     Otc::NorthEast, Otc::SouthEast, Otc::SouthWest, Otc::NorthWest };
+            
+            Position bestPos = playerPos;
+            int maxDist = dist;
+
+            for (auto dir : directions) {
+                Position nextPos = playerPos;
+                if (dir == Otc::North) nextPos.y--;
+                else if (dir == Otc::South) nextPos.y++;
+                else if (dir == Otc::West) nextPos.x--;
+                else if (dir == Otc::East) nextPos.x++;
+                else if (dir == Otc::NorthEast) { nextPos.x++; nextPos.y--; }
+                else if (dir == Otc::SouthEast) { nextPos.x++; nextPos.y++; }
+                else if (dir == Otc::SouthWest) { nextPos.x--; nextPos.y++; }
+                else if (dir == Otc::NorthWest) { nextPos.x--; nextPos.y--; }
+
+                if (!proto->findPath(playerPos, nextPos, 10, Otc::PathFindIgnoreCreatures).empty()) {
+                    int nextDist = std::max(std::abs(static_cast<int>(nextPos.x) - static_cast<int>(spectatorPos.x)),
+                                          std::abs(static_cast<int>(nextPos.y) - static_cast<int>(spectatorPos.y)));
+                    if (nextDist > maxDist) {
+                        maxDist = nextDist;
+                        bestPos = nextPos;
+                    }
+                }
+            }
+            for (auto blockedPos : m_blockedTiles) {
+                if (blockedPos. x == bestPos.x && blockedPos. y == bestPos.y && blockedPos.z == bestPos.z) return;
+            }
+            if (bestPos.x != playerPos.x || bestPos.y != playerPos.y) {
+                proto->autoWalk(localPlayer, bestPos);
+            }
+        }
+    }
 }
 
 

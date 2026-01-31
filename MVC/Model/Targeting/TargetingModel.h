@@ -17,7 +17,7 @@ class TargetingModel : public QObject {
     explicit TargetingModel(QObject *parent = nullptr);
     ~TargetingModel();
 
-    void addItem(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
+    void addItem(const QString &targetName, const int &dist, const int &count, const QString &desiredStance, bool openCorpse);
     void shootableState(bool state);
     void reachableState(bool state);
     void stayAwayDist(int currentDist);
@@ -34,7 +34,7 @@ class TargetingModel : public QObject {
 
 
     signals:
-    void addItem_signal(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, const QString &monstersAttacks, bool openCorpse);
+    void addItem_signal(const QString &targetName, const QString &dist, const QString &count, const QString &desiredStance, bool openCorpse);
     void shootableStateChanged_signal(bool state);
     void reachableStateChanged_signal(bool state);
     void stayAwayDistChanged_signal(int currentDist);

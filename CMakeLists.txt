@@ -67,6 +67,12 @@ add_executable(EasyBotGUI WIN32
         app_icon.rc
 )
 
+add_executable(TestScripts
+        TestScripts.cpp
+        ${QRC_SOURCES}
+        ${CMAKE_SOURCE_DIR}/proto_functions_client.cpp
+)
+
 add_library(bot_proto STATIC ${GENERATED_SRCS} ${GENERATED_HDRS})
 target_include_directories(bot_proto PUBLIC ${GEN_DIR})
 target_link_libraries(bot_proto PUBLIC protobuf::libprotobuf gRPC::grpc++)
@@ -81,8 +87,22 @@ target_link_libraries(EasyBotGUI PRIVATE
         ${LUA_LIBRARIES}
 )
 
+target_link_libraries(TestScripts PRIVATE
+        bot_proto
+        Qt6::Network
+        Qt6::NetworkAuth
+)
+
 set_target_properties(EasyBotGUI PROPERTIES
         OUTPUT_NAME "Bot/EasyBot"
+        RUNTIME_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
+        LIBRARY_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
+        AUTOUIC ON
+        AUTOMOC ON
+)
+
+set_target_properties(TestScripts PROPERTIES
+        OUTPUT_NAME "Bot/TestScripts"
         RUNTIME_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
         LIBRARY_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
         AUTOUIC ON

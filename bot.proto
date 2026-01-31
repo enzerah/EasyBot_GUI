@@ -19,14 +19,18 @@ service BotService {
 
   // --- Creature.h ---
   rpc GetCreatureName(google.protobuf.UInt64Value) returns (google.protobuf.StringValue);
+  rpc GetManaPercent(google.protobuf.UInt64Value) returns (google.protobuf.UInt32Value);
   rpc GetHealthPercent(google.protobuf.UInt64Value) returns (google.protobuf.UInt32Value);
+  rpc GetSkull(google.protobuf.UInt64Value) returns (google.protobuf.UInt32Value);
   rpc GetDirection(google.protobuf.UInt64Value) returns (google.protobuf.Int32Value);
   rpc IsDead(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
+  rpc IsWalking(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
   rpc CanBeSeen(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
   rpc IsCovered(google.protobuf.UInt64Value) returns (google.protobuf.BoolValue);
   rpc CanShoot(bot_CanShootRequest) returns (google.protobuf.BoolValue);
 
   // --- Game.h ---
+  rpc SafeLogout(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc Walk(google.protobuf.Int32Value) returns (google.protobuf.Empty);
   rpc AutoWalkGame(bot_AutoWalkGameRequest) returns (google.protobuf.Empty);
   rpc Turn(google.protobuf.Int32Value) returns (google.protobuf.Empty);
@@ -50,6 +54,8 @@ service BotService {
   rpc TalkChannel(bot_TalkChannelRequest) returns (google.protobuf.Empty);
   rpc TalkPrivate(bot_TalkPrivateRequest) returns (google.protobuf.Empty);
   rpc OpenPrivateChannel(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc GetChaseMode(google.protobuf.Empty) returns (google.protobuf.Int32Value);
+  rpc GetFightMode(google.protobuf.Empty) returns (google.protobuf.Int32Value);
   rpc SetChaseMode(google.protobuf.Int32Value) returns (google.protobuf.Empty);
   rpc SetFightMode(google.protobuf.Int32Value) returns (google.protobuf.Empty);
   rpc BuyItem(bot_BuyItemRequest) returns (google.protobuf.Empty);
@@ -105,7 +111,6 @@ service BotService {
   rpc GetTile(bot_Position) returns (google.protobuf.UInt64Value);
   rpc GetSpectators(bot_GetSpectatorsRequest) returns (bot_Uint64List);
   rpc FindPath(bot_FindPathRequest) returns (bot_DirectionList);
-  rpc IsWalkable(bot_IsWalkableRequest) returns (google.protobuf.BoolValue);
   rpc IsSightClear(bot_IsSightClearRequest) returns (google.protobuf.BoolValue);
 
   // --- Thing.h ---
@@ -126,6 +131,7 @@ service BotService {
   rpc GetTopThing(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
   rpc GetTopUseThing(google.protobuf.UInt64Value) returns (google.protobuf.UInt64Value);
   rpc GetTileItems(google.protobuf.UInt64Value) returns (bot_Uint64List);
+  rpc IsWalkable(bot_IsWalkableRequest) returns (google.protobuf.BoolValue);
 
   // --- CustomFunctions.h ---
   rpc GetMessages(google.protobuf.UInt32Value) returns (bot_GetMessages);
@@ -296,7 +302,7 @@ message bot_FindPathRequest {
 }
 
 message bot_IsWalkableRequest {
-  bot_Position pos = 1;
+  uint64 tile = 1;
   bool ignoreCreatures = 2;
 }
 

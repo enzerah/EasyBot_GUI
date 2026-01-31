@@ -18,14 +18,13 @@ TargetingModel::~TargetingModel() {
 }
 
 void TargetingModel::addItem(const QString &targetName, const int &dist, const int &count,
-    const QString &desiredStance, const QString &monstersAttacks, bool openCorpse) {
+    const QString &desiredStance, bool openCorpse) {
     Target target;
     target.name = targetName.toStdString();
     std::transform(target.name .begin(), target.name .end(), target.name .begin(), ::tolower);
     target.count = count;
     target.dist = dist;
     target.desiredStance = desiredStance.toStdString();
-    target.monstersAttacks = monstersAttacks.toStdString();
     target.openCorpse = openCorpse;
     targets.push_back(target);
     QString distString = QString::number(dist);
@@ -33,7 +32,7 @@ void TargetingModel::addItem(const QString &targetName, const int &dist, const i
 
     if (!dist) distString = "All";
     if (count == 1) countString = "Any";
-    emit addItem_signal(targetName, distString, countString, desiredStance, monstersAttacks, openCorpse);
+    emit addItem_signal(targetName, distString, countString, desiredStance, openCorpse);
     emit updateData_signal(targets);
 }
 
@@ -91,7 +90,6 @@ QJsonArray TargetingModel::toJson() const {
         jsonObj["dist"] = target.dist;
         jsonObj["count"] = target.count;
         jsonObj["stance"] = QString::fromStdString(target.desiredStance);
-        jsonObj["attack"] = QString::fromStdString(target.monstersAttacks);
         jsonObj["open"] = target.openCorpse;
         jsonArray.append(jsonObj);
     }
@@ -127,9 +125,8 @@ void TargetingModel::fromJson(const QJsonArray &json) {
                 int dist = obj["dist"].toInt();
                 int count = obj["count"].toInt();
                 QString stance = obj["stance"].toString();
-                QString attack = obj["attack"].toString();
                 bool open = obj["open"].toBool();
-                addItem(name, dist, count, stance, attack, open);
+                addItem(name, dist, count, stance, open);
             }
         }
         if (mainObj.contains("blockedTiles")) {
@@ -149,9 +146,8 @@ void TargetingModel::fromJson(const QJsonArray &json) {
             int dist = obj["dist"].toInt();
             int count = obj["count"].toInt();
             QString stance = obj["stance"].toString();
-            QString attack = obj["attack"].toString();
             bool open = obj["open"].toBool();
-            addItem(name, dist, count, stance, attack, open);
+            addItem(name, dist, count, stance, open);
         }
     }
 }

@@ -293,51 +293,6 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Monster attacks</string>
-           </property>
-           <property name="buddy">
-            <cstring>monsterAttacks_comboBox</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="monsterAttacks_comboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <item>
-            <property name="text">
-             <string>No Action</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Face Target</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Avoid Waves</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <widget class="QCheckBox" name="open_checkBox">
          <property name="enabled">
           <bool>false</bool>
