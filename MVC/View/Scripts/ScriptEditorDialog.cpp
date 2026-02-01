@@ -103,8 +103,8 @@ ScriptEditorDialog::ScriptEditorDialog(const QString &name, const QString &scrip
 
 void ScriptEditorDialog::populateLists() {
     m_gameList->addItems({
-        "getLocalPlayer() -> LocalPlayer", "walk(Otc::Direction)", "turn(Otc::Direction)", "stop()",
-        "move(Thing, Position, count)", "moveToParentContainer(Thing, count)", "use(Thing)",
+        "getLocalPlayer() -> LocalPlayer",  "countItems({id1, id2}) -> {numbers}", "walk(Otc::Direction)", "turn(Otc::Direction)", "stop()",
+        "move(Thing, Position, count)", "moveToParentContainer(Thing, count)", "use(Thing)", "safeLogout()",
         "useWith(Item, Thing)", "useInventoryItem(itemId)", "useInventoryItemWith(itemId, Thing)",
         "findItemInContainers(itemId, subType, tier) -> Item", "open(Item, previousContainer) -> number",
         "openParent(Container)", "close(Container)", "refreshContainer(Container)",

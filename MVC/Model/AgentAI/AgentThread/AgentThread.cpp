@@ -14,17 +14,21 @@
 void AgentThread::run() {
     proto->clearMessages();
     while (!isInterruptionRequested()) {
+        auto localPlayerName = proto->getCharacterName();
         auto messages = proto->getMessages(100);
         proto->clearMessages();
         if (list) {
             for (const auto& name : names) {
                 for (const auto& message : messages) {
-                    if (name != message.name) {
-                        std::cout << message.name << std::endl;
-                        std::cout << message.mode << std::endl;
-                        std::string response = performRequest_GPT(message);
-                        if (message.mode == Otc::MessageSay || message.mode == Otc::MessageWhisper || message.mode == Otc::MessageYell) proto->talk(response);
-                        if (message.mode == Otc::MessagePrivateFrom) proto->talkPrivate(Otc::MessagePrivateTo, message.name, response);
+                    if (name != message.name && message.name != localPlayerName) {
+                        if (message.mode == Otc::MessageSay || message.mode == Otc::MessageWhisper || message.mode == Otc::MessageYell) {
+                            std::string response = performRequest_GPT(message);
+                            proto->talk(response);
+                        }
+                        if (message.mode == Otc::MessagePrivateFrom) {
+                            std::string response = performRequest_GPT(message);
+                            proto->talkPrivate(Otc::MessagePrivateTo, message.name, response);
+                        }
                         msleep(1000);
                         break;
                     }
@@ -33,10 +37,15 @@ void AgentThread::run() {
         } else {
             for (const auto& name : names) {
                 for (const auto& message : messages) {
-                    if (name == message.name) {
-                        std::string response = performRequest_GPT(message);
-                        if (message.mode == Otc::MessageSay || message.mode == Otc::MessageWhisper || message.mode == Otc::MessageYell) proto->talk(response);
-                        if (message.mode == Otc::MessagePrivateFrom) proto->talkPrivate(Otc::MessagePrivateTo, message.name, response);
+                    if (name == message.name && message.name != localPlayerName) {
+                        if (message.mode == Otc::MessageSay || message.mode == Otc::MessageWhisper || message.mode == Otc::MessageYell) {
+                            std::string response = performRequest_GPT(message);
+                            proto->talk(response);
+                        }
+                        if (message.mode == Otc::MessagePrivateFrom) {
+                            std::string response = performRequest_GPT(message);
+                            proto->talkPrivate(Otc::MessagePrivateTo, message.name, response);
+                        }
                         msleep(1000);
                         break;
                     }
