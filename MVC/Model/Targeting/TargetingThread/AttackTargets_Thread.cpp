@@ -83,6 +83,7 @@ void AttackTargets_Thread::run() {
                 }
                 if (reachable && shootable) {
                     if (countsToFind[monster.target.name] <= 0) {
+                        g_Engine->hasTarget = true;
                     } else {
                         g_Engine->hasTarget = false;
                     }
@@ -129,7 +130,7 @@ void AttackTargets_Thread::run() {
 }
 
 bool AttackTargets_Thread::isReachable(Position playerPos, Position spectatorPos) {
-    auto path = proto->findPath(playerPos, spectatorPos, 15, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
+    auto path = proto->findPath(playerPos, spectatorPos, 100, Otc::PathFindIgnoreCreatures | Otc::PathFindAllowNonPathable);
     if (path.empty()) return false;
     return true;
 }
