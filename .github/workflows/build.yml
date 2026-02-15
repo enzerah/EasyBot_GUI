@@ -1,0 +1,66 @@
+name: Build EasyBot_GUI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        build-type: [Release]
+        include:
+          - build-type: Release
+            vcpkg-triplet: x64-windows-static-release
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.10.0'
+        arch: 'win64_msvc2022_64'
+        modules: 'qttools'
+
+    - name: Install dependencies
+      run: |
+        choco install cmake -y
+        choco install protoc -y
+
+    - name: Setup vcpkg
+      run: |
+        cd third_party/vcpkg
+        .\bootstrap-vcpkg.bat
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake
+      run: |
+        cd build
+        cmake .. `
+          -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} `
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg-triplet }} `
+          -DVCPKG_HOST_TRIPLET=${{ matrix.vcpkg-triplet }} `
+          "-DCMAKE_PREFIX_PATH=${{ env.Qt6_DIR }}/lib/cmake"
+
+    - name: Build
+      run: |
+        cd build
+        cmake --build . --config ${{ matrix.build-type }} --parallel 4
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: EasyBot_GUI-${{ matrix.build-type }}
+        path: |
+          Bot/EasyBot.exe
+          build/**/*.exe
