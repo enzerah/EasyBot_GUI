@@ -18,7 +18,7 @@ jobs:
             vcpkg-triplet: x64-windows-static-release
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -57,7 +57,7 @@ jobs:
         cmake --build . --config ${{ matrix.build-type }} --parallel 4
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: EasyBot_GUI-${{ matrix.build-type }}
