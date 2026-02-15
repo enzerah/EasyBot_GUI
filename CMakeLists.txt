@@ -6,20 +6,36 @@ set(VCPKG_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 
 set(VCPKG_TARGET_TRIPLET "x64-windows-static-release" CACHE STRING "VCPKG target triplet" FORCE)
 set(VCPKG_HOST_TRIPLET "x64-windows-static-release" CACHE STRING "VCPKG host triplet" FORCE)
-set(GRPC_CPP_PLUGIN_EXECUTABLE "${CMAKE_SOURCE_DIR}/third_party/vcpkg/packages/grpc_x64-windows-static-release/tools/grpc/grpc_cpp_plugin.exe")
 
 project(EasyBotGUI)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
-list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.10.0/msvc2022_64/lib/cmake")
+# Try local Qt installation first, then use system
+if(NOT DEFINED CMAKE_PREFIX_PATH OR CMAKE_PREFIX_PATH STREQUAL "")
+    list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.10.0/msvc2022_64")
+endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Qml Network NetworkAuth)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(Lua REQUIRED)
 find_path(LUABRIDGE3_INCLUDE_DIRS "luabridge3/LuaBridge/Array.h")
+
+# Find gRPC plugin
+find_program(GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin
+    PATHS
+        "${CMAKE_SOURCE_DIR}/third_party/vcpkg/packages/grpc_x64-windows-static-release/tools/grpc"
+        "${CMAKE_SOURCE_DIR}/third_party/vcpkg/installed/${VCPKG_TARGET_TRIPLET}/tools/grpc"
+    NO_DEFAULT_PATH
+)
+if(NOT GRPC_CPP_PLUGIN_EXECUTABLE)
+    find_program(GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+endif()
 
 
 set(PROTO_FILE ${CMAKE_SOURCE_DIR}/bot.proto)
@@ -97,15 +113,11 @@ set_target_properties(EasyBotGUI PROPERTIES
         OUTPUT_NAME "Bot/EasyBot"
         RUNTIME_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
         LIBRARY_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
-        AUTOUIC ON
-        AUTOMOC ON
 )
 
 set_target_properties(TestScripts PROPERTIES
         OUTPUT_NAME "Bot/TestScripts"
         RUNTIME_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
         LIBRARY_OUTPUT_DIRECTORY  "${PROJECT_SOURCE_DIR}"
-        AUTOUIC ON
-        AUTOMOC ON
 )
 
