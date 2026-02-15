@@ -67,19 +67,26 @@ jobs:
         cd build
         cmake --build . --config ${{ matrix.build-type }} --parallel 4
 
-    - name: Package artifacts
+    - name: Find and package artifacts
       run: |
         New-Item -ItemType Directory -Force -Path artifacts
-        if (Test-Path "Bot/EasyBot.exe") {
-          Copy-Item "Bot/EasyBot.exe" -Destination "artifacts/"
+        Write-Host "=== Searching for executables ==="
+        Get-ChildItem -Path . -Recurse -Filter "*.exe" -ErrorAction SilentlyContinue | ForEach-Object {
+          Write-Host "Found: $($_.FullName)"
+          Copy-Item $_.FullName -Destination "artifacts/$($_.Name)" -Force
         }
-        if (Test-Path "build/${{ matrix.build-type }}/EasyBotGUI.exe") {
-          Copy-Item "build/${{ matrix.build-type }}/EasyBotGUI.exe" -Destination "artifacts/"
+        Write-Host "=== Contents of artifacts directory ==="
+        Get-ChildItem -Path artifacts -ErrorAction SilentlyContinue | ForEach-Object {
+          Write-Host "$($_.Name) - $($_.Length) bytes"
+        }
+        if ((Get-ChildItem -Path artifacts -ErrorAction SilentlyContinue | Measure-Object).Count -eq 0) {
+          Write-Host "WARNING: No artifacts found! Checking build directory structure..."
+          Get-ChildItem -Path build -Recurse | Select-Object FullName, Length | Format-Table
         }
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
-      if: always()
+      if: success()
       with:
         name: EasyBot_GUI-${{ matrix.build-type }}
         path: artifacts/
