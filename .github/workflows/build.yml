@@ -50,10 +50,13 @@ jobs:
 
     - name: Cache info
       run: |
-        if ("${{ steps.vcpkg-cache.outputs.cache-hit }}" -eq "true") {
-          Write-Host "✅ vcpkg cache HIT - packages will be restored"
+        $cacheHit = "${{ steps.vcpkg-cache.outputs.cache-hit }}"
+        Write-Host "Cache Hit Status: '$cacheHit'"
+        if ($cacheHit -eq "true") {
+          Write-Host "✅ vcpkg cache HIT - packages restored (~50 min saved!)"
         } else {
-          Write-Host "❌ vcpkg cache MISS - will build from scratch"
+          Write-Host "❌ vcpkg cache MISS - building from scratch (~60 min)"
+          Write-Host "ℹ️  This is normal for the first build or after cache expiration"
         }
 
     - name: Setup vcpkg
@@ -90,6 +93,29 @@ jobs:
       run: |
         cd build
         cmake --build . --config ${{ matrix.build-type }} --parallel 4
+
+    - name: Cache statistics
+      if: always()
+      run: |
+        Write-Host "=== vcpkg Cache Statistics ==="
+        
+        $dirs = @(
+          @{Name="downloads"; Path="third_party/vcpkg/downloads"},
+          @{Name="packages"; Path="third_party/vcpkg/packages"},
+          @{Name="installed"; Path="third_party/vcpkg/installed"}
+        )
+        
+        $totalSize = 0
+        foreach ($dir in $dirs) {
+          if (Test-Path $dir.Path) {
+            $size = (Get-ChildItem -Path $dir.Path -Recurse -File -ErrorAction SilentlyContinue | 
+                     Measure-Object -Property Length -Sum).Sum / 1MB
+            $totalSize += $size
+            Write-Host "$($dir.Name): $([math]::Round($size, 2)) MB"
+          }
+        }
+        Write-Host "Total cache size: $([math]::Round($totalSize, 2)) MB"
+        Write-Host "This will be saved for next builds!"
 
     - name: Find and package artifacts
       run: |
